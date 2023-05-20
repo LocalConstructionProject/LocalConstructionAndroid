@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ds">
+        <attr name="background_color" format="color"/>
+        <attr name="title_text_color" format="color"/>
+        <attr name="subtitle_text_color" format="color"/>
+        <attr name="hint_color" format="color"/>
+        <attr name="normal_text_color" format="color"/>
+
+        <attr name="card_background" format="color"/>
+        <attr name="button_color" format="color"/>
+        <attr name="button_color_dim" format="color"/>
+        <attr name="button_text_color" format="color"/>
+        <attr name="tool_bar_color" format="color"/>
+        <attr name="tool_bar_color_dim" format="color"/>
+        <attr name="tool_bar_text_background_color" format="color"/>
+
+    </declare-styleable>
+    <declare-styleable name="ProgressCircle">
+        <attr name="android:textColor"/>
+        <attr name="android:textSize"/>
+        <attr name="android:text" format="string"/>
+        <attr name="progressColor" format="color" />
+        <attr name="incompleteProgressColor" format="color" />
+        <attr name="strokeWidth" format="dimension" />
+    </declare-styleable>
+</resources>
