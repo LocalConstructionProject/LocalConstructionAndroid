@@ -8,7 +8,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.core.content.ContextCompat
-import com.chillminds.holy_bible.R
+import com.chillminds.local_construction.R
 
 class CircularProgressBar(context: Context, attrs: AttributeSet?) :
     View(context, attrs) {
