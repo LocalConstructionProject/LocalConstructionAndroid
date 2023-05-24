@@ -8,12 +8,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
+import com.chillminds.holy_bible.utils.isNullOrEmptyOrBlank
 import com.chillminds.local_construction.R
+import com.chillminds.local_construction.common.Actions
 import com.chillminds.local_construction.databinding.FragmentSplashBinding
+import com.chillminds.local_construction.view_models.SplashViewModel
+import org.koin.android.ext.android.inject
 
 class SplashFragment : Fragment() {
 
     lateinit var binding: FragmentSplashBinding
+
+    private val viewModel by inject<SplashViewModel>()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -25,8 +32,13 @@ class SplashFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Handler(Looper.getMainLooper()).postDelayed({
-            findNavController().navigate(R.id.action_splashFragment_to_homeActivity)
-        }, 3000)
+
+        viewModel.commonModel.actionListener.observe(viewLifecycleOwner) {
+            if (!it.isNullOrEmptyOrBlank() && it == Actions.GOTO_HOME_PAGE_ACTIVITY) {
+                Handler(Looper.getMainLooper()).postDelayed({
+                    findNavController().navigate(R.id.action_splashFragment_to_homeActivity)
+                }, 3000)
+            }
+        }
     }
 }

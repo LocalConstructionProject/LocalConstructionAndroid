@@ -1,4 +1,4 @@
-package com.chillminds.local_construction
+package com.chillminds.local_construction.base
 
 import android.app.Application
 import android.content.Context
@@ -6,6 +6,10 @@ import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import com.chillminds.local_construction.common.SecurePreference
+import com.chillminds.local_construction.repositories.remote.RemoteRepository
+import com.chillminds.local_construction.repositories.remote.service.ApiHelper
+import com.chillminds.local_construction.repositories.remote.service.ApiService
+import com.chillminds.local_construction.view_models.SplashViewModel
 import com.google.gson.GsonBuilder
 import okhttp3.Credentials
 import okhttp3.OkHttpClient
@@ -15,6 +19,7 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
+import java.nio.charset.StandardCharsets
 import java.util.concurrent.TimeUnit
 
 class AppModule {
@@ -24,21 +29,26 @@ class AppModule {
     }
 
     fun getModules() =
-        listOf(networkModule, utilsModule)
+        listOf(networkModule, utilsModule,viewModelsModule)
+
+    private val viewModelsModule= module {
+        singleOf(::SplashViewModel)
+    }
 
     private val networkModule = module {
 
         singleOf(::provideOkHttpClient)
+        singleOf(::RemoteRepository)
 
         single { provideRetrofit(get(), getProperty("base.url")) }
-        //single { provideApiService(get()) }
+        single { provideApiService(get()) }
 
-//        single {
-//            ApiHelper(
-//                get(),
-//                Credentials.basic(getProperty("user.name"), getProperty("user.password"), StandardCharsets.UTF_8)
-//            )
-//        }
+        single {
+            ApiHelper(
+                get(),
+                Credentials.basic(getProperty("user.name"), getProperty("user.password"), StandardCharsets.UTF_8)
+            )
+        }
     }
 
     private fun getSharedPreference(
@@ -62,8 +72,8 @@ class AppModule {
         }
     }
 
-    //private fun provideApiService(retrofit: Retrofit): ApiService =
-      //  retrofit.create(ApiService::class.java)
+    private fun provideApiService(retrofit: Retrofit): ApiService =
+        retrofit.create(ApiService::class.java)
 
     private fun provideRetrofit(client: OkHttpClient, url: String): Retrofit {
         return Retrofit.Builder()

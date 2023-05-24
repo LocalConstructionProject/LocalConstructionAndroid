@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.StrictMode
 import androidx.multidex.MultiDex
 import androidx.multidex.MultiDexApplication
-import com.chillminds.local_construction.AppModule
 import com.chillminds.local_construction.BuildConfig
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidFileProperties
