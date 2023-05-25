@@ -10,4 +10,16 @@ class RemoteRepository(
     } ?: run {
         remoteRepo.getAllProjects()
     }
+
+    suspend fun getMaterial(id: String? = null) = id?.let {
+        remoteRepo.getMaterialById(it)
+    } ?: run {
+        remoteRepo.getAllMaterials()
+    }
+
+    suspend fun getLabourInfo(id: String? = null) = id?.let {
+        remoteRepo.getLabourInfoById(it)
+    } ?: run {
+        remoteRepo.getAllLabourInfo()
+    }
 }

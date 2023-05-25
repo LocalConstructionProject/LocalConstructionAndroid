@@ -9,4 +9,11 @@ class ApiHelper(
 
     suspend fun getAllProjectById(id: String) = service.getAllProjects(authentication, id)
 
+    suspend fun getMaterialById(id: String) = service.getAllMaterials(authentication, id)
+
+    suspend fun getAllMaterials() = service.getAllMaterials(authentication)
+
+    suspend fun getLabourInfoById(id: String) = service.getAllLabourInfo(authentication, id)
+
+    suspend fun getAllLabourInfo() = service.getAllLabourInfo(authentication)
 }

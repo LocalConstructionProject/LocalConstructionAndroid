@@ -10,6 +10,34 @@ data class ProjectDetailsResponse(
     val data: List<ProjectDetail>,
 )
 
+data class MaterialListResponse(
+    val status: String,
+    val statusCode: Int,
+    val message: String,
+    val data: List<MaterialData>,
+)
+
+data class MaterialData(
+    val _id: String,
+    val name: String,
+    @SerializedName("amount") val price: Int,
+    val id: String,
+)
+
+data class LabourInfoResponse(
+    val status: String,
+    val statusCode: Int,
+    val message: String,
+    val data: List<LabourData>,
+)
+
+data class LabourData(
+    val _id: String,
+    val name: String,
+    val price: Int,
+    val id: String,
+)
+
 data class ProjectDetail(
     @SerializedName("_id") val id: String,
     val name: String,
