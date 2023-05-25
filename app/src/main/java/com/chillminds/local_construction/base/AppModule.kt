@@ -5,14 +5,17 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
+import com.chillminds.local_construction.BuildConfig
 import com.chillminds.local_construction.common.SecurePreference
 import com.chillminds.local_construction.repositories.remote.RemoteRepository
 import com.chillminds.local_construction.repositories.remote.service.ApiHelper
 import com.chillminds.local_construction.repositories.remote.service.ApiService
 import com.chillminds.local_construction.view_models.SplashViewModel
+import com.chillminds.local_construction.models.CommonModel
 import com.google.gson.GsonBuilder
 import okhttp3.Credentials
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidApplication
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
@@ -32,6 +35,7 @@ class AppModule {
         listOf(networkModule, utilsModule,viewModelsModule)
 
     private val viewModelsModule= module {
+        singleOf(::CommonModel)
         singleOf(::SplashViewModel)
     }
 
@@ -92,11 +96,11 @@ class AppModule {
         val builder = OkHttpClient.Builder().connectTimeout(6000, TimeUnit.SECONDS)
             .readTimeout(6000, TimeUnit.SECONDS)
 
-        /*if (BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             builder.addInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
             })
-        }*/
+        }
 
         return builder.build()
     }

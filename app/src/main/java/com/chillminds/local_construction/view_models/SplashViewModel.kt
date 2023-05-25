@@ -20,7 +20,7 @@ class SplashViewModel(
         try {
             emit(Resource.success(repository.getProject()))
         } catch (e: Exception) {
-            emit(Resource.error(null, ""))
+            emit(Resource.error(null, e.toString()))
         }
     }
 
