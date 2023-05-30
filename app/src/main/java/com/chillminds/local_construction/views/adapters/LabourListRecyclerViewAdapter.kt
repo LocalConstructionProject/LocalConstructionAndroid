@@ -13,16 +13,18 @@ class LabourListRecyclerViewAdapter(
     private val lifeCycle: LifecycleOwner,
     private val dataList: List<LabourData>
 ) : RecyclerView.Adapter<LabourListRecyclerViewAdapter.ViewHolder>() {
-    private val viewModel : DashboardViewModel by KoinJavaComponent.inject(DashboardViewModel::class.java)
+    private val viewModel: DashboardViewModel by KoinJavaComponent.inject(DashboardViewModel::class.java)
 
     class ViewHolder(val binding: LabourListRecyclerViewBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(
             data: LabourData,
             lifeCycle: LifecycleOwner,
-            viewModel: DashboardViewModel
+            viewModel: DashboardViewModel,
+            showEdit: Boolean
         ) {
             binding.data = data
+            binding.showEdit = showEdit
             binding.viewModel = viewModel
             binding.lifecycleOwner = lifeCycle
             binding.executePendingBindings()
@@ -39,7 +41,7 @@ class LabourListRecyclerViewAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(
         dataList[position],
         lifeCycle,
-        viewModel
+        viewModel, (viewModel.commonModel.labourData.value?.size ?: 0) < dataList.size
     )
 
     override fun getItemCount(): Int = dataList.size

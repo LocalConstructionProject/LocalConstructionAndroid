@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="data"
             type="com.chillminds.local_construction.repositories.remote.dto.StageDetail" />
@@ -11,6 +12,10 @@
         <variable
             name="viewModel"
             type="com.chillminds.local_construction.view_models.DashboardViewModel" />
+
+        <variable
+            name="lifeCycle"
+            type="androidx.lifecycle.LifecycleOwner" />
 
     </data>
 
@@ -29,24 +34,68 @@
             android:lineSpacingExtra="@dimen/_5sdp"
             android:padding="@dimen/_5sdp"
             android:text="@{data.name}"
+            android:textSize="@dimen/_14sdp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="" />
 
         <TextView
+            android:id="@+id/labourLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/_5sdp"
             android:elegantTextHeight="true"
             android:letterSpacing="0.1"
+            android:text="Labour Details"
             android:textColor="?attr/title_text_color"
             android:textStyle="bold"
-            android:text="@{``+data.createdDate}"
-            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/nameTextView"
             tools:text="Zec 3:7" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/labourLabel"
+            app:lifeCycle="@{lifeCycle}"
+            app:setStagesLabourList="@{viewModel.commonModel.labourData}"
+            app:stagesData="@{data}" />
+
+        <TextView
+            android:id="@+id/materialLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_5sdp"
+            android:layout_marginVertical="@dimen/_10sdp"
+            android:elegantTextHeight="true"
+            android:letterSpacing="0.1"
+            android:text="Material Details"
+            android:textColor="?attr/title_text_color"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recycler_view"
+            tools:text="Zec 3:7" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/materialLabel"
+            app:lifeCycle="@{lifeCycle}"
+            app:setStagesMaterialList="@{viewModel.commonModel.materialData}"
+            app:stagesData="@{data}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -25,6 +25,7 @@ class StagesListRecyclerViewAdapter(
         ) {
             binding.data = data
             binding.viewModel = viewModel
+            binding.lifeCycle = lifeCycle
             binding.lifecycleOwner = lifeCycle
             binding.executePendingBindings()
         }

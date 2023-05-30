@@ -26,6 +26,38 @@ fun setLabourListAdapter(
 
 }
 
+@BindingAdapter("lifeCycle", "setStagesLabourList", "stagesData", requireAll = false)
+fun setStagesLabourList(
+    recyclerView: RecyclerView,
+    lifeCycle: LifecycleOwner,
+    data: List<LabourData>?,
+    stagesData: StageDetail,
+) {
+
+    recyclerView.layoutManager =
+        LinearLayoutManager(recyclerView.context, LinearLayoutManager.VERTICAL, false)
+    val data = (data ?: arrayListOf()).filter { it.id in stagesData.labourIds }
+    recyclerView.adapter =
+        LabourListRecyclerViewAdapter(lifeCycle, data)
+
+}
+
+@BindingAdapter("lifeCycle", "setStagesMaterialList", "stagesData", requireAll = false)
+fun setStagesMaterialList(
+    recyclerView: RecyclerView,
+    lifeCycle: LifecycleOwner,
+    data: List<MaterialData>?,
+    stagesData: StageDetail,
+) {
+
+    recyclerView.layoutManager =
+        LinearLayoutManager(recyclerView.context, LinearLayoutManager.VERTICAL, false)
+    val data = (data ?: arrayListOf()).filter { it.id in stagesData.materialIds }
+    recyclerView.adapter =
+        MaterialListRecyclerViewAdapter(lifeCycle, data)
+
+}
+
 @BindingAdapter("lifeCycle", "setMaterialListAdapter")
 fun setMaterialListAdapter(
     recyclerView: RecyclerView,
