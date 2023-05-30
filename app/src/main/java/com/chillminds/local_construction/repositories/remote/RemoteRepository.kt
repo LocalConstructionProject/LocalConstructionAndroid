@@ -1,5 +1,8 @@
 package com.chillminds.local_construction.repositories.remote
 
+import com.chillminds.local_construction.repositories.remote.dto.LabourData
+import com.chillminds.local_construction.repositories.remote.dto.MaterialData
+import com.chillminds.local_construction.repositories.remote.dto.ProjectCreationRequest
 import com.chillminds.local_construction.repositories.remote.service.ApiHelper
 
 class RemoteRepository(
@@ -10,6 +13,8 @@ class RemoteRepository(
     } ?: run {
         remoteRepo.getAllProjects()
     }
+
+    suspend fun createNewProject(request: ProjectCreationRequest) = remoteRepo.createProject(request)
 
     suspend fun getMaterial(id: String? = null) = id?.let {
         remoteRepo.getMaterialById(it)
@@ -22,4 +27,15 @@ class RemoteRepository(
     } ?: run {
         remoteRepo.getAllLabourInfo()
     }
+
+    suspend fun getStagesInformation(id: String? = null) = id?.let {
+        remoteRepo.getStagesInfoById(it)
+    } ?: run {
+        remoteRepo.getAllStagesInfo()
+    }
+
+    suspend fun updateMaterial(data: MaterialData) = remoteRepo.updateMaterials(arrayListOf(data))
+
+    suspend fun updateLabour(data: LabourData) = remoteRepo.updateLabourDetails(arrayListOf(data))
+
 }

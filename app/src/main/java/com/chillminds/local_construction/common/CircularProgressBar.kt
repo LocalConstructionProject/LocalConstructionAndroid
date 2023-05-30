@@ -93,7 +93,6 @@ class CircularProgressBar(context: Context, attrs: AttributeSet?) :
         val textColor: Int
         val textSize: Float
         val progressColor: Int
-        val incompleteColor: Int
         try {
             textColor = a.getColor(
                 R.styleable.ProgressCircle_android_textColor,
@@ -105,10 +104,6 @@ class CircularProgressBar(context: Context, attrs: AttributeSet?) :
             progressColor = a.getColor(
                 R.styleable.ProgressCircle_progressColor,
                 ContextCompat.getColor(context, android.R.color.holo_blue_bright)
-            )
-            incompleteColor = a.getColor(
-                R.styleable.ProgressCircle_incompleteProgressColor,
-                ContextCompat.getColor(context, android.R.color.darker_gray)
             )
         } finally {
             a.recycle()

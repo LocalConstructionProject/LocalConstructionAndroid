@@ -12,6 +12,20 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+
+        <item name="background_color">@color/background_color_light</item>
+        <item name="title_text_color">@color/title_text_color_light</item>
+        <item name="subtitle_text_color">@color/sub_title_text_color_light</item>
+        <item name="hint_color">@color/hint_color_light</item>
+        <item name="card_background">@color/white</item>
+        <item name="button_color">@color/button_color</item>
+        <item name="normal_text_color">#004D40</item>
+        <item name="button_text_color">@color/white</item>
+        <item name="button_color_dim">@color/button_color_dim</item>
+        <item name="tool_bar_color">@color/tool_bar_color_light</item>
+        <item name="tool_bar_color_dim">@color/tool_bar_color_light_dim</item>
+        <item name="tool_bar_text_background_color">@color/tool_bar_color_light_70</item>
+
     </style>
 
     <style name="Theme.LocalConstruction.NoActionBar">

@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <variable
+            name="viewModel"
+            type="com.chillminds.local_construction.models.CommonModel" />
+    </data>
+
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -44,6 +50,13 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:menu="@menu/bottom_nav_menu" />
+
+        <TextView
+            style="@style/ToastTextView"
+            android:text="@{viewModel.message}"
+            app:animateVisibility="@{viewModel.showMessage}"
+            app:layout_anchor="@+id/bottomNavigationView"
+            app:layout_anchorGravity="bottom" />
 
         <!--    <include layout="@layout/content_home" />-->
 

@@ -1,15 +1,10 @@
 package com.chillminds.local_construction.utils
 
-import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.ImageDecoder
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.annotation.ColorRes
@@ -72,9 +67,4 @@ fun Drawable.drawableToStream(): ByteArrayOutputStream {
     return stream
 }
 
-fun Context.getBitmap(uri: Uri): Bitmap =
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) ImageDecoder.decodeBitmap(ImageDecoder.createSource(
-        this.contentResolver,
-        uri))
-    else MediaStore.Images.Media.getBitmap(this.contentResolver, uri)
 

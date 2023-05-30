@@ -7,6 +7,7 @@ import com.chillminds.local_construction.common.SecurePreference
 import com.chillminds.local_construction.repositories.remote.dto.LabourData
 import com.chillminds.local_construction.repositories.remote.dto.MaterialData
 import com.chillminds.local_construction.repositories.remote.dto.ProjectDetail
+import com.chillminds.local_construction.repositories.remote.dto.StageDetail
 import org.koin.java.KoinJavaComponent
 
 class CommonModel {
@@ -17,6 +18,7 @@ class CommonModel {
     val actionListener = MutableLiveData<String>()
     val materialData = MutableLiveData<List<MaterialData>>()
     val labourData = MutableLiveData<List<LabourData>>()
+    val stagesData = MutableLiveData<List<StageDetail>>()
     val projectList = MutableLiveData<List<ProjectDetail>>()
 
     fun showSnackBar(message: String,delaySeconds:Int = 3) {

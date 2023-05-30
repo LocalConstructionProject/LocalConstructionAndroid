@@ -1,12 +1,7 @@
 package com.chillminds.local_construction.repositories.remote.service
 
-import com.chillminds.local_construction.repositories.remote.dto.LabourInfoResponse
-import com.chillminds.local_construction.repositories.remote.dto.MaterialListResponse
-import com.chillminds.local_construction.repositories.remote.dto.ProjectDetailsResponse
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.Headers
-import retrofit2.http.Path
+import com.chillminds.local_construction.repositories.remote.dto.*
+import retrofit2.http.*
 
 interface ApiService {
 
@@ -23,6 +18,20 @@ interface ApiService {
     ): ProjectDetailsResponse
 
     @Headers(contentType)
+    @POST("/v1/project/update")
+    suspend fun updateProject(
+        @Header("Authorization") auth: String,
+        @Body request: ProjectDetail,
+    ): CommonResponse
+
+    @Headers(contentType)
+    @POST("/v1/project/update")
+    suspend fun createProject(
+        @Header("Authorization") auth: String,
+        @Body request: ProjectCreationRequest
+    ): CommonResponse
+
+    @Headers(contentType)
     @GET("/v1/materials/{id}")
     suspend fun getAllMaterials(
         @Header("Authorization") auth: String,
@@ -35,5 +44,26 @@ interface ApiService {
         @Header("Authorization") auth: String,
         @Path("id", encoded = true) id: String = "all",
     ): LabourInfoResponse
+
+    @Headers(contentType)
+    @GET("/v1/stages/{id}")
+    suspend fun getAllStagesInfo(
+        @Header("Authorization") auth: String,
+        @Path("id", encoded = true) id: String = "all",
+    ): StagesInfoResponse
+
+    @Headers(contentType)
+    @POST("/v1/materials/update")
+    suspend fun updateMaterials(
+        @Header("Authorization") auth: String,
+        @Body request: MaterialUpdateRequest,
+    ): CommonResponse
+
+    @Headers(contentType)
+    @POST("/v1/labour/update")
+    suspend fun updateLabourDetails(
+        @Header("Authorization") auth: String,
+        @Body request: LabourUpdateRequest,
+    ): CommonResponse
 
 }

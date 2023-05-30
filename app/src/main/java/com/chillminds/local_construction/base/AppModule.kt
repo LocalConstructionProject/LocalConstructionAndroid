@@ -7,16 +7,18 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import com.chillminds.local_construction.BuildConfig
 import com.chillminds.local_construction.common.SecurePreference
+import com.chillminds.local_construction.models.CommonModel
 import com.chillminds.local_construction.repositories.remote.RemoteRepository
 import com.chillminds.local_construction.repositories.remote.service.ApiHelper
 import com.chillminds.local_construction.repositories.remote.service.ApiService
+import com.chillminds.local_construction.view_models.DashboardViewModel
 import com.chillminds.local_construction.view_models.SplashViewModel
-import com.chillminds.local_construction.models.CommonModel
 import com.google.gson.GsonBuilder
 import okhttp3.Credentials
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidApplication
+import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -36,7 +38,8 @@ class AppModule {
 
     private val viewModelsModule= module {
         singleOf(::CommonModel)
-        singleOf(::SplashViewModel)
+        factoryOf(::SplashViewModel)
+        singleOf(::DashboardViewModel)
     }
 
     private val networkModule = module {

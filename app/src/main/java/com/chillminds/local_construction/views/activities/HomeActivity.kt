@@ -1,26 +1,121 @@
 package com.chillminds.local_construction.views.activities
 
 import android.os.Bundle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.chillminds.local_construction.R
+import com.chillminds.local_construction.common.Actions
+import com.chillminds.local_construction.common.Logger
 import com.chillminds.local_construction.databinding.ActivityHomeBinding
+import com.chillminds.local_construction.models.CommonModel
+import com.chillminds.local_construction.repositories.remote.ApiCallStatus
+import com.chillminds.local_construction.utils.isNullOrEmptyOrBlank
+import com.chillminds.local_construction.view_models.DashboardViewModel
+import org.koin.android.ext.android.inject
 
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomeBinding
+    var progressBar: AlertDialog? = null
+    val commonModel by inject<CommonModel>()
+    val viewModel by inject<DashboardViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.viewModel = commonModel
         binding.lifecycleOwner = this
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_home) as NavHostFragment
         val navController = navHostFragment.navController
         binding.bottomNavigationView.setupWithNavController(navController)
 
+        observeFields()
+    }
+
+    private fun observeFields() {
+        commonModel.actionListener.observe(this) {
+            if (!it.isNullOrEmptyOrBlank()) {
+                when (it) {
+                    Actions.REFRESH_MATERIALS_LIST -> getMaterialsData()
+                    Actions.REFRESH_STAGE_LIST -> getStagesData()
+                    Actions.REFRESH_LABOUR_LIST -> getLabourData()
+                    Actions.REFRESH_PROJECT_LIST -> getProjectDetails()
+                }
+                commonModel.actionListener.postValue("")
+            }
+        }
+    }
+
+    private fun getStagesData() {
+        viewModel.getStagesData().observe(this) { response ->
+            when (response.status) {
+                ApiCallStatus.SUCCESS -> {
+                    Logger.error("SUCCESS", response.toString())
+                    viewModel.commonModel.stagesData.postValue(response.data?.data)
+                }
+                ApiCallStatus.ERROR -> {
+                    Logger.error("ERROR", response.toString())
+                }
+                ApiCallStatus.LOADING -> {
+
+                }
+            }
+        }
+    }
+
+    private fun getLabourData() {
+        viewModel.getLabourDetails().observe(this) { response ->
+            when (response.status) {
+                ApiCallStatus.SUCCESS -> {
+                    Logger.error("Labour Data", response.data.toString())
+                    viewModel.commonModel.labourData.postValue(response.data?.data)
+                }
+                ApiCallStatus.ERROR -> {
+                    Logger.error("ERROR", response.toString())
+                }
+                ApiCallStatus.LOADING -> {
+
+                }
+            }
+        }
+    }
+
+    private fun getMaterialsData() {
+        viewModel.getAllMaterials().observe(this) { response ->
+            when (response.status) {
+                ApiCallStatus.SUCCESS -> {
+                    Logger.error("Material Details", response.data.toString())
+                    viewModel.commonModel.materialData.postValue(response.data?.data)
+                }
+                ApiCallStatus.ERROR -> {
+                    Logger.error("ERROR", response.toString())
+                }
+                ApiCallStatus.LOADING -> {
+
+                }
+            }
+        }
+    }
+
+    private fun getProjectDetails() {
+        viewModel.getAllProjects().observe(this) { response ->
+            when (response.status) {
+                ApiCallStatus.SUCCESS -> {
+                    Logger.error("Project Details", response.data.toString())
+                    viewModel.commonModel.projectList.postValue(response.data?.data)
+                }
+                ApiCallStatus.ERROR -> {
+                    Logger.error("ERROR", response.toString())
+                }
+                ApiCallStatus.LOADING -> {
+
+                }
+            }
+        }
     }
 }

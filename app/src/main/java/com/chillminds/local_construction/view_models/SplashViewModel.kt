@@ -10,7 +10,7 @@ import com.chillminds.local_construction.repositories.remote.Resource
 class SplashViewModel(
     application: Application,
     val commonModel: CommonModel,
-    val repository: RemoteRepository,
+    private val repository: RemoteRepository,
 ) : AndroidViewModel(application) {
 
     fun getAllProjects() = liveData {
@@ -35,6 +35,15 @@ class SplashViewModel(
         emit(Resource.loading())
         try {
             emit(Resource.success(repository.getLabourInfo()))
+        } catch (e: Exception) {
+            emit(Resource.error(null, e.toString()))
+        }
+    }
+
+    fun getStagesData()= liveData {
+        emit(Resource.loading())
+        try {
+            emit(Resource.success(repository.getStagesInformation()))
         } catch (e: Exception) {
             emit(Resource.error(null, e.toString()))
         }

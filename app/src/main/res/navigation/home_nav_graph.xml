@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.chillminds.local_construction.views.fragments.SettingsFragment"
+        android:name="com.chillminds.local_construction.views.fragments.settings.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings" />
 

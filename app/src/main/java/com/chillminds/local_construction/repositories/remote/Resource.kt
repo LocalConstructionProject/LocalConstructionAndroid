@@ -8,7 +8,7 @@ data class Resource<out T>(val status: ApiCallStatus, val data: T?, val message:
         fun <T> error(data: T?, message: String): Resource<T> =
             Resource(status = ApiCallStatus.ERROR, data = data, message = message)
 
-        fun <T> loading(): Resource<T> =
-            Resource(status = ApiCallStatus.LOADING, data = null, message = "Loading..!")
+        fun <T> loading(message: String = "Loading..!"): Resource<T> =
+            Resource(status = ApiCallStatus.LOADING, data = null, message)
     }
 }

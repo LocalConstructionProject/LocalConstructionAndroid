@@ -6,7 +6,7 @@ import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import com.chillminds.holy_bible.utils.isNullOrEmptyOrBlank
+import com.chillminds.local_construction.utils.isNullOrEmptyOrBlank
 import com.chillminds.local_construction.R
 import com.chillminds.local_construction.base.lazyFast
 

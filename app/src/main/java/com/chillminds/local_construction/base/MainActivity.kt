@@ -28,14 +28,33 @@ class MainActivity : AppCompatActivity() {
 
     private fun observeFields() {
         getMaterialsData()
-        getLabourData()
+    }
+
+    private fun getStagesData() {
+        viewModel.getStagesData().observe(this) { response ->
+            when (response.status) {
+                ApiCallStatus.SUCCESS -> {
+                    Logger.error("SUCCESS", response.toString())
+                    viewModel.commonModel.stagesData.postValue(response.data?.data)
+                    getProjectDetails()
+                }
+                ApiCallStatus.ERROR -> {
+                    Logger.error("ERROR", response.toString())
+                }
+                ApiCallStatus.LOADING -> {
+
+                }
+            }
+        }
     }
 
     private fun getLabourData() {
         viewModel.getLabourDetails().observe(this) { response ->
             when (response.status) {
                 ApiCallStatus.SUCCESS -> {
+                    Logger.error("Labour Data", response.data.toString())
                     viewModel.commonModel.labourData.postValue(response.data?.data)
+                    getStagesData()
                 }
                 ApiCallStatus.ERROR -> {
                     Logger.error("ERROR", response.toString())
@@ -53,7 +72,7 @@ class MainActivity : AppCompatActivity() {
                 ApiCallStatus.SUCCESS -> {
                     Logger.error("Material Details", response.data.toString())
                     viewModel.commonModel.materialData.postValue(response.data?.data)
-                    getProjectDetails()
+                    getLabourData()
                 }
                 ApiCallStatus.ERROR -> {
                     Logger.error("ERROR", response.toString())

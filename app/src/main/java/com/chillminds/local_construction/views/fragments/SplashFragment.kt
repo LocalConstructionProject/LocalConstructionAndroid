@@ -3,15 +3,15 @@ package com.chillminds.local_construction.views.fragments
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.chillminds.holy_bible.utils.isNullOrEmptyOrBlank
 import com.chillminds.local_construction.R
 import com.chillminds.local_construction.common.Actions
 import com.chillminds.local_construction.databinding.FragmentSplashBinding
+import com.chillminds.local_construction.utils.isNullOrEmptyOrBlank
 import com.chillminds.local_construction.view_models.SplashViewModel
 import org.koin.android.ext.android.inject
 
