@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/dashboardFragment"
-        android:name="com.chillminds.local_construction.views.fragments.DashboardFragment"
+        android:name="com.chillminds.local_construction.views.fragments.dashboard.DashboardFragment"
         android:label="fragment_dashboard"
         tools:layout="@layout/fragment_dashboard" />
 

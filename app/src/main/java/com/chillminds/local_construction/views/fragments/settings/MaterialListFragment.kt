@@ -47,10 +47,9 @@ class MaterialListFragment : Fragment() {
                         }
                     }
                 }
-            }
+             }
         }
     }
-
 
     private fun showMaterialEditSheet(materialData: MaterialData) {
         InputSheet().show(requireActivity()) {

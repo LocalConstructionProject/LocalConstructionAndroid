@@ -1,4 +1,4 @@
-package com.chillminds.local_construction.views.fragments
+package com.chillminds.local_construction.views.fragments.dashboard
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,10 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.chillminds.local_construction.common.Actions
+import com.chillminds.local_construction.common.Constants
 import com.chillminds.local_construction.databinding.FragmentDashboardBinding
 import com.chillminds.local_construction.repositories.remote.ApiCallStatus
 import com.chillminds.local_construction.utils.isNullOrEmptyOrBlank
 import com.chillminds.local_construction.view_models.DashboardViewModel
+import com.chillminds.local_construction.views.adapters.DashBoardTabAdapter
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.maxkeppeler.sheets.input.InputSheet
 import com.maxkeppeler.sheets.input.type.InputEditText
 import org.koin.android.ext.android.inject
@@ -31,6 +35,7 @@ class DashboardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setTabBar()
         viewModel.commonModel.actionListener.observe(viewLifecycleOwner) {
             if (!it.isNullOrEmptyOrBlank()) {
                 when (it) {
@@ -41,6 +46,26 @@ class DashboardFragment : Fragment() {
             }
         }
     }
+
+    private fun setTabBar() {
+        val tabAdapter = DashBoardTabAdapter(this)
+
+        binding.viewPager.adapter = tabAdapter
+
+        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            tab.text = Constants.dashboardDashList[position]
+        }.attach()
+
+        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {}
+        })
+    }
+
 
     private fun showProjectCreationSheet() {
         InputSheet().show(requireActivity()) {

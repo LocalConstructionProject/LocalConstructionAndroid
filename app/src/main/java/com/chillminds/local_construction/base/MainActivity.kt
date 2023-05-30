@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.chillminds.local_construction.common.Actions
+import com.chillminds.local_construction.common.Constants
 import com.chillminds.local_construction.common.Logger
 import com.chillminds.local_construction.databinding.ActivityMainBinding
 import com.chillminds.local_construction.repositories.remote.ApiCallStatus
@@ -42,7 +43,7 @@ class MainActivity : AppCompatActivity() {
                     Logger.error("ERROR", response.toString())
                 }
                 ApiCallStatus.LOADING -> {
-
+                    viewModel.splashMessage.postValue(Constants.PREPARING_CONSTRUCTION_STAGES)
                 }
             }
         }
@@ -60,7 +61,7 @@ class MainActivity : AppCompatActivity() {
                     Logger.error("ERROR", response.toString())
                 }
                 ApiCallStatus.LOADING -> {
-
+                    viewModel.splashMessage.postValue(Constants.PREPARING_LABOUR_INFORMATION)
                 }
             }
         }
@@ -78,7 +79,7 @@ class MainActivity : AppCompatActivity() {
                     Logger.error("ERROR", response.toString())
                 }
                 ApiCallStatus.LOADING -> {
-
+                    viewModel.splashMessage.postValue(Constants.PREPARING_MATERIAL_INFORMATION)
                 }
             }
         }
@@ -97,7 +98,7 @@ class MainActivity : AppCompatActivity() {
                     Logger.error("ERROR", response.toString())
                 }
                 ApiCallStatus.LOADING -> {
-
+                    viewModel.splashMessage.postValue(Constants.PREPARING_PROJECT_INFORMATION)
                 }
             }
         }
