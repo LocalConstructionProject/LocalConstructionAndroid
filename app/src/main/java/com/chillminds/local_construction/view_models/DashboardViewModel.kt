@@ -11,6 +11,7 @@ import com.chillminds.local_construction.repositories.remote.Resource
 import com.chillminds.local_construction.repositories.remote.dto.LabourData
 import com.chillminds.local_construction.repositories.remote.dto.MaterialData
 import com.chillminds.local_construction.repositories.remote.dto.ProjectCreationRequest
+import com.chillminds.local_construction.repositories.remote.dto.ProjectDetail
 
 class DashboardViewModel(
     application: Application,
@@ -21,6 +22,7 @@ class DashboardViewModel(
 
     val materialDataToEdit = MutableLiveData<MaterialData?>().apply { value = null }
     val labourDataToEdit = MutableLiveData<LabourData?>().apply { value = null }
+    val selectedProjectDetail = MutableLiveData<ProjectDetail?>().apply { value = null }
 
     fun showBottomSheetToCreateProject() {
         commonModel.actionListener.postValue(Actions.SHOW_PROJECT_CREATION_SHEET)
@@ -119,6 +121,10 @@ class DashboardViewModel(
         } catch (e: Exception) {
             emit(Resource.error(null, e.toString()))
         }
+    }
+
+    fun selectProject(data: ProjectDetail) {
+        selectedProjectDetail.postValue(data)
     }
 
 }

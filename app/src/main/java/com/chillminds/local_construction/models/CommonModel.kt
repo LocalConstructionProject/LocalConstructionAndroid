@@ -17,6 +17,7 @@ class CommonModel {
     val showMessage = MutableLiveData<Boolean>().apply { value = false }
     val actionListener = MutableLiveData<String>()
     val materialData = MutableLiveData<List<MaterialData>>()
+    val splashMessage = MutableLiveData<String>().apply { value = "Connecting with server..!" }
     val labourData = MutableLiveData<List<LabourData>>()
     val stagesData = MutableLiveData<List<StageDetail>>()
     val projectList = MutableLiveData<List<ProjectDetail>>()

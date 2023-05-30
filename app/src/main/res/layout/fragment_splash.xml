@@ -26,11 +26,12 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{viewModel.splashMessage}"
-            app:layout_constraintVertical_bias="0.85"
             android:layout_marginHorizontal="@dimen/_10sdp"
+            android:gravity="center"
+            android:text="@={viewModel.commonModel.splashMessage}"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.85" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

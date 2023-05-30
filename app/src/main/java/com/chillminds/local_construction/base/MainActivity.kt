@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
                     Logger.error("ERROR", response.toString())
                 }
                 ApiCallStatus.LOADING -> {
-                    viewModel.splashMessage.postValue(Constants.PREPARING_CONSTRUCTION_STAGES)
+                    viewModel.commonModel.splashMessage.postValue(Constants.PREPARING_CONSTRUCTION_STAGES)
                 }
             }
         }
@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
                     Logger.error("ERROR", response.toString())
                 }
                 ApiCallStatus.LOADING -> {
-                    viewModel.splashMessage.postValue(Constants.PREPARING_LABOUR_INFORMATION)
+                    viewModel.commonModel.splashMessage.postValue(Constants.PREPARING_LABOUR_INFORMATION)
                 }
             }
         }
@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity() {
                     Logger.error("ERROR", response.toString())
                 }
                 ApiCallStatus.LOADING -> {
-                    viewModel.splashMessage.postValue(Constants.PREPARING_MATERIAL_INFORMATION)
+                    viewModel.commonModel.splashMessage.postValue(Constants.PREPARING_MATERIAL_INFORMATION)
                 }
             }
         }
@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity() {
                     Logger.error("ERROR", response.toString())
                 }
                 ApiCallStatus.LOADING -> {
-                    viewModel.splashMessage.postValue(Constants.PREPARING_PROJECT_INFORMATION)
+                    viewModel.commonModel.splashMessage.postValue(Constants.PREPARING_PROJECT_INFORMATION)
                 }
             }
         }

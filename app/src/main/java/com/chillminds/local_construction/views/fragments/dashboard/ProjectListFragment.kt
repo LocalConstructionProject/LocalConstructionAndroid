@@ -22,8 +22,11 @@ class ProjectListFragment : Fragment() {
     ): View {
         binding = FragmentProjectListBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
+        binding.lifeCycle = this
         binding.lifecycleOwner = this
         return binding.root
     }
+
+
 
 }
