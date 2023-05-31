@@ -5,9 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import com.chillminds.local_construction.databinding.FragmentHomeBinding
-import com.chillminds.local_construction.repositories.remote.dto.ProjectDetail
 import com.chillminds.local_construction.view_models.DashboardViewModel
 import com.chillminds.local_construction.views.adapters.ProjectSpinnerAdapter
 import org.koin.android.ext.android.inject
@@ -30,16 +30,33 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.projectSpinner.adapter = ProjectSpinnerAdapter(requireActivity(),viewModel.commonModel.projectList.value)
+        binding.projectSpinner.adapter =
+            ProjectSpinnerAdapter(requireActivity(), viewModel.commonModel.projectList.value)
+
+        ArrayAdapter(
+            requireActivity(),
+            android.R.layout.simple_list_item_1,
+            viewModel.commonModel.projectList.value?.map { it.name } ?: arrayListOf(),
+        )
+            .also { adapter ->
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                // Apply the adapter to the spinner
+                binding.projectSpinner.adapter = adapter
+            }
 
         binding.projectSpinner.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
                     parent: AdapterView<*>,
-                    view: View, position: Int, id: Long
+                    view: View?, position: Int, id: Long
                 ) {
-                    val clickedItem = parent.getItemAtPosition(position) as ProjectDetail
-                    viewModel.selectProject(clickedItem)
+                    val selectedProject = parent.getItemAtPosition(position) as String
+
+                    (viewModel.commonModel.projectList.value
+                        ?: arrayListOf()).firstOrNull { it.name == selectedProject }?.let {
+                        viewModel.selectProject(it)
+                    }
+
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {}
