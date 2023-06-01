@@ -2,6 +2,7 @@ package com.chillminds.local_construction.repositories.remote.dto
 
 import com.chillminds.local_construction.utils.getDateTime
 import com.google.gson.annotations.SerializedName
+import java.util.*
 
 data class ProjectDetailsResponse(
     val status: String,
@@ -54,24 +55,26 @@ data class LabourData(
 
 data class ProjectDetail(
     @SerializedName("_id") val id: String,
-    val name: String,
+    var name: String,
     val createdDate: String = getDateTime(),
-    val location: String,
-    val contact: String?,
-    val stages: List<StageDetail> = arrayListOf(),
+    var location: String,
+    var contact: Long?,
+    var stages: List<ProjectStageDetail> = arrayListOf(),
 )
 
 data class ProjectCreationRequest(
+    val _id: UUID = UUID.randomUUID(),
     val name: String,
     val createdDate: String = getDateTime(),
     val location: String,
-    val contact: String?,
-    val stages: List<StageDetail> = arrayListOf(),
+    val contact: Long?,
+    val stages: List<ProjectStageDetail> = arrayListOf(),
 )
 
 data class MaterialUpdateRequest(
     val materials: List<MaterialData>
 )
+
 data class LabourUpdateRequest(
     val labours: List<LabourData>
 )
@@ -84,6 +87,29 @@ data class StageDetail(
     val labourIds: List<String> = arrayListOf(),
     val materialIds: List<String> = arrayListOf(),
 )
+
+data class ProjectStageDetail(
+    val name: String,
+    val id: UUID = UUID.randomUUID(),
+    val startedDate: String = getDateTime(),
+    val entryRecords: List<StageEntryRecord> = arrayListOf(),
+)
+
+data class StageEntryRecord(
+    val _id: UUID = UUID.randomUUID(),
+    val name: String,
+    val stageTypeId: String,
+    val type: StageEntryType,
+    val insertedDate: String = getDateTime(),
+    val dateOfExecution: String = getDateTime(),
+    val count: Long,
+    val priceForTheDay: Long,
+    val totalPrice: Long,
+)
+
+enum class StageEntryType {
+    MATERIAL, LABOUR
+}
 
 data class LabourDetail(
     val _id: String,

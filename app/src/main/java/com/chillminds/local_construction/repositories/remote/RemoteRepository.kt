@@ -3,6 +3,7 @@ package com.chillminds.local_construction.repositories.remote
 import com.chillminds.local_construction.repositories.remote.dto.LabourData
 import com.chillminds.local_construction.repositories.remote.dto.MaterialData
 import com.chillminds.local_construction.repositories.remote.dto.ProjectCreationRequest
+import com.chillminds.local_construction.repositories.remote.dto.ProjectDetail
 import com.chillminds.local_construction.repositories.remote.service.ApiHelper
 
 class RemoteRepository(
@@ -15,6 +16,8 @@ class RemoteRepository(
     }
 
     suspend fun createNewProject(request: ProjectCreationRequest) = remoteRepo.createProject(request)
+
+    suspend fun updateProject(request: ProjectDetail) = remoteRepo.updateExistingProject(request)
 
     suspend fun getMaterial(id: String? = null) = id?.let {
         remoteRepo.getMaterialById(it)

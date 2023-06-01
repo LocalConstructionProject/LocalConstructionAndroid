@@ -8,21 +8,19 @@ import com.chillminds.local_construction.common.Actions
 import com.chillminds.local_construction.models.CommonModel
 import com.chillminds.local_construction.repositories.remote.RemoteRepository
 import com.chillminds.local_construction.repositories.remote.Resource
-import com.chillminds.local_construction.repositories.remote.dto.LabourData
-import com.chillminds.local_construction.repositories.remote.dto.MaterialData
-import com.chillminds.local_construction.repositories.remote.dto.ProjectCreationRequest
-import com.chillminds.local_construction.repositories.remote.dto.ProjectDetail
+import com.chillminds.local_construction.repositories.remote.dto.*
 
 class DashboardViewModel(
     application: Application,
     val commonModel: CommonModel,
     private val repository: RemoteRepository,
-) :
-    AndroidViewModel(application) {
+) : AndroidViewModel(application) {
 
     val materialDataToEdit = MutableLiveData<MaterialData?>().apply { value = null }
     val labourDataToEdit = MutableLiveData<LabourData?>().apply { value = null }
-    val selectedProjectDetail = MutableLiveData<ProjectDetail?>().apply { value = null }
+    val stageEntryDataToEdit =
+        MutableLiveData<Pair<StageEntryRecord?, ProjectStageDetail>>().apply { value = null }
+    val projectDataToEdit = MutableLiveData<ProjectDetail?>().apply { value = null }
 
     fun showBottomSheetToCreateProject() {
         commonModel.actionListener.postValue(Actions.SHOW_PROJECT_CREATION_SHEET)
@@ -38,7 +36,21 @@ class DashboardViewModel(
         commonModel.actionListener.postValue(Actions.SHOW_LABOUR_EDIT_DIALOG)
     }
 
-    fun createProject(name: String, location: String, contact: String) = liveData {
+    fun editStageEntryData(data: StageEntryRecord, stageDetails: ProjectStageDetail) {
+        stageEntryDataToEdit.postValue(Pair(data, stageDetails))
+        commonModel.actionListener.postValue(Actions.SHOW_STAGE_ENTRY_EDIT_DIALOG)
+    }
+
+    fun editProjectData(data: ProjectDetail) {
+        projectDataToEdit.postValue(data)
+        commonModel.actionListener.postValue(Actions.SHOW_PROJECT_EDIT_DIALOG)
+    }
+
+    fun addStageBottomSheet() {
+        commonModel.actionListener.postValue(Actions.SHOW_CREATE_STAGE_DIALOG)
+    }
+
+    fun createProject(name: String, location: String, contact: Long) = liveData {
         emit(Resource.loading())
         try {
             emit(
@@ -49,6 +61,40 @@ class DashboardViewModel(
                             location = location,
                             contact = contact
                         )
+                    )
+                )
+            )
+        } catch (e: Exception) {
+            emit(Resource.error(null, "${e.message}"))
+        }
+    }
+
+    fun updateProject(project: ProjectDetail) = liveData {
+        emit(Resource.loading())
+        try {
+            emit(
+                Resource.success(
+                    repository.updateProject(
+                        project
+                    )
+                )
+            )
+        } catch (e: Exception) {
+            emit(Resource.error(null, "${e.message}"))
+        }
+    }
+
+
+    fun createStage(project: ProjectDetail, stage: StageDetail) = liveData {
+        val stages =
+            project.stages + listOf(ProjectStageDetail(name = stage.name)).distinctBy { it.name }
+        project.stages = stages
+        emit(Resource.loading())
+        try {
+            emit(
+                Resource.success(
+                    repository.updateProject(
+                        project
                     )
                 )
             )
@@ -124,7 +170,7 @@ class DashboardViewModel(
     }
 
     fun selectProject(data: ProjectDetail) {
-        selectedProjectDetail.postValue(data)
+        commonModel.selectedProjectDetail.postValue(data)
     }
 
 }

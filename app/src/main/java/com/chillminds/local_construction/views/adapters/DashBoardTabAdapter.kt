@@ -2,11 +2,10 @@ package com.chillminds.local_construction.views.adapters
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.chillminds.local_construction.repositories.remote.dto.ProjectDetail
+import com.chillminds.local_construction.views.fragments.StagesEntriesFragment
 import com.chillminds.local_construction.views.fragments.dashboard.DashboardStatisticsFragment
 import com.chillminds.local_construction.views.fragments.dashboard.ProjectListFragment
-import com.chillminds.local_construction.views.fragments.settings.LabourListFragment
-import com.chillminds.local_construction.views.fragments.settings.MaterialListFragment
-import com.chillminds.local_construction.views.fragments.settings.StagesListFragment
 
 class DashBoardTabAdapter(booksTabFragment: Fragment) : FragmentStateAdapter(booksTabFragment) {
 
@@ -17,5 +16,15 @@ class DashBoardTabAdapter(booksTabFragment: Fragment) : FragmentStateAdapter(boo
             1 -> ProjectListFragment()
             else -> DashboardStatisticsFragment()
         }
+    }
+}
+
+class ProjectStagesTabAdapter(booksTabFragment: Fragment, val projectDetail: ProjectDetail) :
+    FragmentStateAdapter(booksTabFragment) {
+
+    override fun getItemCount() = projectDetail.stages.size
+
+    override fun createFragment(position: Int): Fragment {
+        return StagesEntriesFragment.newInstance(position)
     }
 }

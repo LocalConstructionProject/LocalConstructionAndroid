@@ -4,27 +4,30 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
-import com.chillminds.local_construction.databinding.LabourListRecyclerViewBinding
-import com.chillminds.local_construction.repositories.remote.dto.LabourData
+import com.chillminds.local_construction.databinding.StageEntryViewBinding
+import com.chillminds.local_construction.repositories.remote.dto.ProjectStageDetail
+import com.chillminds.local_construction.repositories.remote.dto.StageEntryRecord
 import com.chillminds.local_construction.view_models.DashboardViewModel
 import org.koin.java.KoinJavaComponent
 
-class LabourListRecyclerViewAdapter(
+class ProjectStageEntryRecyclerViewAdapter(
     private val lifeCycle: LifecycleOwner,
-    private val dataList: List<LabourData>
-) : RecyclerView.Adapter<LabourListRecyclerViewAdapter.ViewHolder>() {
+    private val dataList: List<StageEntryRecord>,
+    val stageDetails: ProjectStageDetail
+) : RecyclerView.Adapter<ProjectStageEntryRecyclerViewAdapter.ViewHolder>() {
+
     private val viewModel: DashboardViewModel by KoinJavaComponent.inject(DashboardViewModel::class.java)
 
-    class ViewHolder(val binding: LabourListRecyclerViewBinding) :
+    class ViewHolder(val binding: StageEntryViewBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(
-            data: LabourData,
+            data: StageEntryRecord,
             lifeCycle: LifecycleOwner,
             viewModel: DashboardViewModel,
-            showEdit: Boolean
+            stageDetails: ProjectStageDetail,
         ) {
             binding.data = data
-            binding.showEdit = showEdit
+            binding.stageDetails = stageDetails
             binding.viewModel = viewModel
             binding.lifecycleOwner = lifeCycle
             binding.executePendingBindings()
@@ -32,7 +35,7 @@ class LabourListRecyclerViewAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder = ViewHolder(
-        LabourListRecyclerViewBinding.inflate(
+        StageEntryViewBinding.inflate(
             LayoutInflater.from(parent.context), parent,
             false
         )
@@ -40,8 +43,8 @@ class LabourListRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(
         dataList[position],
-        lifeCycle,
-        viewModel, (viewModel.commonModel.labourData.value?.size ?: 0) == dataList.size
+        lifeCycle, viewModel,
+        stageDetails
     )
 
     override fun getItemCount(): Int = dataList.size

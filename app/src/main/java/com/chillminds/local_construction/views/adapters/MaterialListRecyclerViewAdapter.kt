@@ -41,7 +41,7 @@ class MaterialListRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(
         dataList[position],
-        lifeCycle, viewModel, (viewModel.commonModel.materialData.value?.size ?: 0) < dataList.size
+        lifeCycle, viewModel, (viewModel.commonModel.materialData.value?.size ?: 0) == dataList.size
     )
 
     override fun getItemCount(): Int = dataList.size

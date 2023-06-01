@@ -25,7 +25,7 @@ interface ApiService {
     ): CommonResponse
 
     @Headers(contentType)
-    @POST("/v1/project/update")
+    @POST("/v1/project/create")
     suspend fun createProject(
         @Header("Authorization") auth: String,
         @Body request: ProjectCreationRequest

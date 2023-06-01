@@ -54,6 +54,7 @@
         <TextView
             style="@style/ToastTextView"
             android:text="@{viewModel.message}"
+            android:elevation="@dimen/_10sdp"
             app:animateVisibility="@{viewModel.showMessage}"
             app:layout_anchor="@+id/bottomNavigationView"
             app:layout_anchorGravity="bottom" />

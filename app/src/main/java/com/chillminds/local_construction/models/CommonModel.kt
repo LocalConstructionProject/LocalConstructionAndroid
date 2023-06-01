@@ -21,6 +21,7 @@ class CommonModel {
     val labourData = MutableLiveData<List<LabourData>>()
     val stagesData = MutableLiveData<List<StageDetail>>()
     val projectList = MutableLiveData<List<ProjectDetail>>()
+    val selectedProjectDetail = MutableLiveData<ProjectDetail?>().apply { value = null }
 
     fun showSnackBar(message: String,delaySeconds:Int = 3) {
         this.message.postValue(message)

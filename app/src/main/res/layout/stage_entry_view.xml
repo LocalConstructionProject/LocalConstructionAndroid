@@ -7,7 +7,11 @@
 
         <variable
             name="data"
-            type="com.chillminds.local_construction.repositories.remote.dto.ProjectDetail" />
+            type="com.chillminds.local_construction.repositories.remote.dto.StageEntryRecord" />
+
+        <variable
+            name="stageDetails"
+            type="com.chillminds.local_construction.repositories.remote.dto.ProjectStageDetail" />
 
         <variable
             name="viewModel"
@@ -40,30 +44,47 @@
             tools:text="Sample" />
 
         <TextView
+            android:id="@+id/countTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/_5sdp"
             android:elegantTextHeight="true"
             android:letterSpacing="0.1"
             android:padding="@dimen/_2sdp"
-            android:text="@{``+data.location}"
+            android:text="@{`Count - `+data.count}"
             android:textColor="?attr/title_text_color"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/nameTextView"
-            tools:text="Zec 3:7" />
+            tools:text="Count - 1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_5sdp"
+            android:elegantTextHeight="true"
+            android:letterSpacing="0.1"
+            android:padding="@dimen/_2sdp"
+            android:text="@{`Total Price - `+data.totalPrice}"
+            android:textColor="?attr/title_text_color"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/countTextView"
+            tools:text="Total Price - 1" />
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:layout_width="@dimen/_30sdp"
             android:layout_height="@dimen/_30sdp"
+            android:background="@null"
+            android:onClick="@{()->viewModel.editStageEntryData(data,stageDetails)}"
             android:src="@drawable/ic_edit"
-            android:onClick="@{()->viewModel.editProjectData(data)}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:background="@null"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

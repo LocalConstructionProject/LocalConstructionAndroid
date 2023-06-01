@@ -108,6 +108,7 @@ class HomeActivity : AppCompatActivity() {
                 ApiCallStatus.SUCCESS -> {
                     Logger.error("Project Details", response.data.toString())
                     viewModel.commonModel.projectList.postValue(response.data?.data)
+                    viewModel.commonModel.selectedProjectDetail.postValue(response.data?.data?.get(0))
                 }
                 ApiCallStatus.ERROR -> {
                     Logger.error("ERROR", response.toString())
