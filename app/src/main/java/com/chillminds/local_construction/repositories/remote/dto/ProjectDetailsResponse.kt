@@ -30,7 +30,17 @@ data class MaterialData(
     var name: String,
     var amount: Int,
     val id: String,
-)
+) {
+    fun toStageEntry(count: Long = 0, totalPrice: Long = 0) =
+        StageEntryRecord(
+            name = this.name,
+            stageTypeId = this.id,
+            type = StageEntryType.MATERIAL,
+            count = count,
+            priceForTheDay = amount.toLong(),
+            totalPrice = totalPrice
+        )
+}
 
 data class LabourInfoResponse(
     val status: String,
@@ -51,7 +61,17 @@ data class LabourData(
     var name: String,
     var price: Int,
     val id: String,
-)
+) {
+    fun toStageEntry(count: Long = 0, totalPrice: Long = 0) =
+        StageEntryRecord(
+            name = this.name,
+            stageTypeId = this.id,
+            type = StageEntryType.LABOUR,
+            count = count,
+            priceForTheDay = price.toLong(),
+            totalPrice = totalPrice
+        )
+}
 
 data class ProjectDetail(
     @SerializedName("_id") val id: String,
@@ -89,10 +109,10 @@ data class StageDetail(
 )
 
 data class ProjectStageDetail(
-    val name: String,
-    val id: UUID = UUID.randomUUID(),
-    val startedDate: String = getDateTime(),
-    val entryRecords: List<StageEntryRecord> = arrayListOf(),
+    var name: String,
+    var id: UUID = UUID.randomUUID(),
+    var startedDate: String = getDateTime(),
+    var entryRecords: List<StageEntryRecord> = arrayListOf(),
 )
 
 data class StageEntryRecord(
@@ -102,9 +122,9 @@ data class StageEntryRecord(
     val type: StageEntryType,
     val insertedDate: String = getDateTime(),
     val dateOfExecution: String = getDateTime(),
-    val count: Long,
-    val priceForTheDay: Long,
-    val totalPrice: Long,
+    var count: Long,
+    var priceForTheDay: Long,
+    var totalPrice: Long,
 )
 
 enum class StageEntryType {

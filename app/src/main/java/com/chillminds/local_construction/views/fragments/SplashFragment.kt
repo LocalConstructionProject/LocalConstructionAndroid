@@ -1,8 +1,6 @@
 package com.chillminds.local_construction.views.fragments
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,9 +34,7 @@ class SplashFragment : Fragment() {
 
         viewModel.commonModel.actionListener.observe(viewLifecycleOwner) {
             if (!it.isNullOrEmptyOrBlank() && it == Actions.GOTO_HOME_PAGE_ACTIVITY) {
-                Handler(Looper.getMainLooper()).postDelayed({
-                    findNavController().navigate(R.id.action_splashFragment_to_homeActivity)
-                }, 3000)
+                findNavController().navigate(R.id.action_splashFragment_to_homeActivity)
             }
         }
     }

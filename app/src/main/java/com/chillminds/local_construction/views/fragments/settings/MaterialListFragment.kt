@@ -56,7 +56,7 @@ class MaterialListFragment : Fragment() {
             title("Update Material")
             with(InputEditText {
                 required()
-                label("Material Name *")
+                label("Material Name ")
                 hint("Name of the project.")
                 defaultValue(materialData.name)
             })

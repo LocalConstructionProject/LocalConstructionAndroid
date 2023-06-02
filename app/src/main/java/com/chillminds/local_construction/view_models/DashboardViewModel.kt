@@ -21,6 +21,7 @@ class DashboardViewModel(
     val stageEntryDataToEdit =
         MutableLiveData<Pair<StageEntryRecord?, ProjectStageDetail>>().apply { value = null }
     val projectDataToEdit = MutableLiveData<ProjectDetail?>().apply { value = null }
+    val projectStagesTabAdapterPosition = MutableLiveData<ProjectStageDetail?>()
 
     fun showBottomSheetToCreateProject() {
         commonModel.actionListener.postValue(Actions.SHOW_PROJECT_CREATION_SHEET)
@@ -42,12 +43,12 @@ class DashboardViewModel(
     }
 
     fun editProjectData(data: ProjectDetail) {
-        projectDataToEdit.postValue(data)
+        commonModel.selectedProjectDetail.postValue(data)
         commonModel.actionListener.postValue(Actions.SHOW_PROJECT_EDIT_DIALOG)
     }
 
     fun addStageBottomSheet() {
-        commonModel.actionListener.postValue(Actions.SHOW_CREATE_STAGE_DIALOG)
+        commonModel.actionListener.postValue(Actions.SHOW_SHEET_TO_CHOOSE_OPTION_ON_HOME)
     }
 
     fun createProject(name: String, location: String, contact: Long) = liveData {
@@ -89,6 +90,29 @@ class DashboardViewModel(
         val stages =
             project.stages + listOf(ProjectStageDetail(name = stage.name)).distinctBy { it.name }
         project.stages = stages
+        emit(Resource.loading())
+        try {
+            emit(
+                Resource.success(
+                    repository.updateProject(
+                        project
+                    )
+                )
+            )
+        } catch (e: Exception) {
+            emit(Resource.error(null, "${e.message}"))
+        }
+    }
+
+    fun updateStage(project: ProjectDetail, stage: ProjectStageDetail) = liveData {
+        project.stages.forEach {
+            if (it.id == stage.id) {
+                it.name = stage.name
+                it.id = stage.id
+                it.startedDate = stage.startedDate
+                it.entryRecords = stage.entryRecords
+            }
+        }
         emit(Resource.loading())
         try {
             emit(

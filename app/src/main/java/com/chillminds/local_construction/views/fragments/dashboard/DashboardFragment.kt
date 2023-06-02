@@ -13,7 +13,6 @@ import com.chillminds.local_construction.repositories.remote.dto.ProjectDetail
 import com.chillminds.local_construction.utils.isNullOrEmptyOrBlank
 import com.chillminds.local_construction.view_models.DashboardViewModel
 import com.chillminds.local_construction.views.adapters.DashBoardTabAdapter
-import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.maxkeppeler.sheets.input.InputSheet
 import com.maxkeppeler.sheets.input.type.InputEditText
@@ -56,15 +55,6 @@ class DashboardFragment : Fragment() {
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = Constants.dashboardDashList[position]
         }.attach()
-
-        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab?) {}
-
-            override fun onTabReselected(tab: TabLayout.Tab?) {}
-        })
     }
 
 
@@ -73,12 +63,12 @@ class DashboardFragment : Fragment() {
             title("Create Project")
             with(InputEditText {
                 required()
-                label("Project Name *")
+                label("Project Name ")
                 hint("Name of the project.")
             })
             with(InputEditText {
                 required()
-                label("Project Location *")
+                label("Project Location ")
                 hint("Name of the place")
             })
             with(InputEditText {
@@ -106,18 +96,18 @@ class DashboardFragment : Fragment() {
     }
 
     private fun showProjectUpdateSheet() {
-        viewModel.projectDataToEdit.value?.let { projectDetail ->
+        viewModel.commonModel.selectedProjectDetail.value?.let { projectDetail ->
             InputSheet().show(requireActivity()) {
                 title("Update Project")
                 with(InputEditText {
                     required()
-                    label("Project Name *")
+                    label("Project Name ")
                     hint("Name of the project.")
                     this.defaultValue(projectDetail.name)
                 })
                 with(InputEditText {
                     required()
-                    label("Project Location *")
+                    label("Project Location ")
                     hint("Name of the place")
                     this.defaultValue(projectDetail.location)
                 })

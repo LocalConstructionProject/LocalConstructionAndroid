@@ -35,7 +35,6 @@ class LabourListFragment : Fragment() {
         return binding.root
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.commonModel.actionListener.observe(viewLifecycleOwner) {
@@ -53,14 +52,13 @@ class LabourListFragment : Fragment() {
         }
     }
 
-
     private fun showLabourEditSheet(labourData: LabourData) {
         InputSheet().show(requireActivity()) {
             title("Update Labour")
             with(InputEditText {
                 this.defaultValue(labourData.name)
                 required()
-                label("Labour Name *")
+                label("Labour Name ")
                 hint("Name of the project.")
             })
             with(InputEditText {

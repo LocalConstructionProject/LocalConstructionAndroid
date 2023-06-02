@@ -1,6 +1,7 @@
 package com.chillminds.local_construction.views.fragments
 
 import android.os.Bundle
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +11,9 @@ import com.chillminds.local_construction.common.Actions
 import com.chillminds.local_construction.databinding.FragmentHomeBinding
 import com.chillminds.local_construction.repositories.remote.ApiCallStatus
 import com.chillminds.local_construction.repositories.remote.dto.ProjectDetail
+import com.chillminds.local_construction.repositories.remote.dto.ProjectStageDetail
 import com.chillminds.local_construction.repositories.remote.dto.StageDetail
+import com.chillminds.local_construction.repositories.remote.dto.StageEntryRecord
 import com.chillminds.local_construction.utils.isNullOrEmptyOrBlank
 import com.chillminds.local_construction.utils.validate
 import com.chillminds.local_construction.view_models.DashboardViewModel
@@ -19,7 +22,10 @@ import com.chillminds.local_construction.views.adapters.ProjectStagesTabAdapter
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.maxkeppeler.sheets.input.InputSheet
+import com.maxkeppeler.sheets.input.type.InputEditText
 import com.maxkeppeler.sheets.input.type.spinner.InputSpinner
+import com.maxkeppeler.sheets.option.Option
+import com.maxkeppeler.sheets.option.OptionSheet
 import org.koin.android.ext.android.inject
 
 class HomeFragment : Fragment() {
@@ -42,18 +48,6 @@ class HomeFragment : Fragment() {
 
         binding.projectSpinner.adapter =
             ProjectSpinnerAdapter(requireActivity(), viewModel.commonModel.projectList.value)
-
-        /*ArrayAdapter(
-            requireActivity(),
-            android.R.layout.simple_list_item_1,
-            viewModel.commonModel.projectList.value?.map { it.name } ?: arrayListOf(),
-        )
-            .also { adapter ->
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                // Apply the adapter to the spinner
-                binding.projectSpinner.adapter = adapter
-            }
-        */
 
         binding.projectSpinner.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
@@ -83,6 +77,8 @@ class HomeFragment : Fragment() {
 
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
+                val stage = projectDetail.stages.elementAtOrNull(tab?.position ?: 0)
+                viewModel.projectStagesTabAdapterPosition.postValue(stage)
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
@@ -103,25 +99,164 @@ class HomeFragment : Fragment() {
                     Actions.SHOW_CREATE_STAGE_DIALOG -> {
                         showStageCreationBottomSheet()
                     }
+                    Actions.SHOW_SHEET_TO_CHOOSE_OPTION_ON_HOME -> {
+                        showChoiceOptionSheet()
+                    }
                     Actions.SHOW_STAGE_ENTRY_EDIT_DIALOG -> {
-
+                        viewModel.stageEntryDataToEdit.value?.validate()?.let { pairRecord ->
+                            showStageEntryDialog(pairRecord)
+                        } ?: kotlin.run {
+                            viewModel.commonModel.actionListener.postValue("Failed to edit entry.")
+                        }
                     }
                 }
             }
         }
     }
 
+    private fun showChoiceOptionSheet() {
+        OptionSheet().show(requireActivity()) {
+            title("Choose any one")
+            with(
+                Option("Stage"),
+                Option("Entry Record"),
+            )
+            onPositive { index: Int, option: Option ->
+                if (index == 0) {
+                    showStageCreationBottomSheet()
+                } else {
+                    showCreateStageEntryDialog()
+                }
+            }
+        }
+    }
+
+    private fun showCreateStageEntryDialog() {
+        val currentStage = viewModel.projectStagesTabAdapterPosition.value
+        val idsPair =
+            viewModel.commonModel.stagesData.value?.firstOrNull { it.name == currentStage?.name }
+                ?.let {
+                    Pair(it.labourIds, it.materialIds)
+                }
+
+        val labourList = viewModel.commonModel.labourData.value?.filter {
+            it.id in (idsPair?.first ?: arrayListOf())
+        } ?: arrayListOf()
+        val materialList = viewModel.commonModel.materialData.value?.filter {
+            it.id in (idsPair?.second ?: arrayListOf())
+        } ?: arrayListOf()
+
+        val dataList = materialList.map { it.toStageEntry() } + labourList.map { it.toStageEntry() }
+        val options = dataList.map { it.name + " - " + it.priceForTheDay }
+        InputSheet().show(requireActivity()) {
+            title("New Entry to ${currentStage?.name}")
+            with(InputSpinner("entry") {
+                title("Choose any one")
+                options(options)
+                changeListener {
+                    dataList[it]
+                }
+            })
+            with(InputEditText("count") {
+                hint("Count")
+                inputType(InputType.TYPE_CLASS_NUMBER)
+            })
+            with(InputEditText("price") {
+                hint("Price")
+                inputType(InputType.TYPE_CLASS_NUMBER)
+            })
+            with(InputEditText("totalPrice") {
+                hint("Total Price")
+                inputType(InputType.TYPE_CLASS_NUMBER)
+            })
+            onNegative { viewModel.commonModel.showSnackBar("Cancelled") }
+            onPositive { result ->
+                val materialEntry = result.getInt("entry")
+                val count = result.getString("count")
+                val price = result.getString("price") ?: "0"
+                val totalPrice = result.getString("totalPrice") ?: "0"
+                if (count.isNullOrEmptyOrBlank() && count == "0" && count.toLongOrNull() == null) {
+                    viewModel.commonModel.showSnackBar("Enter valid count")
+                    return@onPositive
+                }
+
+                val newEntry = dataList[materialEntry]
+                newEntry.apply {
+                    this.count = count?.toLongOrNull() ?: 0L
+                    this.totalPrice = totalPrice.toLongOrNull() ?: 0L
+                    this.priceForTheDay = price.toLongOrNull() ?: 0L
+                }
+                val entryRecords = ArrayList(currentStage?.entryRecords ?: arrayListOf())
+                entryRecords.add(newEntry)
+                currentStage?.entryRecords = entryRecords
+                updateStageUnderSelectedProject(
+                    viewModel.commonModel.selectedProjectDetail.value!!,
+                    currentStage!!
+                )
+            }
+        }
+    }
+
+    private fun showStageEntryDialog(pairRecord: Pair<StageEntryRecord, ProjectStageDetail>) {
+        val stageEntryRecord = pairRecord.first
+        InputSheet().show(requireActivity()) {
+            title("${pairRecord.second.name} - ${pairRecord.first.name}")
+            with(InputEditText("count") {
+                hint("Count")
+                inputType(InputType.TYPE_CLASS_NUMBER)
+                this.defaultValue(stageEntryRecord.count.toString())
+            })
+            with(InputEditText("price") {
+                hint("Price")
+                inputType(InputType.TYPE_CLASS_NUMBER)
+                this.defaultValue(stageEntryRecord.priceForTheDay.toString())
+            })
+            with(InputEditText("totalPrice") {
+                hint("Total Price")
+                inputType(InputType.TYPE_CLASS_NUMBER)
+                this.defaultValue(stageEntryRecord.totalPrice.toString())
+            })
+            onNegative { viewModel.commonModel.showSnackBar("Cancelled") }
+            onPositive { result ->
+                val count = result.getString("count")
+                val price = result.getString("price") ?: "0"
+                val totalPrice = result.getString("totalPrice") ?: "0"
+                if (count.isNullOrEmptyOrBlank() && count == "0" && count.toLongOrNull() == null) {
+                    viewModel.commonModel.showSnackBar("Enter valid count")
+                    return@onPositive
+                }
+                val projectStage = pairRecord.second
+                projectStage.entryRecords.forEach {
+                    if (it._id == stageEntryRecord._id) {
+                        it.count = count?.toLongOrNull() ?: 0
+                        it.priceForTheDay = price.toLongOrNull() ?: 0
+                        it.totalPrice = totalPrice.toLongOrNull() ?: 0
+                    }
+                }
+
+                updateStageUnderSelectedProject(
+                    viewModel.commonModel.selectedProjectDetail.value!!,
+                    projectStage
+                )
+            }
+        }
+    }
+
     private fun showStageCreationBottomSheet() {
+        val selectedProjectDetail = viewModel.commonModel.selectedProjectDetail.value
         Pair(
-            viewModel.commonModel.selectedProjectDetail.value,
-            viewModel.commonModel.stagesData.value
+            selectedProjectDetail,
+            viewModel.commonModel.stagesData.value?.filter { stageDetails ->
+                stageDetails.name !in (selectedProjectDetail?.stages?.map { it.name }
+                    ?: arrayListOf())
+            }
         ).validate()?.let { (project, stages) ->
             InputSheet().show(requireActivity()) {
                 title("Stage Creation")
                 with(InputSpinner {
                     required()
                     this.options(listOf("Select Stage") + stages.map { it.name })
-                    label("select Stage Name *")
+                    label("select Stage Name ")
                 })
                 onNegative { viewModel.commonModel.showSnackBar("Stage Creation Cancelled") }
                 onPositive { result ->
@@ -153,6 +288,26 @@ class HomeFragment : Fragment() {
                 }
                 ApiCallStatus.SUCCESS -> {
                     viewModel.commonModel.showSnackBar("Stage Created Successfully.")
+                    viewModel.commonModel.actionListener.postValue(Actions.REFRESH_PROJECT_LIST)
+                }
+            }
+        }
+    }
+
+    private fun updateStageUnderSelectedProject(
+        project: ProjectDetail,
+        stage: ProjectStageDetail
+    ) {
+        viewModel.updateStage(project, stage).observe(viewLifecycleOwner) {
+            when (it.status) {
+                ApiCallStatus.LOADING -> {
+
+                }
+                ApiCallStatus.ERROR -> {
+                    viewModel.commonModel.showSnackBar("Failed to update a stage.")
+                }
+                ApiCallStatus.SUCCESS -> {
+                    viewModel.commonModel.showSnackBar("Stage update Successfully.")
                     viewModel.commonModel.actionListener.postValue(Actions.REFRESH_PROJECT_LIST)
                 }
             }

@@ -9,7 +9,6 @@ import com.chillminds.local_construction.common.Constants
 import com.chillminds.local_construction.databinding.FragmentSettingsBinding
 import com.chillminds.local_construction.view_models.DashboardViewModel
 import com.chillminds.local_construction.views.adapters.SettingsTabAdapter
-import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import org.koin.android.ext.android.inject
 
@@ -42,15 +41,6 @@ class SettingsFragment : Fragment() {
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = Constants.settingsTapList[position]
         }.attach()
-
-        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab?) {}
-
-            override fun onTabReselected(tab: TabLayout.Tab?) {}
-        })
     }
 
 

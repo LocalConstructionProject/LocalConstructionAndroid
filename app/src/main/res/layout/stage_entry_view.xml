@@ -44,6 +44,22 @@
             tools:text="Sample" />
 
         <TextView
+            android:id="@+id/dateTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_5sdp"
+            android:layout_marginTop="52dp"
+            android:elegantTextHeight="true"
+            android:letterSpacing="0.2"
+            android:lineSpacingExtra="@dimen/_5sdp"
+            android:padding="@dimen/_2sdp"
+            android:text="@{data.dateOfExecution.substring(0,10)}"
+            android:textColor="?attr/title_text_color"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Sample" />
+
+        <TextView
             android:id="@+id/countTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -84,7 +100,7 @@
             android:src="@drawable/ic_edit"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/dateTextView" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

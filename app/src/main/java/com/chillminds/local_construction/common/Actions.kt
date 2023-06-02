@@ -1,6 +1,7 @@
 package com.chillminds.local_construction.common
 
 object Actions {
+    const val SHOW_SHEET_TO_CHOOSE_OPTION_ON_HOME = "Bottom sheet to choose stage or entry"
     const val SHOW_CREATE_STAGE_DIALOG = "Create a stage under the project"
     const val REFRESH_PROJECT_LIST = "Refresh Project List"
     const val REFRESH_LABOUR_LIST = "Refresh Labour List"

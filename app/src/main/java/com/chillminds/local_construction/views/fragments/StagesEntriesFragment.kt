@@ -22,8 +22,14 @@ class StagesEntriesFragment() : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentStagesEntriesBinding.inflate(inflater, container, false)
-        position = arguments?.getInt("position")?:0
-        val projectStageDetail = viewModel.commonModel.selectedProjectDetail.value?.stages?.get(position)
+        position = arguments?.getInt("position") ?: 0
+        val stages = viewModel.commonModel.selectedProjectDetail.value?.stages
+        val projectStageDetail = if (stages.isNullOrEmpty() || stages.size <= position) {
+            null
+        } else {
+            stages[position]
+        }
+
         binding.data = projectStageDetail
         binding.lifeCycle = this
         binding.lifecycleOwner = this
@@ -33,7 +39,7 @@ class StagesEntriesFragment() : Fragment() {
     companion object {
         fun newInstance(position: Int?): StagesEntriesFragment {
             val args = Bundle()
-            args.putInt("position", position?:0)
+            args.putInt("position", position ?: 0)
             val f = StagesEntriesFragment()
             f.arguments = args
             return f
