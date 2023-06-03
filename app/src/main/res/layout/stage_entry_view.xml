@@ -6,17 +6,20 @@
     <data>
 
         <variable
-            name="data"
-            type="com.chillminds.local_construction.repositories.remote.dto.StageEntryRecord" />
+            name="date"
+            type="String" />
+
+        <variable
+            name="stageEntryRecordList"
+            type="com.chillminds.local_construction.repositories.remote.dto.StageEntryRecordList" />
 
         <variable
             name="stageDetails"
             type="com.chillminds.local_construction.repositories.remote.dto.ProjectStageDetail" />
 
         <variable
-            name="viewModel"
-            type="com.chillminds.local_construction.view_models.DashboardViewModel" />
-
+            name="lifeCycle"
+            type="androidx.lifecycle.LifecycleOwner" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -37,70 +40,21 @@
             android:letterSpacing="0.2"
             android:lineSpacingExtra="@dimen/_5sdp"
             android:padding="@dimen/_2sdp"
-            android:text="@{data.name}"
+            android:text="@{date}"
             android:textColor="?attr/title_text_color"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Sample" />
 
-        <TextView
-            android:id="@+id/dateTextView"
-            android:layout_width="wrap_content"
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/_5sdp"
-            android:layout_marginTop="52dp"
-            android:elegantTextHeight="true"
-            android:letterSpacing="0.2"
-            android:lineSpacingExtra="@dimen/_5sdp"
-            android:padding="@dimen/_2sdp"
-            android:text="@{data.dateOfExecution.substring(0,10)}"
-            android:textColor="?attr/title_text_color"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Sample" />
-
-        <TextView
-            android:id="@+id/countTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/_5sdp"
-            android:elegantTextHeight="true"
-            android:letterSpacing="0.1"
-            android:padding="@dimen/_2sdp"
-            android:text="@{`Count - `+data.count}"
-            android:textColor="?attr/title_text_color"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/nameTextView"
-            tools:text="Count - 1" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/_5sdp"
-            android:elegantTextHeight="true"
-            android:letterSpacing="0.1"
-            android:padding="@dimen/_2sdp"
-            android:text="@{`Total Price - `+data.totalPrice}"
-            android:textColor="?attr/title_text_color"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/countTextView"
-            tools:text="Total Price - 1" />
-
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:layout_width="@dimen/_30sdp"
-            android:layout_height="@dimen/_30sdp"
-            android:background="@null"
-            android:onClick="@{()->viewModel.editStageEntryData(data,stageDetails)}"
-            android:src="@drawable/ic_edit"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dateTextView" />
+            android:layout_marginTop="@dimen/_10sdp"
+            app:layout_constraintTop_toBottomOf="@id/nameTextView"
+            app:lifeCycle="@{lifeCycle}"
+            app:setStagesEntryChildAdapter="@{stageEntryRecordList.entryRecords}"
+            app:stageDetails="@{stageDetails}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

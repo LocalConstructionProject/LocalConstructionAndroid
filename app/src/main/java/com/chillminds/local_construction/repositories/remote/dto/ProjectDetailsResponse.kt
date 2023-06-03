@@ -127,6 +127,10 @@ data class StageEntryRecord(
     var totalPrice: Long,
 )
 
+data class StageEntryRecordList(
+    var entryRecords: List<StageEntryRecord> = arrayListOf(),
+    )
+
 enum class StageEntryType {
     MATERIAL, LABOUR
 }

@@ -34,10 +34,13 @@ fun Long.convertToHistoryTime(): String {
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun String.toDate(): LocalDateTime? {
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
-    return LocalDateTime.parse(this, formatter)
-}
+fun String.toDate(pattern: String = "yyyy-MM-dd HH:mm:ss"): LocalDateTime =
+    LocalDateTime.parse(
+        this,
+        DateTimeFormatter.ofPattern(pattern, Locale.ENGLISH)
+    )
+
+fun String.toDateBelowOreo(pattern: String = "yyyy-MM-dd") = SimpleDateFormat(pattern, Locale.getDefault()).parse(this)
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun LocalDateTime.toStringTime(): String {
@@ -83,4 +86,4 @@ fun Date.toCalendar(): Calendar? = try {
     null
 }
 
-fun Date.format(): String = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(this)
+fun Date.format(pattern:String = "dd-MM-yyyy"): String = SimpleDateFormat(pattern, Locale.getDefault()).format(this)

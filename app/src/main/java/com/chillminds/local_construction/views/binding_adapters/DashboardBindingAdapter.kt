@@ -5,6 +5,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.chillminds.local_construction.repositories.remote.dto.*
+import com.chillminds.local_construction.utils.toDateBelowOreo
 import com.chillminds.local_construction.views.adapters.*
 
 @BindingAdapter("lifeCycle", "setLabourListAdapter", requireAll = false)
@@ -48,8 +49,36 @@ fun setStagesEntryAdapter(
     recyclerView.layoutManager =
         LinearLayoutManager(recyclerView.context, LinearLayoutManager.VERTICAL, false)
 
+    val dateWiseRecords = entryRecords?.groupBy { it.dateOfExecution.subSequence(0, 10).toString() }
+    val dateSet = (dateWiseRecords?.keys ?: setOf()).map { it.toDateBelowOreo() }.sorted()
+
     recyclerView.adapter =
-        ProjectStageEntryRecyclerViewAdapter(lifeCycle, entryRecords ?: arrayListOf(),stageDetails)
+        ProjectStageEntryRecyclerViewAdapter(
+            lifeCycle,
+            dateSet,
+            dateWiseRecords ?: hashMapOf(),
+            stageDetails
+        )
+
+}
+
+@BindingAdapter("lifeCycle", "setStagesEntryChildAdapter", "stageDetails", requireAll = false)
+fun setStagesEntryChildAdapter(
+    recyclerView: RecyclerView,
+    lifeCycle: LifecycleOwner,
+    entryRecords: List<StageEntryRecord>?,
+    stageDetails: ProjectStageDetail
+) {
+
+    recyclerView.layoutManager =
+        LinearLayoutManager(recyclerView.context, LinearLayoutManager.VERTICAL, false)
+
+    recyclerView.adapter =
+        ProjectStageEntryRecyclerViewChildAdapter(
+            lifeCycle,
+            entryRecords ?: arrayListOf(),
+            stageDetails
+        )
 
 }
 
