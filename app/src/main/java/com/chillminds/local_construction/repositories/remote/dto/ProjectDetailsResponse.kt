@@ -130,21 +130,3 @@ data class StageEntryRecord(
 enum class StageEntryType {
     MATERIAL, LABOUR
 }
-
-data class LabourDetail(
-    val _id: String,
-    val name: String,
-    val price: Int,
-    val date: String = getDateTime(),
-    val labourCount: Int,
-    val id: String,
-)
-
-data class MaterialDetail(
-    val _id: String,
-    val name: String,
-    val price: Int,
-    val date: String = getDateTime(),
-    val materialCount: Int,
-    val id: String,
-)

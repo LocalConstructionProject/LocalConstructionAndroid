@@ -121,7 +121,7 @@ class HomeFragment : Fragment() {
                 Option("Stage"),
                 Option("Entry Record"),
             )
-            onPositive { index: Int, option: Option ->
+            onPositive { index: Int, _: Option ->
                 if (index == 0) {
                     showStageCreationBottomSheet()
                 } else {

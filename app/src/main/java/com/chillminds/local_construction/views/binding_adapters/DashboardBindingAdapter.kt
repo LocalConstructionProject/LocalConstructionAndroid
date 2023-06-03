@@ -63,9 +63,9 @@ fun setStagesLabourList(
 
     recyclerView.layoutManager =
         LinearLayoutManager(recyclerView.context, LinearLayoutManager.VERTICAL, false)
-    val data = (data ?: arrayListOf()).filter { it.id in stagesData.labourIds }
+    val dataList = (data ?: arrayListOf()).filter { it.id in stagesData.labourIds }
     recyclerView.adapter =
-        LabourListRecyclerViewAdapter(lifeCycle, data)
+        LabourListRecyclerViewAdapter(lifeCycle, dataList)
 
 }
 
@@ -79,9 +79,9 @@ fun setStagesMaterialList(
 
     recyclerView.layoutManager =
         LinearLayoutManager(recyclerView.context, LinearLayoutManager.VERTICAL, false)
-    val data = (data ?: arrayListOf()).filter { it.id in stagesData.materialIds }
+    val dataList = (data ?: arrayListOf()).filter { it.id in stagesData.materialIds }
     recyclerView.adapter =
-        MaterialListRecyclerViewAdapter(lifeCycle, data)
+        MaterialListRecyclerViewAdapter(lifeCycle, dataList)
 
 }
 
