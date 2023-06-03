@@ -27,6 +27,7 @@ class ProjectStageEntryRecyclerViewAdapter(
             stageDetails: ProjectStageDetail,
         ) {
             binding.date = date
+            binding.totalPrice = recordList.sumOf { it.totalPrice }.toString()
             binding.stageEntryRecordList = StageEntryRecordList(recordList)
             binding.stageDetails = stageDetails
             binding.lifeCycle = lifeCycle

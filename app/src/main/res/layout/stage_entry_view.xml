@@ -10,6 +10,10 @@
             type="String" />
 
         <variable
+            name="totalPrice"
+            type="String" />
+
+        <variable
             name="stageEntryRecordList"
             type="com.chillminds.local_construction.repositories.remote.dto.StageEntryRecordList" />
 
@@ -42,8 +46,23 @@
             android:padding="@dimen/_2sdp"
             android:text="@{date}"
             android:textColor="?attr/title_text_color"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Sample" />
+
+        <TextView
+            android:id="@+id/totalPriceTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_5sdp"
+            android:layout_marginTop="52dp"
+            android:elegantTextHeight="true"
+            android:letterSpacing="0.2"
+            android:lineSpacingExtra="@dimen/_5sdp"
+            android:padding="@dimen/_2sdp"
+            android:text="@{asd}"
+            android:textColor="?attr/title_text_color"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Sample" />
 
