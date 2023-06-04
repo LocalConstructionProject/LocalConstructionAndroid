@@ -23,10 +23,12 @@ class ProjectStageEntryRecyclerViewAdapter(
             recordList: List<StageEntryRecord>,
             lifeCycle: LifecycleOwner,
             stageDetails: ProjectStageDetail,
+            isLastElement: Boolean,
         ) {
             binding.date = date
             binding.totalPrice = recordList.sumOf { it.totalPrice }.toString()
             binding.stageEntryRecordList = StageEntryRecordList(recordList)
+            binding.isLastElement = isLastElement
             binding.stageDetails = stageDetails
             binding.lifeCycle = lifeCycle
             binding.lifecycleOwner = lifeCycle
@@ -46,7 +48,8 @@ class ProjectStageEntryRecyclerViewAdapter(
             dateKeysPairList[position].first,
             dataList[dateKeysPairList[position].first] ?: arrayListOf(),
             lifeCycle,
-            stageDetails
+            stageDetails,
+            dataList.size == position+1
         )
 
     override fun getItemCount(): Int = dataList.size
