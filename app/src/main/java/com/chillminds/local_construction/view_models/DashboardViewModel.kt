@@ -22,6 +22,7 @@ class DashboardViewModel(
         MutableLiveData<Pair<StageEntryRecord?, ProjectStageDetail>>().apply { value = null }
     val projectDataToEdit = MutableLiveData<ProjectDetail?>().apply { value = null }
     val projectStagesTabAdapterPosition = MutableLiveData<ProjectStageDetail?>()
+    val spinnerSelectedPosition = MutableLiveData<Int>().apply { value = 0 }
 
     fun showBottomSheetToCreateProject() {
         commonModel.actionListener.postValue(Actions.SHOW_PROJECT_CREATION_SHEET)

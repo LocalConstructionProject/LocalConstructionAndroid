@@ -8,4 +8,5 @@ object Constants {
     const val PREPARING_PROJECT_INFORMATION = "Preparing Project Information..."
     val settingsTapList = arrayListOf("Materials", "Labour", "Stages")
     val dashboardDashList = arrayListOf("Dashboard","Projects")
+    val dashboardList = arrayListOf("All Projects")
 }

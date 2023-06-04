@@ -50,7 +50,8 @@ fun setStagesEntryAdapter(
         LinearLayoutManager(recyclerView.context, LinearLayoutManager.VERTICAL, false)
 
     val dateWiseRecords = entryRecords?.groupBy { it.dateOfExecution.subSequence(0, 10).toString() }
-    val dateSet = (dateWiseRecords?.keys ?: setOf()).map { Pair(it,it.toDateBelowOreo().time) }.sortedBy { it.second }.reversed()
+    val dateSet = (dateWiseRecords?.keys ?: setOf()).map { Pair(it, it.toDateBelowOreo().time) }
+        .sortedBy { it.second }.reversed()
 
     recyclerView.adapter =
         ProjectStageEntryRecyclerViewAdapter(
@@ -80,6 +81,49 @@ fun setStagesEntryChildAdapter(
             stageDetails
         )
 
+}
+
+@BindingAdapter("lifeCycle", "setupDashboardInformation", requireAll = false)
+fun setStagesEntryChildAdapter(
+    recyclerView: RecyclerView,
+    lifeCycle: LifecycleOwner,
+    projectList: List<ProjectDetail>?
+) {
+
+    recyclerView.layoutManager =
+        LinearLayoutManager(recyclerView.context, LinearLayoutManager.VERTICAL, false)
+    val dashboardEntryDetails = arrayListOf<DashboardStatisticsDetails>()
+    projectList?.forEach { projectDetail ->
+        projectDetail.stages.forEach { stageDetails ->
+            dashboardEntryDetails.addAll(stageDetails.entryRecords.map {
+                it.toDashboardStatisticsDetails(
+                    projectDetail,
+                    stageDetails
+                )
+            })
+
+        }
+    }
+
+    val listToDisplay =
+        dashboardEntryDetails.groupBy { it.entryName }.filter { it.value.isNotEmpty() }.map {
+            val entryName = it.key
+            val entries = it.value
+            entries.first().let { data ->
+                DashboardStatisticsDetails(
+                    data.projectId,
+                    data.projectName,
+                    data.stageId,
+                    data.stageName,
+                    data.stageEntry,
+                    entryName,
+                    entries.sumOf { it.count },
+                    entries.sumOf { it.totalPrice })
+            }
+        }
+
+    recyclerView.adapter =
+        DashboardListRecyclerViewAdapter(lifeCycle, listToDisplay)
 }
 
 @BindingAdapter("lifeCycle", "setStagesLabourList", "stagesData", requireAll = false)

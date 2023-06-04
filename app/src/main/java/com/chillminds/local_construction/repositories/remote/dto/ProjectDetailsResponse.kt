@@ -125,11 +125,36 @@ data class StageEntryRecord(
     var count: Long,
     var priceForTheDay: Long,
     var totalPrice: Long,
+) {
+    fun toDashboardStatisticsDetails(
+        projectDetail: ProjectDetail,
+        stageDetail: ProjectStageDetail,
+    ) = DashboardStatisticsDetails(
+        projectDetail.id,
+        projectDetail.name,
+        stageDetail.id,
+        stageDetail.name,
+        this,
+        this.name,
+        this.count,
+        this.totalPrice
+    )
+}
+
+data class DashboardStatisticsDetails(
+    val projectId: String,
+    val projectName: String,
+    val stageId: UUID,
+    val stageName: String,
+    val stageEntry: StageEntryRecord,
+    val entryName: String,
+    val count: Long,
+    var totalPrice: Long,
 )
 
 data class StageEntryRecordList(
     var entryRecords: List<StageEntryRecord> = arrayListOf(),
-    )
+)
 
 enum class StageEntryType {
     MATERIAL, LABOUR
