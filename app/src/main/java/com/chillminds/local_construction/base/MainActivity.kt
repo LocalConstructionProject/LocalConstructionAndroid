@@ -91,7 +91,7 @@ class MainActivity : AppCompatActivity() {
                 ApiCallStatus.SUCCESS -> {
                     Logger.error("Project Details", response.data.toString())
                     viewModel.commonModel.projectList.postValue(response.data?.data)
-                    viewModel.commonModel.selectedProjectDetail.postValue(response.data?.data?.get(0))
+                    viewModel.commonModel.selectedProjectDetail.postValue(response.data?.data?.firstOrNull())
                     viewModel.commonModel
                         .actionListener.postValue(Actions.GOTO_HOME_PAGE_ACTIVITY)
                 }

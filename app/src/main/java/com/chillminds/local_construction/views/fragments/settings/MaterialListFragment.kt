@@ -77,7 +77,7 @@ class MaterialListFragment : Fragment() {
                     viewModel.commonModel.showSnackBar("Price is mandatory")
                 } else {
                     materialData.name = name!!
-                    materialData.amount = price!!.toIntOrNull() ?: materialData.amount
+                    materialData.amount = price ?: materialData.amount
                     updateMaterial(materialData)
                 }
             }

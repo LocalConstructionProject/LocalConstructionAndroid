@@ -83,8 +83,48 @@ fun setStagesEntryChildAdapter(
 
 }
 
+@BindingAdapter("lifeCycle", "setupProjectDashboardInformation", requireAll = false)
+fun setupProjectDashboardInformation(
+    recyclerView: RecyclerView,
+    lifeCycle: LifecycleOwner,
+    projectDetail: ProjectDetail?
+) {
+
+    recyclerView.layoutManager =
+        LinearLayoutManager(recyclerView.context, LinearLayoutManager.VERTICAL, false)
+    val dashboardEntryDetails = arrayListOf<DashboardStatisticsDetails>()
+    projectDetail?.stages?.forEach { stageDetails ->
+        dashboardEntryDetails.addAll(stageDetails.entryRecords.map {
+            it.toDashboardStatisticsDetails(
+                projectDetail,
+                stageDetails
+            )
+        })
+    }
+
+    val listToDisplay =
+        dashboardEntryDetails.groupBy { it.entryName }.filter { it.value.isNotEmpty() }.map {
+            val entryName = it.key
+            val entries = it.value
+            entries.first().let { data ->
+                DashboardStatisticsDetails(
+                    data.projectId,
+                    data.projectName,
+                    data.stageId,
+                    data.stageName,
+                    data.stageEntry,
+                    entryName,
+                    entries.sumOf { it.count },
+                    entries.sumOf { it.totalPrice })
+            }
+        }
+
+    recyclerView.adapter =
+        DashboardListRecyclerViewAdapter(lifeCycle, listToDisplay)
+}
+
 @BindingAdapter("lifeCycle", "setupDashboardInformation", requireAll = false)
-fun setStagesEntryChildAdapter(
+fun setupDashboardInformation(
     recyclerView: RecyclerView,
     lifeCycle: LifecycleOwner,
     projectList: List<ProjectDetail>?

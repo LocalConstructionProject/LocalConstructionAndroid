@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.chillminds.local_construction.R
 import com.chillminds.local_construction.common.Actions
 import com.chillminds.local_construction.common.Constants
 import com.chillminds.local_construction.databinding.FragmentDashboardBinding
@@ -42,6 +44,8 @@ class DashboardFragment : Fragment() {
                     Actions.SHOW_PROJECT_CREATION_SHEET -> showProjectCreationSheet()
 
                     Actions.SHOW_PROJECT_EDIT_DIALOG -> showProjectUpdateSheet()
+
+                    Actions.ON_SELECT_PROJECT_FROM_DASHBOARD ->findNavController().navigate(R.id.action_dashboardFragment_to_projectDashboardFragment)
                 }
             }
         }

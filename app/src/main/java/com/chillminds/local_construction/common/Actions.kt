@@ -15,4 +15,5 @@ object Actions {
 
     const val SHOW_PROJECT_CREATION_SHEET = "Show Bottom sheet to create a project"
     const val GOTO_HOME_PAGE_ACTIVITY = "goto home page."
+    const val ON_SELECT_PROJECT_FROM_DASHBOARD = "goto Specific Project dashboard page."
 }

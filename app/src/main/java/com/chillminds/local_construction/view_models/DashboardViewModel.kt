@@ -48,6 +48,11 @@ class DashboardViewModel(
         commonModel.actionListener.postValue(Actions.SHOW_PROJECT_EDIT_DIALOG)
     }
 
+    fun onSelectSpecificProjectFromDashboard(data: ProjectDetail) {
+        commonModel.dashboardProjectDetail.postValue(data)
+        commonModel.actionListener.postValue(Actions.ON_SELECT_PROJECT_FROM_DASHBOARD)
+    }
+
     fun addStageBottomSheet() {
         commonModel.actionListener.postValue(Actions.SHOW_SHEET_TO_CHOOSE_OPTION_ON_HOME)
     }

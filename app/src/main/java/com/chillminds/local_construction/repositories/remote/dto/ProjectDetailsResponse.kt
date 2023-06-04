@@ -28,7 +28,7 @@ data class MaterialListResponse(
 data class MaterialData(
     val _id: String,
     var name: String,
-    var amount: Int,
+    var amount: String,
     val id: String,
 ) {
     fun toStageEntry(count: Long = 0, totalPrice: Long = 0) =

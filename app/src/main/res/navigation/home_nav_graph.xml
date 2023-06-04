@@ -9,7 +9,11 @@
         android:id="@+id/dashboardFragment"
         android:name="com.chillminds.local_construction.views.fragments.dashboard.DashboardFragment"
         android:label="fragment_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_dashboard" >
+        <action
+            android:id="@+id/action_dashboardFragment_to_projectDashboardFragment"
+            app:destination="@id/projectDashboardFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/projectDetailsFragment"
@@ -28,5 +32,9 @@
         android:name="com.chillminds.local_construction.views.fragments.HomeFragment"
         android:label="HomeFragment"
         tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/projectDashboardFragment"
+        android:name="com.chillminds.local_construction.views.fragments.dashboard.ProjectDashboardFragment"
+        android:label="ProjectDashboardFragment" />
 
 </navigation>
