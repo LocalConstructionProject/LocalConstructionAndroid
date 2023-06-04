@@ -8,13 +8,11 @@ import com.chillminds.local_construction.databinding.StageEntryViewBinding
 import com.chillminds.local_construction.repositories.remote.dto.ProjectStageDetail
 import com.chillminds.local_construction.repositories.remote.dto.StageEntryRecord
 import com.chillminds.local_construction.repositories.remote.dto.StageEntryRecordList
-import com.chillminds.local_construction.utils.format
-import java.util.*
 
 class ProjectStageEntryRecyclerViewAdapter(
     private val lifeCycle: LifecycleOwner,
-    private val dateKeys: List<Date>,
-    private val dataList: Map<String,List<StageEntryRecord>>,
+    private val dateKeysPairList: List<Pair<String, Long>>,
+    private val dataList: Map<String, List<StageEntryRecord>>,
     val stageDetails: ProjectStageDetail
 ) : RecyclerView.Adapter<ProjectStageEntryRecyclerViewAdapter.ViewHolder>() {
 
@@ -43,12 +41,14 @@ class ProjectStageEntryRecyclerViewAdapter(
         )
     )
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(
-        dateKeys[position].format(),
-        dataList[dateKeys[position].format()]?: arrayListOf(),
-        lifeCycle,
-        stageDetails
-    )
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) =
+        holder.bind(
+            dateKeysPairList[position].first,
+            dataList[dateKeysPairList[position].first] ?: arrayListOf(),
+            lifeCycle,
+            stageDetails
+        )
 
-    override fun getItemCount(): Int = dateKeys.size
+    override fun getItemCount(): Int = dataList.size
+
 }

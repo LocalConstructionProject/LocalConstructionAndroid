@@ -50,7 +50,7 @@ fun setStagesEntryAdapter(
         LinearLayoutManager(recyclerView.context, LinearLayoutManager.VERTICAL, false)
 
     val dateWiseRecords = entryRecords?.groupBy { it.dateOfExecution.subSequence(0, 10).toString() }
-    val dateSet = (dateWiseRecords?.keys ?: setOf()).map { it.toDateBelowOreo() }.sorted()
+    val dateSet = (dateWiseRecords?.keys ?: setOf()).map { Pair(it,it.toDateBelowOreo().time) }.sortedBy { it.second }.reversed()
 
     recyclerView.adapter =
         ProjectStageEntryRecyclerViewAdapter(

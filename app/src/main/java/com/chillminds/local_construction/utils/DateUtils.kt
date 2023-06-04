@@ -40,7 +40,10 @@ fun String.toDate(pattern: String = "yyyy-MM-dd HH:mm:ss"): LocalDateTime =
         DateTimeFormatter.ofPattern(pattern, Locale.ENGLISH)
     )
 
-fun String.toDateBelowOreo(pattern: String = "yyyy-MM-dd") = SimpleDateFormat(pattern, Locale.getDefault()).parse(this)
+fun String.toDateBelowOreo(pattern: String = "yyyy-MM-dd"): Date {
+    val formatter = SimpleDateFormat(pattern, Locale.getDefault())
+    return formatter.parse(this) ?: Date()
+}
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun LocalDateTime.toStringTime(): String {
@@ -86,4 +89,5 @@ fun Date.toCalendar(): Calendar? = try {
     null
 }
 
-fun Date.format(pattern:String = "dd-MM-yyyy"): String = SimpleDateFormat(pattern, Locale.getDefault()).format(this)
+fun Date.format(pattern: String = "dd-MM-yyyy"): String =
+    SimpleDateFormat(pattern, Locale.getDefault()).format(this)

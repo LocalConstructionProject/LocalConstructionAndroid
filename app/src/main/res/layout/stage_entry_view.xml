@@ -60,7 +60,7 @@
             android:letterSpacing="0.2"
             android:lineSpacingExtra="@dimen/_5sdp"
             android:padding="@dimen/_2sdp"
-            android:text="@{asd}"
+            android:text="@{totalPrice}"
             android:textColor="?attr/title_text_color"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
