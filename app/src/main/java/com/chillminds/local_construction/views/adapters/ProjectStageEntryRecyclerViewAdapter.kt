@@ -8,6 +8,7 @@ import com.chillminds.local_construction.databinding.StageEntryViewBinding
 import com.chillminds.local_construction.repositories.remote.dto.ProjectStageDetail
 import com.chillminds.local_construction.repositories.remote.dto.StageEntryRecord
 import com.chillminds.local_construction.repositories.remote.dto.StageEntryRecordList
+import com.chillminds.local_construction.utils.dateConversion
 
 class ProjectStageEntryRecyclerViewAdapter(
     private val lifeCycle: LifecycleOwner,
@@ -25,7 +26,7 @@ class ProjectStageEntryRecyclerViewAdapter(
             stageDetails: ProjectStageDetail,
             isLastElement: Boolean,
         ) {
-            binding.date = date
+            binding.date = date.dateConversion()
             binding.totalPrice = recordList.sumOf { it.totalPrice }.toString()
             binding.stageEntryRecordList = StageEntryRecordList(recordList)
             binding.isLastElement = isLastElement
@@ -49,7 +50,7 @@ class ProjectStageEntryRecyclerViewAdapter(
             dataList[dateKeysPairList[position].first] ?: arrayListOf(),
             lifeCycle,
             stageDetails,
-            dataList.size == position+1
+            dataList.size == position + 1
         )
 
     override fun getItemCount(): Int = dataList.size

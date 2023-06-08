@@ -57,7 +57,7 @@
             android:letterSpacing="0.2"
             android:lineSpacingExtra="@dimen/_5sdp"
             android:padding="@dimen/_2sdp"
-            android:text="@{data.dateOfExecution.substring(0,10)}"
+            android:text="@{data.getDate()}"
             android:textColor="?attr/title_text_color"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

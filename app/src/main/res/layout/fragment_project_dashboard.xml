@@ -23,7 +23,7 @@
 
         <TextView
             android:id="@+id/projectNameTextView"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="@dimen/_45sdp"
             android:gravity="center"
             android:text="@{viewModel.commonModel.dashboardProjectDetail.name}"
@@ -33,6 +33,19 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:layout_constraintWidth="@dimen/_40sdp"
+            android:padding="@dimen/_10sdp"
+            app:layout_constrainedHeight="true"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:onClick="@{(view)->viewModel.commonModel.goBack(view)}"
+            app:layout_constraintBottom_toBottomOf="@+id/projectNameTextView"
+            app:layout_constraintTop_toTopOf="@+id/projectNameTextView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/ic_arrow_back" />
 
         <View
             android:id="@+id/topView"

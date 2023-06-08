@@ -2,7 +2,9 @@ package com.chillminds.local_construction.models
 
 import android.os.Handler
 import android.os.Looper
+import android.view.View
 import androidx.lifecycle.MutableLiveData
+import androidx.navigation.findNavController
 import com.chillminds.local_construction.common.SecurePreference
 import com.chillminds.local_construction.repositories.remote.dto.LabourData
 import com.chillminds.local_construction.repositories.remote.dto.MaterialData
@@ -24,7 +26,7 @@ class CommonModel {
     val selectedProjectDetail = MutableLiveData<ProjectDetail?>().apply { value = null }
     val dashboardProjectDetail = MutableLiveData<ProjectDetail?>().apply { value = null }
 
-    fun showSnackBar(message: String,delaySeconds:Int = 3) {
+    fun showSnackBar(message: String, delaySeconds: Int = 3) {
         this.message.postValue(message)
         showMessage.postValue(true)
         Handler(Looper.getMainLooper()).postDelayed({
@@ -32,4 +34,7 @@ class CommonModel {
         }, delaySeconds * 1000L)
     }
 
+    fun goBack(view: View) {
+        view.findNavController().navigateUp()
+    }
 }

@@ -1,5 +1,6 @@
 package com.chillminds.local_construction.repositories.remote.dto
 
+import com.chillminds.local_construction.utils.dateConversion
 import com.chillminds.local_construction.utils.getDateTime
 import com.google.gson.annotations.SerializedName
 import java.util.*
@@ -121,11 +122,14 @@ data class StageEntryRecord(
     val stageTypeId: String,
     val type: StageEntryType,
     val insertedDate: String = getDateTime(),
-    val dateOfExecution: String = getDateTime(),
+    var dateOfExecution: String = getDateTime(),
     var count: Long,
     var priceForTheDay: Long,
     var totalPrice: Long,
 ) {
+
+    fun getDate() = dateOfExecution.dateConversion()
+
     fun toDashboardStatisticsDetails(
         projectDetail: ProjectDetail,
         stageDetail: ProjectStageDetail,

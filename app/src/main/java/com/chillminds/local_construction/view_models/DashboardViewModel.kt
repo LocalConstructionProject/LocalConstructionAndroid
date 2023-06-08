@@ -20,8 +20,8 @@ class DashboardViewModel(
     val labourDataToEdit = MutableLiveData<LabourData?>().apply { value = null }
     val stageEntryDataToEdit =
         MutableLiveData<Pair<StageEntryRecord?, ProjectStageDetail>>().apply { value = null }
-    val projectDataToEdit = MutableLiveData<ProjectDetail?>().apply { value = null }
-    val projectStagesTabAdapterPosition = MutableLiveData<ProjectStageDetail?>()
+    val projectStagesTabAdapterPosition =
+        MutableLiveData<ProjectStageDetail?>().apply { value = null }
     val spinnerSelectedPosition = MutableLiveData<Int>().apply { value = 0 }
 
     fun showBottomSheetToCreateProject() {
@@ -200,7 +200,15 @@ class DashboardViewModel(
     }
 
     fun selectProject(data: ProjectDetail) {
+        val previousValue = commonModel.selectedProjectDetail.value
+//        if (previousValue?.name != data.name) {
+//
+//        }
         commonModel.selectedProjectDetail.postValue(data)
+        val selectedStage = projectStagesTabAdapterPosition.value
+        val stageToUpdate = data.stages.firstOrNull { stage -> stage.name == selectedStage?.name }
+            ?: data.stages.firstOrNull()
+        projectStagesTabAdapterPosition.postValue(stageToUpdate)
     }
 
 }

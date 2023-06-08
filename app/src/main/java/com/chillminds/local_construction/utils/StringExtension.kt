@@ -8,6 +8,8 @@ import androidx.annotation.RequiresApi
 fun CharSequence?.isNullOrEmptyOrBlank(): Boolean =
     this == null || isBlank() || isEmpty() || trim().isEmpty()
 
+fun String.dateConversion(): String = toDateBelowOreo().format("dd-MM-yyyy")
+
 @RequiresApi(Build.VERSION_CODES.N)
 fun String.getSpannedText(): Spanned? = Html.fromHtml(this, Html.FROM_HTML_MODE_COMPACT)
 

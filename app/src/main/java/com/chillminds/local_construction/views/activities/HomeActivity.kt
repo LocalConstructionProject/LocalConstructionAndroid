@@ -107,8 +107,21 @@ class HomeActivity : AppCompatActivity() {
             when (response.status) {
                 ApiCallStatus.SUCCESS -> {
                     Logger.error("Project Details", response.data.toString())
-                    viewModel.commonModel.projectList.postValue(response.data?.data)
-                    viewModel.commonModel.selectedProjectDetail.postValue(response.data?.data?.get(0))
+                    val projectList = response.data?.data
+                    viewModel.commonModel.projectList.postValue(projectList)
+                    val selectedProject = viewModel.commonModel.selectedProjectDetail.value
+                    if (selectedProject == null) {
+                        viewModel.commonModel.selectedProjectDetail.postValue(
+                            response.data?.data?.get(
+                                0
+                            )
+                        )
+                    } else {
+                        projectList?.firstOrNull { it.id == selectedProject.id }?.let {
+                            viewModel.selectProject(it)
+                        }
+                    }
+
                 }
                 ApiCallStatus.ERROR -> {
                     Logger.error("ERROR", response.toString())

@@ -14,6 +14,7 @@ import com.chillminds.local_construction.repositories.remote.dto.ProjectDetail
 import com.chillminds.local_construction.repositories.remote.dto.ProjectStageDetail
 import com.chillminds.local_construction.repositories.remote.dto.StageDetail
 import com.chillminds.local_construction.repositories.remote.dto.StageEntryRecord
+import com.chillminds.local_construction.utils.getDateTime
 import com.chillminds.local_construction.utils.isNullOrEmptyOrBlank
 import com.chillminds.local_construction.utils.validate
 import com.chillminds.local_construction.view_models.DashboardViewModel
@@ -77,7 +78,8 @@ class HomeFragment : Fragment() {
 
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                val stage = projectDetail.stages.elementAtOrNull(tab?.position ?: 0)
+                val project = viewModel.commonModel.selectedProjectDetail.value
+                val stage = project?.stages?.elementAtOrNull(tab?.position ?: 0)
                 viewModel.projectStagesTabAdapterPosition.postValue(stage)
             }
 
@@ -133,25 +135,14 @@ class HomeFragment : Fragment() {
 
     private fun showCreateStageEntryDialog() {
         val currentStage = viewModel.projectStagesTabAdapterPosition.value
-        val idsPair =
-            viewModel.commonModel.stagesData.value?.firstOrNull { it.name == currentStage?.name }
-                ?.let {
-                    Pair(it.labourIds, it.materialIds)
-                }
-
-        val labourList = viewModel.commonModel.labourData.value?.filter {
-            it.id in (idsPair?.first ?: arrayListOf())
-        } ?: arrayListOf()
-        val materialList = viewModel.commonModel.materialData.value?.filter {
-            it.id in (idsPair?.second ?: arrayListOf())
-        } ?: arrayListOf()
+        val materialList = viewModel.commonModel.materialData.value ?: arrayListOf()
+        val labourList = viewModel.commonModel.labourData.value ?: arrayListOf()
 
         val dataList = materialList.map { it.toStageEntry() } + labourList.map { it.toStageEntry() }
         val options = dataList.map { it.name + " - " + it.priceForTheDay }
         InputSheet().show(requireActivity()) {
-            title("New Entry to ${currentStage?.name}")
             with(InputSpinner("entry") {
-                title("Choose any one")
+                title("New Entry to ${currentStage?.name}")
                 options(options)
                 changeListener {
                     dataList[it]
@@ -179,7 +170,6 @@ class HomeFragment : Fragment() {
                     viewModel.commonModel.showSnackBar("Enter valid count")
                     return@onPositive
                 }
-
                 val newEntry = dataList[materialEntry]
                 newEntry.apply {
                     this.count = count?.toLongOrNull() ?: 0L
@@ -216,11 +206,18 @@ class HomeFragment : Fragment() {
                 inputType(InputType.TYPE_CLASS_NUMBER)
                 this.defaultValue(stageEntryRecord.totalPrice.toString())
             })
+            with(InputEditText("date") {
+                hint("Date")
+                inputType(InputType.TYPE_CLASS_TEXT)
+                this.defaultValue(stageEntryRecord.dateOfExecution.subSequence(0,10))
+            })
             onNegative { viewModel.commonModel.showSnackBar("Cancelled") }
             onPositive { result ->
+                val now = getDateTime()
                 val count = result.getString("count")
                 val price = result.getString("price") ?: "0"
                 val totalPrice = result.getString("totalPrice") ?: "0"
+                val date = result.getString("date") ?: now.substring(0,10)
                 if (count.isNullOrEmptyOrBlank() && count == "0" && count.toLongOrNull() == null) {
                     viewModel.commonModel.showSnackBar("Enter valid count")
                     return@onPositive
@@ -231,6 +228,7 @@ class HomeFragment : Fragment() {
                         it.count = count?.toLongOrNull() ?: 0
                         it.priceForTheDay = price.toLongOrNull() ?: 0
                         it.totalPrice = totalPrice.toLongOrNull() ?: 0
+                        it.dateOfExecution = date + now.substring(11)
                     }
                 }
 
