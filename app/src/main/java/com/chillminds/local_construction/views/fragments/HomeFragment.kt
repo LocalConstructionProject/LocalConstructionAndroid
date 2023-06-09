@@ -106,7 +106,9 @@ class HomeFragment : Fragment() {
                     }
                     Actions.SHOW_STAGE_ENTRY_EDIT_DIALOG -> {
                         viewModel.stageEntryDataToEdit.value?.validate()?.let { pairRecord ->
-                            showStageEntryDialog(pairRecord)
+                            // showStageEntryDialog(pairRecord)
+                            viewModel.updateEntryInformation(pairRecord.first)
+                            StageEntryBottomSheet.show(parentFragmentManager)
                         } ?: kotlin.run {
                             viewModel.commonModel.actionListener.postValue("Failed to edit entry.")
                         }
@@ -127,7 +129,9 @@ class HomeFragment : Fragment() {
                 if (index == 0) {
                     showStageCreationBottomSheet()
                 } else {
-                    showCreateStageEntryDialog()
+                    viewModel.updateEntryInformation()
+                    StageEntryBottomSheet.show(parentFragmentManager)
+                    // showCreateStageEntryDialog()
                 }
             }
         }

@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.transition.TransitionManager
 import com.chillminds.local_construction.R
@@ -15,6 +16,13 @@ fun setAnimatedVisibility(target: View, isVisible: Boolean) {
 
     TransitionManager.beginDelayedTransition(target.rootView as ViewGroup)
     target.visibility = if (isVisible) View.VISIBLE else View.GONE
+}
+
+@BindingAdapter("count","setTotalPrice", requireAll = false)
+fun setTotalPrice(target: TextView, count: String?, price:String?) {
+    val totalPrice = ((count?:"1").toLongOrNull()?:1) * ((price?:"1").toLongOrNull()?:1)
+    val text = "Total Price - $totalPrice"
+    target.text = text
 }
 
 @BindingAdapter("animateSrc")

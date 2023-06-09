@@ -8,10 +8,37 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import com.chillminds.local_construction.R
 import com.chillminds.local_construction.repositories.remote.dto.ProjectDetail
+import com.chillminds.local_construction.repositories.remote.dto.StageEntryRecord
 
 
 class ProjectSpinnerAdapter(context: Context, projectList: List<ProjectDetail>?) :
     ArrayAdapter<ProjectDetail>(context, 0, projectList ?: arrayListOf()) {
+
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+        return initView(position, convertView, parent)
+    }
+
+    override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+        return initView(position, convertView, parent)
+    }
+
+    private fun initView(
+        position: Int, convertView: View?,
+        parent: ViewGroup
+    ): View {
+        var localView: View? = convertView
+        if (localView == null) {
+            localView =
+                LayoutInflater.from(context).inflate(R.layout.project_spinner_view, parent, false)
+        }
+        localView?.findViewById<TextView>(R.id.spinnerTextView)?.text = getItem(position)?.name?:""
+
+        return localView!!
+    }
+
+}
+class StageEntrySpinnerAdapter(context: Context, projectList: List<StageEntryRecord>?) :
+    ArrayAdapter<StageEntryRecord>(context, 0, projectList ?: arrayListOf()) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         return initView(position, convertView, parent)

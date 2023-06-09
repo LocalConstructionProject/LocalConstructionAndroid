@@ -9,6 +9,7 @@ import com.chillminds.local_construction.models.CommonModel
 import com.chillminds.local_construction.repositories.remote.RemoteRepository
 import com.chillminds.local_construction.repositories.remote.Resource
 import com.chillminds.local_construction.repositories.remote.dto.*
+import com.chillminds.local_construction.utils.getDateTime
 
 class DashboardViewModel(
     application: Application,
@@ -23,6 +24,20 @@ class DashboardViewModel(
     val projectStagesTabAdapterPosition =
         MutableLiveData<ProjectStageDetail?>().apply { value = null }
     val spinnerSelectedPosition = MutableLiveData<Int>().apply { value = 0 }
+
+    val materialEntryRecord = MutableLiveData<StageEntryRecord?>()
+    val count = MutableLiveData<String>().apply { value = "1" }
+    val price = MutableLiveData<String>().apply { value = "1" }
+    val date = MutableLiveData<String>().apply { value = getDateTime() }
+
+    fun updateEntryInformation(
+        stageEntry: StageEntryRecord? = null,
+    ) {
+        materialEntryRecord.postValue(stageEntry)
+        count.postValue((stageEntry?.count?:1).toString())
+        price.postValue((stageEntry?.priceForTheDay?:1).toString())
+        date.postValue(stageEntry?.dateOfExecution?: getDateTime())
+    }
 
     fun showBottomSheetToCreateProject() {
         commonModel.actionListener.postValue(Actions.SHOW_PROJECT_CREATION_SHEET)
@@ -39,6 +54,7 @@ class DashboardViewModel(
     }
 
     fun editStageEntryData(data: StageEntryRecord, stageDetails: ProjectStageDetail) {
+        projectStagesTabAdapterPosition.postValue(stageDetails)
         stageEntryDataToEdit.postValue(Pair(data, stageDetails))
         commonModel.actionListener.postValue(Actions.SHOW_STAGE_ENTRY_EDIT_DIALOG)
     }
@@ -57,6 +73,14 @@ class DashboardViewModel(
         commonModel.actionListener.postValue(Actions.SHOW_SHEET_TO_CHOOSE_OPTION_ON_HOME)
     }
 
+    fun dismissStageEntryBottomSheet() {
+        commonModel.actionListener.postValue(Actions.DISMISS_STAGE_ENTRY_BOTTOM_SHEET)
+    }
+
+    fun insertOrUpdateEntry() {
+        commonModel.actionListener.postValue(Actions.INSERT_OR_VALIDATE_ENTRY)
+    }
+
     fun createProject(name: String, location: String, contact: Long) = liveData {
         emit(Resource.loading())
         try {
@@ -64,9 +88,7 @@ class DashboardViewModel(
                 Resource.success(
                     repository.createNewProject(
                         ProjectCreationRequest(
-                            name = name,
-                            location = location,
-                            contact = contact
+                            name = name, location = location, contact = contact
                         )
                     )
                 )
