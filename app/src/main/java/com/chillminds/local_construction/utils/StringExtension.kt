@@ -9,6 +9,7 @@ fun CharSequence?.isNullOrEmptyOrBlank(): Boolean =
     this == null || isBlank() || isEmpty() || trim().isEmpty()
 
 fun String.dateConversion(): String = toDateBelowOreo().format("dd-MM-yyyy")
+fun String.dateConversionReverse(): String = toDateBelowOreo("dd-MM-yyyy").format("yyyy-MM-dd")
 
 @RequiresApi(Build.VERSION_CODES.N)
 fun String.getSpannedText(): Spanned? = Html.fromHtml(this, Html.FROM_HTML_MODE_COMPACT)

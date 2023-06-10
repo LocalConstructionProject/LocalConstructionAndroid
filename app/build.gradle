@@ -94,10 +94,11 @@ dependencies {
     kapt 'com.github.bumptech.glide:compiler:4.13.0'
 
     def sheetsVersion = "2.3.1"
-    implementation "com.maxkeppeler.sheets:color:${sheetsVersion}"
+    // implementation "com.maxkeppeler.sheets:color:${sheetsVersion}"
     implementation "com.maxkeppeler.sheets:input:${sheetsVersion}"
     implementation "com.maxkeppeler.sheets:option:${sheetsVersion}"
     implementation "com.maxkeppeler.sheets:info:${sheetsVersion}"
+    implementation "com.maxkeppeler.sheets:calendar:${sheetsVersion}"
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

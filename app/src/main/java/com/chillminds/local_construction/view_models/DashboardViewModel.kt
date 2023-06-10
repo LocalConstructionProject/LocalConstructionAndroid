@@ -9,6 +9,7 @@ import com.chillminds.local_construction.models.CommonModel
 import com.chillminds.local_construction.repositories.remote.RemoteRepository
 import com.chillminds.local_construction.repositories.remote.Resource
 import com.chillminds.local_construction.repositories.remote.dto.*
+import com.chillminds.local_construction.utils.dateConversion
 import com.chillminds.local_construction.utils.getDateTime
 
 class DashboardViewModel(
@@ -26,17 +27,22 @@ class DashboardViewModel(
     val spinnerSelectedPosition = MutableLiveData<Int>().apply { value = 0 }
 
     val materialEntryRecord = MutableLiveData<StageEntryRecord?>()
+    val newMaterialEntrySpinnerSelection = MutableLiveData<StageEntryRecord?>()
     val count = MutableLiveData<String>().apply { value = "1" }
     val price = MutableLiveData<String>().apply { value = "1" }
     val date = MutableLiveData<String>().apply { value = getDateTime() }
+
+    fun onSelectDateToEntry() {
+        commonModel.actionListener.postValue(Actions.SHOW_DATE_BOTTOM_SHEET)
+    }
 
     fun updateEntryInformation(
         stageEntry: StageEntryRecord? = null,
     ) {
         materialEntryRecord.postValue(stageEntry)
-        count.postValue((stageEntry?.count?:1).toString())
-        price.postValue((stageEntry?.priceForTheDay?:1).toString())
-        date.postValue(stageEntry?.dateOfExecution?: getDateTime())
+        count.postValue((stageEntry?.count ?: 1).toString())
+        price.postValue((stageEntry?.priceForTheDay ?: 1).toString())
+        date.postValue(stageEntry?.dateOfExecution?.dateConversion() ?: getDateTime().dateConversion())
     }
 
     fun showBottomSheetToCreateProject() {
