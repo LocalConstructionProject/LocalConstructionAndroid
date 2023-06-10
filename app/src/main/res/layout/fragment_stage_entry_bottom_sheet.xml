@@ -99,13 +99,23 @@
             app:layout_constraintTop_toBottomOf="@+id/dateSelectionButton"
             app:setTotalPrice="@{viewModel.price}" />
 
+        <TextView
+            style="@style/ToastTextView"
+            android:id="@+id/toastTextView"
+            android:text="@{viewModel.commonModel.message}"
+            android:elevation="@dimen/_10sdp"
+            app:animateVisibility="@{viewModel.commonModel.showMessage}"
+            app:layout_constraintTop_toBottomOf="@+id/totalPriceTextView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
         <View
             android:id="@+id/view"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_1sdp"
             android:layout_marginTop="@dimen/_10sdp"
             android:background="@drawable/splash_background"
-            app:layout_constraintTop_toBottomOf="@+id/totalPriceTextView" />
+            app:layout_constraintTop_toBottomOf="@+id/toastTextView" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideLineHalfVertical"

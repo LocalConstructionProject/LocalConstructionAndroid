@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.fragment.app.FragmentManager
 import com.chillminds.local_construction.common.Actions
-import com.chillminds.local_construction.common.Logger
 import com.chillminds.local_construction.databinding.FragmentStageEntryBottomSheetBinding
 import com.chillminds.local_construction.repositories.remote.ApiCallStatus
 import com.chillminds.local_construction.repositories.remote.dto.ProjectDetail
@@ -61,7 +60,12 @@ class StageEntryBottomSheet : BottomSheetDialogFragment() {
                 ) {
                     val stageEntryRecord =
                         parent.getItemAtPosition(position) as StageEntryRecord
-                    viewModel.newMaterialEntrySpinnerSelection.postValue(stageEntryRecord)
+                    viewModel.apply {
+                        count.postValue(stageEntryRecord.count.toString())
+                        price.postValue(stageEntryRecord.priceForTheDay.toString())
+                        newMaterialEntrySpinnerSelection.postValue(stageEntryRecord)
+                    }
+
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -122,7 +126,7 @@ class StageEntryBottomSheet : BottomSheetDialogFragment() {
         val price = viewModel.price.value
         val date = viewModel.date.value
 
-        val toAppendWithDate = newEntry?.dateOfExecution?.substring(11)
+        val toAppendWithDate = newEntry?.dateOfExecution?.substring(10)
 
         val totalPrice =
             (viewModel.count.value?.toIntOrNull() ?: 1) * (viewModel.price.value?.toIntOrNull()
@@ -143,17 +147,13 @@ class StageEntryBottomSheet : BottomSheetDialogFragment() {
             this.priceForTheDay = price?.toLongOrNull() ?: 0L
             this.dateOfExecution = date.dateConversionReverse() + toAppendWithDate
         }
-        val entryRecords = ArrayList(currentStage?.entryRecords ?: arrayListOf())
+        val entryRecords = ArrayList(currentStage.entryRecords)
         entryRecords.add(newEntry)
         currentStage.entryRecords = entryRecords
-        Logger.error(
-            "updateStageUnderSelectedProject",
-            "${viewModel.commonModel.selectedProjectDetail.value} ------> $currentStage"
+        updateStageUnderSelectedProject(
+            viewModel.commonModel.selectedProjectDetail.value!!,
+            currentStage
         )
-//        updateStageUnderSelectedProject(
-//            viewModel.commonModel.selectedProjectDetail.value!!,
-//            currentStage!!
-//        )
     }
 
     private fun updateStageUnderSelectedProject(
@@ -166,11 +166,13 @@ class StageEntryBottomSheet : BottomSheetDialogFragment() {
 
                 }
                 ApiCallStatus.ERROR -> {
+                    dismiss()
                     viewModel.commonModel.showSnackBar("Failed to update a stage.")
                 }
                 ApiCallStatus.SUCCESS -> {
                     viewModel.commonModel.showSnackBar("Stage update Successfully.")
                     viewModel.commonModel.actionListener.postValue(Actions.REFRESH_PROJECT_LIST)
+                    dismiss()
                 }
             }
         }
