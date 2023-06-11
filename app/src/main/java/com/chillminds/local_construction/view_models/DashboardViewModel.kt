@@ -70,6 +70,11 @@ class DashboardViewModel(
         commonModel.actionListener.postValue(Actions.SHOW_PROJECT_EDIT_DIALOG)
     }
 
+    fun deleteProjectData(data: ProjectDetail) {
+        commonModel.projectToDelete.postValue(data)
+        commonModel.actionListener.postValue(Actions.SHOW_PROJECT_DELETION_CONFIRMATION_DIALOG)
+    }
+
     fun onSelectSpecificProjectFromDashboard(data: ProjectDetail) {
         commonModel.dashboardProjectDetail.postValue(data)
         commonModel.actionListener.postValue(Actions.ON_SELECT_PROJECT_FROM_DASHBOARD)
@@ -110,6 +115,21 @@ class DashboardViewModel(
             emit(
                 Resource.success(
                     repository.updateProject(
+                        project
+                    )
+                )
+            )
+        } catch (e: Exception) {
+            emit(Resource.error(null, "${e.message}"))
+        }
+    }
+
+    fun deleteProject(project: ProjectDetail) = liveData {
+        emit(Resource.loading())
+        try {
+            emit(
+                Resource.success(
+                    repository.deleteProject(
                         project
                     )
                 )

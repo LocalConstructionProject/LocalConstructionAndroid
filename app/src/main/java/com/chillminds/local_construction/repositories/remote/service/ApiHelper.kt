@@ -11,6 +11,8 @@ class ApiHelper(
 
     suspend fun getAllProjectById(id: String) = service.getAllProjects(authentication, id)
 
+    suspend fun removeProject(id: String) = service.removeProject(authentication, id)
+
     suspend fun createProject(request: ProjectCreationRequest) = service.createProject(authentication, request)
 
     suspend fun updateExistingProject(request: ProjectDetail) = service.updateProject(authentication, request)

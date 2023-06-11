@@ -16,6 +16,7 @@ import com.chillminds.local_construction.utils.isNullOrEmptyOrBlank
 import com.chillminds.local_construction.view_models.DashboardViewModel
 import com.chillminds.local_construction.views.adapters.DashBoardTabAdapter
 import com.google.android.material.tabs.TabLayoutMediator
+import com.maxkeppeler.sheets.info.InfoSheet
 import com.maxkeppeler.sheets.input.InputSheet
 import com.maxkeppeler.sheets.input.type.InputEditText
 import org.koin.android.ext.android.inject
@@ -44,8 +45,9 @@ class DashboardFragment : Fragment() {
                     Actions.SHOW_PROJECT_CREATION_SHEET -> showProjectCreationSheet()
 
                     Actions.SHOW_PROJECT_EDIT_DIALOG -> showProjectUpdateSheet()
+                    Actions.SHOW_PROJECT_DELETION_CONFIRMATION_DIALOG -> showProjectDeleteConfirmation()
 
-                    Actions.ON_SELECT_PROJECT_FROM_DASHBOARD ->findNavController().navigate(R.id.action_dashboardFragment_to_projectDashboardFragment)
+                    Actions.ON_SELECT_PROJECT_FROM_DASHBOARD -> findNavController().navigate(R.id.action_dashboardFragment_to_projectDashboardFragment)
                 }
             }
         }
@@ -95,6 +97,19 @@ class DashboardFragment : Fragment() {
 
                 createProject(name, location, contact.toLongOrNull() ?: 0)
 
+            }
+        }
+    }
+
+    private fun showProjectDeleteConfirmation() {
+        viewModel.commonModel.projectToDelete.value?.let { projectDetail ->
+            InfoSheet().show(requireActivity()) {
+                title("Are you sure?")
+                this.content("Do you really want to delete ${projectDetail.name}? It you want to continue deletion of the project, press ok.")
+                onNegative { viewModel.commonModel.showSnackBar("Project deletion Cancelled") }
+                onPositive {
+                    deleteProject(projectDetail)
+                }
             }
         }
     }
@@ -171,6 +186,21 @@ class DashboardFragment : Fragment() {
                 }
                 ApiCallStatus.SUCCESS -> {
                     viewModel.commonModel.showSnackBar("Project Updated Successfully.")
+                    viewModel.commonModel.actionListener.postValue(Actions.REFRESH_PROJECT_LIST)
+                }
+            }
+        }
+    }
+
+    private fun deleteProject(data: ProjectDetail) {
+        viewModel.deleteProject(data).observe(viewLifecycleOwner) {
+            when (it.status) {
+                ApiCallStatus.LOADING -> {}
+                ApiCallStatus.ERROR -> {
+                    viewModel.commonModel.showSnackBar("Failed to delete a project.")
+                }
+                ApiCallStatus.SUCCESS -> {
+                    viewModel.commonModel.showSnackBar("Project Deleted Successfully.")
                     viewModel.commonModel.actionListener.postValue(Actions.REFRESH_PROJECT_LIST)
                 }
             }

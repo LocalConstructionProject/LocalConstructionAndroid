@@ -18,6 +18,13 @@ interface ApiService {
     ): ProjectDetailsResponse
 
     @Headers(contentType)
+    @GET("/v1/project/delete/{id}")
+    suspend fun removeProject(
+        @Header("Authorization") auth: String,
+        @Path("id", encoded = true) id: String = "all",
+    ): CommonResponse
+
+    @Headers(contentType)
     @POST("/v1/project/update")
     suspend fun updateProject(
         @Header("Authorization") auth: String,

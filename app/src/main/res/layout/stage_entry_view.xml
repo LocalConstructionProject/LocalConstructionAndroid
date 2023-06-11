@@ -38,6 +38,14 @@
         android:background="?attr/card_background"
         android:padding="@dimen/_10sdp">
 
+        <View
+            android:id="@+id/backgroundView"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
+            android:background="?attr/background_color"
+            app:layout_constraintTop_toTopOf="@+id/totalPriceTextView"
+            app:layout_constraintBottom_toBottomOf="@+id/totalPriceTextView"/>
+
         <TextView
             android:id="@+id/nameTextView"
             android:layout_width="wrap_content"
@@ -70,12 +78,20 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Sample" />
 
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/backgroundView"
+            app:constraint_referenced_ids="nameTextView,backgroundView,totalPriceTextView"
+            />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
-            app:layout_constraintTop_toBottomOf="@id/nameTextView"
+            app:layout_constraintTop_toBottomOf="@id/barrier"
             app:lifeCycle="@{lifeCycle}"
             app:setStagesEntryChildAdapter="@{stageEntryRecordList.entryRecords}"
             app:stageDetails="@{stageDetails}" />

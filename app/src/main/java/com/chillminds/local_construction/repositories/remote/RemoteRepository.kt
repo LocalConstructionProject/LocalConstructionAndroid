@@ -19,6 +19,8 @@ class RemoteRepository(
 
     suspend fun updateProject(request: ProjectDetail) = remoteRepo.updateExistingProject(request)
 
+    suspend fun deleteProject(request: ProjectDetail) = remoteRepo.removeProject(request.id)
+
     suspend fun getMaterial(id: String? = null) = id?.let {
         remoteRepo.getMaterialById(it)
     } ?: run {

@@ -24,7 +24,5 @@ class ProjectStagesTabAdapter(booksTabFragment: Fragment, val projectDetail: Pro
 
     override fun getItemCount() = projectDetail.stages.size
 
-    override fun createFragment(position: Int): Fragment {
-        return StagesEntriesFragment.newInstance(position)
-    }
+    override fun createFragment(position: Int) = StagesEntriesFragment.newInstance(position)
 }
