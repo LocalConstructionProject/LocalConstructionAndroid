@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="lifeCycle"
+            type="androidx.lifecycle.LifecycleOwner" />
+
+        <variable
+            name="viewModel"
+            type="com.chillminds.local_construction.view_models.DashboardViewModel" />
+
+        <variable
+            name="position"
+            type="Integer" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".views.fragments.dashboard.StageTypeWiseStatisticsListFragment">
+
+        <TextView
+            android:id="@+id/nameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_5sdp"
+            android:layout_marginTop="52dp"
+            android:elegantTextHeight="true"
+            android:letterSpacing="0.2"
+            android:lineSpacingExtra="@dimen/_5sdp"
+            android:padding="@dimen/_2sdp"
+            android:text="Name"
+            android:textColor="?attr/title_text_color"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Sample" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="@dimen/_80sdp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_5sdp"
+            android:elegantTextHeight="true"
+            android:gravity="center"
+            android:letterSpacing="0.1"
+            android:padding="@dimen/_2sdp"
+            android:text="Price"
+            android:textColor="?attr/title_text_color"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/nameTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/nameTextView"
+            tools:text="Zec 3:7" />
+
+        <TextView
+            android:layout_width="@dimen/_60sdp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Count"
+            android:textColor="?attr/subtitle_text_color"
+            android:textSize="@dimen/_14sdp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/nameTextView"
+            app:layout_constraintEnd_toStartOf="@+id/textView"
+            app:layout_constraintHorizontal_bias="0.9"
+            app:layout_constraintStart_toEndOf="@+id/nameTextView"
+            app:layout_constraintTop_toTopOf="@+id/nameTextView" />
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_1sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:background="?attr/background_color"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/nameTextView" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="@dimen/_3sdp"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view"
+            app:lifeCycle="@{lifeCycle}"
+            app:position="@{position}"
+            app:setupProjectDashboardInformation="@{viewModel.commonModel.dashboardProjectDetail}" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

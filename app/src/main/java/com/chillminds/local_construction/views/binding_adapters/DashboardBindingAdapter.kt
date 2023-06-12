@@ -83,10 +83,11 @@ fun setStagesEntryChildAdapter(
 
 }
 
-@BindingAdapter("lifeCycle", "setupProjectDashboardInformation", requireAll = false)
+@BindingAdapter("lifeCycle", "position", "setupProjectDashboardInformation", requireAll = false)
 fun setupProjectDashboardInformation(
     recyclerView: RecyclerView,
     lifeCycle: LifecycleOwner,
+    position: Int,
     projectDetail: ProjectDetail?
 ) {
 
@@ -94,12 +95,19 @@ fun setupProjectDashboardInformation(
         LinearLayoutManager(recyclerView.context, LinearLayoutManager.VERTICAL, false)
     val dashboardEntryDetails = arrayListOf<DashboardStatisticsDetails>()
     projectDetail?.stages?.forEach { stageDetails ->
-        dashboardEntryDetails.addAll(stageDetails.entryRecords.map {
-            it.toDashboardStatisticsDetails(
-                projectDetail,
-                stageDetails
-            )
-        })
+        dashboardEntryDetails.addAll(stageDetails.entryRecords.filter {
+            when (position) {
+                0 -> it.type == StageEntryType.LABOUR || it.type == StageEntryType.MATERIAL
+                1 -> it.type == StageEntryType.MATERIAL
+                else -> it.type == StageEntryType.LABOUR
+            }
+        }
+            .map {
+                it.toDashboardStatisticsDetails(
+                    projectDetail,
+                    stageDetails
+                )
+            })
     }
 
     val listToDisplay =
