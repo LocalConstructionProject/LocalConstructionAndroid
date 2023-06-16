@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.chillminds.local_construction.R
+import com.chillminds.local_construction.base.cancelProgress
+import com.chillminds.local_construction.base.showProgress
 import com.chillminds.local_construction.common.Actions
 import com.chillminds.local_construction.common.Logger
 import com.chillminds.local_construction.databinding.ActivityHomeBinding
@@ -47,6 +49,14 @@ class HomeActivity : AppCompatActivity() {
                     Actions.REFRESH_PROJECT_LIST -> getProjectDetails()
                 }
                 commonModel.actionListener.postValue("")
+            }
+        }
+        commonModel.progressListener.observe(this) {
+            if(it.isNullOrEmptyOrBlank()){
+                when(it){
+                    Actions.SHOW_PROGRESS_BAR -> showProgress()
+                    Actions.CANCEL_PROGRESS_BAR -> cancelProgress()
+                }
             }
         }
     }

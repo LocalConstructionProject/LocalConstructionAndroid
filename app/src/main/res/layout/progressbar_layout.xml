@@ -3,18 +3,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@android:color/transparent"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="@dimen/_13sdp">
 
-    <ProgressBar
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/_10sdp"
         android:minWidth="@dimen/_40sdp"
-        android:minHeight="@dimen/_40sdp" />
+        android:minHeight="@dimen/_40sdp"
+        android:scaleType="center"
+        app:animateSrc="@{@drawable/loading_animation}"
+        tools:src="@drawable/loading_animation" />
 
     <TextView
         android:id="@+id/message"

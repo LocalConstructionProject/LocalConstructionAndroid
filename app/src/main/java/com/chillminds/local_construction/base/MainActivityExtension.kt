@@ -13,7 +13,7 @@ fun MainActivity.cancelProgress() {
     progressBar?.dismiss()
 }
 
-fun HomeActivity.showProgress(message: String) {
+fun HomeActivity.showProgress(message: String? = null) {
     progressBar = showProgressBar(message).apply { show() }
 }
 

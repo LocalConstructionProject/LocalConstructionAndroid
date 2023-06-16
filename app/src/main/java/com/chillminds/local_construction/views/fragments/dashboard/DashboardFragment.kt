@@ -165,11 +165,15 @@ class DashboardFragment : Fragment() {
     private fun createProject(name: String?, location: String?, contact: Long) {
         viewModel.createProject(name ?: "", location ?: "", contact).observe(viewLifecycleOwner) {
             when (it.status) {
-                ApiCallStatus.LOADING -> {}
+                ApiCallStatus.LOADING -> {
+                    viewModel.commonModel.showProgress()
+                }
                 ApiCallStatus.ERROR -> {
+                    viewModel.commonModel.cancelProgress()
                     viewModel.commonModel.showSnackBar("Failed to create a project.")
                 }
                 ApiCallStatus.SUCCESS -> {
+                    viewModel.commonModel.cancelProgress()
                     viewModel.commonModel.showSnackBar("Project Created Successfully.")
                     viewModel.commonModel.actionListener.postValue(Actions.REFRESH_PROJECT_LIST)
                 }
@@ -180,11 +184,15 @@ class DashboardFragment : Fragment() {
     private fun updateProject(data: ProjectDetail) {
         viewModel.updateProject(data).observe(viewLifecycleOwner) {
             when (it.status) {
-                ApiCallStatus.LOADING -> {}
+                ApiCallStatus.LOADING -> {
+                    viewModel.commonModel.showProgress()
+                }
                 ApiCallStatus.ERROR -> {
+                    viewModel.commonModel.cancelProgress()
                     viewModel.commonModel.showSnackBar("Failed to update a project.")
                 }
                 ApiCallStatus.SUCCESS -> {
+                    viewModel.commonModel.cancelProgress()
                     viewModel.commonModel.showSnackBar("Project Updated Successfully.")
                     viewModel.commonModel.actionListener.postValue(Actions.REFRESH_PROJECT_LIST)
                 }
@@ -195,11 +203,15 @@ class DashboardFragment : Fragment() {
     private fun deleteProject(data: ProjectDetail) {
         viewModel.deleteProject(data).observe(viewLifecycleOwner) {
             when (it.status) {
-                ApiCallStatus.LOADING -> {}
+                ApiCallStatus.LOADING -> {
+                    viewModel.commonModel.showProgress()
+                }
                 ApiCallStatus.ERROR -> {
+                    viewModel.commonModel.cancelProgress()
                     viewModel.commonModel.showSnackBar("Failed to delete a project.")
                 }
                 ApiCallStatus.SUCCESS -> {
+                    viewModel.commonModel.cancelProgress()
                     viewModel.commonModel.showSnackBar("Project Deleted Successfully.")
                     viewModel.commonModel.actionListener.postValue(Actions.REFRESH_PROJECT_LIST)
                 }

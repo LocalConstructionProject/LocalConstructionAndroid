@@ -169,12 +169,14 @@ class HomeFragment : Fragment() {
         viewModel.createStage(project, stage).observe(viewLifecycleOwner) {
             when (it.status) {
                 ApiCallStatus.LOADING -> {
-
+                    viewModel.commonModel.showProgress()
                 }
                 ApiCallStatus.ERROR -> {
+                    viewModel.commonModel.cancelProgress()
                     viewModel.commonModel.showSnackBar("Failed to create a stage.")
                 }
                 ApiCallStatus.SUCCESS -> {
+                    viewModel.commonModel.cancelProgress()
                     viewModel.commonModel.showSnackBar("Stage Created Successfully.")
                     viewModel.commonModel.actionListener.postValue(Actions.REFRESH_PROJECT_LIST)
                 }

@@ -9,7 +9,9 @@ import com.chillminds.local_construction.common.Logger
 import com.chillminds.local_construction.databinding.ActivityMainBinding
 import com.chillminds.local_construction.repositories.remote.ApiCallStatus
 import com.chillminds.local_construction.view_models.SplashViewModel
+import com.maxkeppeler.sheets.info.InfoSheet
 import org.koin.android.ext.android.inject
+import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
 
@@ -28,7 +30,36 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun observeFields() {
+        callAPI()
+        viewModel.successAPICount.observe(this) {
+            if (it == 4) {
+                viewModel.commonModel
+                    .actionListener.postValue(Actions.GOTO_HOME_PAGE_ACTIVITY)
+            }
+        }
+        viewModel.failureAPICount.observe(this) {
+            if (it != 0) {
+                InfoSheet().show(this) {
+                    title("Oh No")
+                    this.content("We are facing some problem. Can you check your network connectivity and try again.!")
+                    onNegative("Exit") {
+                        finishAffinity()
+                        exitProcess(0)
+                    }
+                    onPositive("Retry") {
+                        callAPI()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun callAPI() {
+        viewModel.resetCount()
         getMaterialsData()
+        getLabourData()
+        getProjectDetails()
+        getStagesData()
     }
 
     private fun getStagesData() {
@@ -37,10 +68,11 @@ class MainActivity : AppCompatActivity() {
                 ApiCallStatus.SUCCESS -> {
                     Logger.error("SUCCESS", response.toString())
                     viewModel.commonModel.stagesData.postValue(response.data?.data)
-                    getProjectDetails()
+                    viewModel.updateSuccessCount()
                 }
                 ApiCallStatus.ERROR -> {
                     Logger.error("ERROR", response.toString())
+                    viewModel.updateErrorCount()
                 }
                 ApiCallStatus.LOADING -> {
                     viewModel.commonModel.splashMessage.postValue(Constants.PREPARING_CONSTRUCTION_STAGES)
@@ -55,10 +87,11 @@ class MainActivity : AppCompatActivity() {
                 ApiCallStatus.SUCCESS -> {
                     Logger.error("Labour Data", response.data.toString())
                     viewModel.commonModel.labourData.postValue(response.data?.data)
-                    getStagesData()
+                    viewModel.updateSuccessCount()
                 }
                 ApiCallStatus.ERROR -> {
                     Logger.error("ERROR", response.toString())
+                    viewModel.updateErrorCount()
                 }
                 ApiCallStatus.LOADING -> {
                     viewModel.commonModel.splashMessage.postValue(Constants.PREPARING_LABOUR_INFORMATION)
@@ -73,10 +106,11 @@ class MainActivity : AppCompatActivity() {
                 ApiCallStatus.SUCCESS -> {
                     Logger.error("Material Details", response.data.toString())
                     viewModel.commonModel.materialData.postValue(response.data?.data)
-                    getLabourData()
+                    viewModel.updateSuccessCount()
                 }
                 ApiCallStatus.ERROR -> {
                     Logger.error("ERROR", response.toString())
+                    viewModel.updateErrorCount()
                 }
                 ApiCallStatus.LOADING -> {
                     viewModel.commonModel.splashMessage.postValue(Constants.PREPARING_MATERIAL_INFORMATION)
@@ -92,11 +126,11 @@ class MainActivity : AppCompatActivity() {
                     Logger.error("Project Details", response.data.toString())
                     viewModel.commonModel.projectList.postValue(response.data?.data)
                     viewModel.commonModel.selectedProjectDetail.postValue(response.data?.data?.firstOrNull())
-                    viewModel.commonModel
-                        .actionListener.postValue(Actions.GOTO_HOME_PAGE_ACTIVITY)
+                    viewModel.updateSuccessCount()
                 }
                 ApiCallStatus.ERROR -> {
                     Logger.error("ERROR", response.toString())
+                    viewModel.updateErrorCount()
                 }
                 ApiCallStatus.LOADING -> {
                     viewModel.commonModel.splashMessage.postValue(Constants.PREPARING_PROJECT_INFORMATION)

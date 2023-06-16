@@ -163,13 +163,15 @@ class StageEntryBottomSheet : BottomSheetDialogFragment() {
         viewModel.updateStage(project, stage).observe(viewLifecycleOwner) {
             when (it.status) {
                 ApiCallStatus.LOADING -> {
-
+                    viewModel.commonModel.showProgress()
                 }
                 ApiCallStatus.ERROR -> {
-                    dismiss()
+                    viewModel.commonModel.cancelProgress()
                     viewModel.commonModel.showSnackBar("Failed to update a stage.")
+                    dismiss()
                 }
                 ApiCallStatus.SUCCESS -> {
+                    viewModel.commonModel.cancelProgress()
                     viewModel.commonModel.showSnackBar("Stage update Successfully.")
                     viewModel.commonModel.actionListener.postValue(Actions.REFRESH_PROJECT_LIST)
                     dismiss()

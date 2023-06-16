@@ -8,6 +8,9 @@ object Actions {
     const val REFRESH_STAGE_LIST = "Refresh Stage List"
     const val REFRESH_MATERIALS_LIST = "Refresh Material List"
 
+    const val SHOW_PROGRESS_BAR = "SHOW_PROGRESS_BAR"
+    const val CANCEL_PROGRESS_BAR = "CANCEL_PROGRESS_BAR"
+
     const val SHOW_PROJECT_EDIT_DIALOG = "Project edit dialog to update"
     const val SHOW_STAGE_ENTRY_EDIT_DIALOG = "Stage Entry edit dialog to update"
     const val SHOW_MATERIAL_EDIT_DIALOG = "Material Edit dialog to update with fields"

@@ -5,6 +5,7 @@ import android.os.Looper
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.findNavController
+import com.chillminds.local_construction.common.Actions
 import com.chillminds.local_construction.common.SecurePreference
 import com.chillminds.local_construction.repositories.remote.dto.LabourData
 import com.chillminds.local_construction.repositories.remote.dto.MaterialData
@@ -18,6 +19,7 @@ class CommonModel {
     val message = MutableLiveData<String>()
     val showMessage = MutableLiveData<Boolean>().apply { value = false }
     val actionListener = MutableLiveData<String>()
+    val progressListener = MutableLiveData<String>()
     val materialData = MutableLiveData<List<MaterialData>>()
     val splashMessage = MutableLiveData<String>().apply { value = "Connecting with server..!" }
     val labourData = MutableLiveData<List<LabourData>>()
@@ -38,4 +40,13 @@ class CommonModel {
     fun goBack(view: View) {
         view.findNavController().navigateUp()
     }
+
+    fun showProgress() {
+        progressListener.postValue(Actions.SHOW_PROGRESS_BAR)
+    }
+
+    fun cancelProgress() {
+        progressListener.postValue(Actions.CANCEL_PROGRESS_BAR)
+    }
+
 }
