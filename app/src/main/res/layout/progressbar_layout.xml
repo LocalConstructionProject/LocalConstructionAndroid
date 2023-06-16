@@ -17,7 +17,7 @@
         android:minWidth="@dimen/_40sdp"
         android:minHeight="@dimen/_40sdp"
         android:scaleType="center"
-        app:srcCompat="@{@drawable/loading_animation}"
+        app:srcCompat="@drawable/loading_animation"
         tools:src="@drawable/loading_animation" />
 
     <TextView
