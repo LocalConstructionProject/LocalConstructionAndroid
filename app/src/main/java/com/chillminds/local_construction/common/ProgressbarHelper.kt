@@ -3,12 +3,13 @@ package com.chillminds.local_construction.common
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import com.chillminds.local_construction.utils.isNullOrEmptyOrBlank
+import androidx.appcompat.widget.AppCompatImageView
 import com.chillminds.local_construction.R
+import com.chillminds.local_construction.base.GlideApp
 import com.chillminds.local_construction.base.lazyFast
+import com.chillminds.local_construction.utils.isNullOrEmptyOrBlank
 
 class ProgressbarHelper(private val context: Context, var message: CharSequence?) {
 
@@ -23,12 +24,12 @@ class ProgressbarHelper(private val context: Context, var message: CharSequence?
         .setView(dialogView)
 
 
-    private val progressBar: ProgressBar by lazyFast {
-        dialogView.findViewById<ProgressBar>(R.id.progressBar)
+    private val progressBar: AppCompatImageView by lazyFast {
+        dialogView.findViewById(R.id.progressBar)
     }
 
     private val title: TextView by lazyFast {
-        dialogView.findViewById<TextView>(R.id.message)
+        dialogView.findViewById(R.id.message)
     }
 
     private var dialog: AlertDialog? = null
@@ -40,6 +41,7 @@ class ProgressbarHelper(private val context: Context, var message: CharSequence?
             message = "Please Wait..!"
         }
         this.title.text = message
+        GlideApp.with(progressBar).asGif().load(R.drawable.loading_animation).into(progressBar)
     }
 
     fun create(): AlertDialog {
