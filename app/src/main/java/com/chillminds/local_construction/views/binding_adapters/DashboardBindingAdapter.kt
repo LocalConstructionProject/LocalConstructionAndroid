@@ -131,11 +131,12 @@ fun setupProjectDashboardInformation(
         DashboardListRecyclerViewAdapter(lifeCycle, listToDisplay)
 }
 
-@BindingAdapter("lifeCycle", "setupDashboardInformation", requireAll = false)
+@BindingAdapter("lifeCycle", "setupDashboardInformation", "sortByPosition", requireAll = false)
 fun setupDashboardInformation(
     recyclerView: RecyclerView,
     lifeCycle: LifecycleOwner,
-    projectList: List<ProjectDetail>?
+    projectList: List<ProjectDetail>?,
+    sortByPosition: Int
 ) {
 
     recyclerView.layoutManager =
@@ -149,7 +150,6 @@ fun setupDashboardInformation(
                     stageDetails
                 )
             })
-
         }
     }
 
@@ -171,7 +171,15 @@ fun setupDashboardInformation(
         }
 
     recyclerView.adapter =
-        DashboardListRecyclerViewAdapter(lifeCycle, listToDisplay)
+        DashboardListRecyclerViewAdapter(lifeCycle, when (sortByPosition) {
+            1 -> listToDisplay.sortedBy { it.count }
+            2 -> listToDisplay.sortedBy { it.totalPrice }
+            3 -> listToDisplay.filter { it.stageEntry.type == StageEntryType.LABOUR }
+                .sortedBy { it.stageId }
+            4 -> listToDisplay.filter { it.stageEntry.type == StageEntryType.MATERIAL }
+                .sortedBy { it.stageId }
+            else -> listToDisplay
+        })
 }
 
 @BindingAdapter("lifeCycle", "setStagesLabourList", "stagesData", requireAll = false)

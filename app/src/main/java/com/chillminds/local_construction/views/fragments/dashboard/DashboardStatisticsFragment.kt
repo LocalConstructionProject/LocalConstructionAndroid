@@ -7,8 +7,10 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
+import com.chillminds.local_construction.common.Actions
 import com.chillminds.local_construction.common.Constants
 import com.chillminds.local_construction.databinding.FragmentDashboardStatisticsBinding
+import com.chillminds.local_construction.utils.isNullOrEmptyOrBlank
 import com.chillminds.local_construction.view_models.DashboardViewModel
 import org.koin.android.ext.android.inject
 
@@ -33,7 +35,7 @@ class DashboardStatisticsFragment : Fragment() {
         binding.dashboardSpinner.apply {
             adapter = ArrayAdapter(
                 requireActivity(),
-                android.R.layout.simple_spinner_item,
+                android.R.layout.simple_list_item_1,
                 Constants.dashboardList
             )
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -45,6 +47,16 @@ class DashboardStatisticsFragment : Fragment() {
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {}
+            }
+        }
+
+        viewModel.commonModel.actionListener.observe(viewLifecycleOwner) {
+            if (!it.isNullOrEmptyOrBlank()) {
+                when (it) {
+                    Actions.EXPORT_PDF_FROM_DASHBOARD_STATISTICS -> {
+                        viewModel.commonModel.showSnackBar("Coming Soon..!")
+                    }
+                }
             }
         }
     }

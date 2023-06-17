@@ -9,5 +9,5 @@ object Constants {
     val settingsTapList = arrayListOf("Materials", "Labour", "Stages")
     val dashboardDashList = arrayListOf("Dashboard","Projects")
     val projectDashboardTabBar = arrayListOf("All","Material","Labour",)
-    val dashboardList = arrayListOf("All Projects")
+    val dashboardList = arrayListOf("Show All","Count wise record","Price wise record","Labour Records","Material Records")
 }

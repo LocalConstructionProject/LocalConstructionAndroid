@@ -36,6 +36,10 @@ class DashboardViewModel(
         commonModel.actionListener.postValue(Actions.SHOW_DATE_BOTTOM_SHEET)
     }
 
+    fun exportPdfFromProjectDashboard() {
+        commonModel.actionListener.postValue(Actions.EXPORT_PDF_FROM_DASHBOARD_STATISTICS)
+    }
+
     fun updateEntryInformation(
         stageEntry: StageEntryRecord? = null,
     ) {
@@ -254,10 +258,6 @@ class DashboardViewModel(
     }
 
     fun selectProject(data: ProjectDetail) {
-        val previousValue = commonModel.selectedProjectDetail.value
-//        if (previousValue?.name != data.name) {
-//
-//        }
         commonModel.selectedProjectDetail.postValue(data)
         val selectedStage = projectStagesTabAdapterPosition.value
         val stageToUpdate = data.stages.firstOrNull { stage -> stage.name == selectedStage?.name }

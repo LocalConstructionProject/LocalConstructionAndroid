@@ -33,8 +33,7 @@ class ProjectStagesTabAdapter(booksTabFragment: Fragment, val projectDetail: Pro
 class ProjectDashBoardTabAdapter(
     booksTabFragment: Fragment,
     val projectDetail: ProjectDetail?
-) :
-    FragmentStateAdapter(booksTabFragment) {
+) : FragmentStateAdapter(booksTabFragment) {
 
     override fun getItemCount() = Constants.projectDashboardTabBar.size
 

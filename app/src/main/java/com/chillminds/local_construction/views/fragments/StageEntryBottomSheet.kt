@@ -42,12 +42,10 @@ class StageEntryBottomSheet : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.materialEntrySpinner
 
-        // val currentStage = viewModel.projectStagesTabAdapterPosition.value
         val materialList = viewModel.commonModel.materialData.value ?: arrayListOf()
         val labourList = viewModel.commonModel.labourData.value ?: arrayListOf()
 
         val dataList = materialList.map { it.toStageEntry() } + labourList.map { it.toStageEntry() }
-        // val options = dataList.map { it.name + " - " + it.priceForTheDay }
 
         binding.materialEntrySpinner.adapter =
             StageEntrySpinnerAdapter(requireActivity(), dataList)
