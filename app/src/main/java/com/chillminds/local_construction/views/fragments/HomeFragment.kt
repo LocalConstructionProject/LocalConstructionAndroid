@@ -10,7 +10,9 @@ import com.chillminds.local_construction.common.Actions
 import com.chillminds.local_construction.databinding.FragmentHomeBinding
 import com.chillminds.local_construction.repositories.remote.ApiCallStatus
 import com.chillminds.local_construction.repositories.remote.dto.ProjectDetail
+import com.chillminds.local_construction.repositories.remote.dto.ProjectStageDetail
 import com.chillminds.local_construction.repositories.remote.dto.StageDetail
+import com.chillminds.local_construction.repositories.remote.dto.StageEntryRecord
 import com.chillminds.local_construction.utils.isNullOrEmptyOrBlank
 import com.chillminds.local_construction.utils.validate
 import com.chillminds.local_construction.view_models.DashboardViewModel
@@ -18,6 +20,7 @@ import com.chillminds.local_construction.views.adapters.ProjectSpinnerAdapter
 import com.chillminds.local_construction.views.adapters.ProjectStagesTabAdapter
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.maxkeppeler.sheets.info.InfoSheet
 import com.maxkeppeler.sheets.input.InputSheet
 import com.maxkeppeler.sheets.input.type.spinner.InputSpinner
 import com.maxkeppeler.sheets.option.Option
@@ -107,80 +110,125 @@ class HomeFragment : Fragment() {
                             viewModel.commonModel.actionListener.postValue("Failed to edit entry.")
                         }
                     }
-                }
-            }
-        }
-    }
-
-    private fun showChoiceOptionSheet() {
-        OptionSheet().show(requireActivity()) {
-            title("Choose any one")
-            with(
-                Option("Stage"),
-                Option("Entry Record"),
-            )
-            onPositive { index: Int, _: Option ->
-                if (index == 0) {
-                    showStageCreationBottomSheet()
-                } else {
-                    viewModel.updateEntryInformation()
-                    StageEntryBottomSheet.show(parentFragmentManager)
-                }
-            }
-        }
-    }
-
-    private fun showStageCreationBottomSheet() {
-        val selectedProjectDetail = viewModel.commonModel.selectedProjectDetail.value
-        Pair(
-            selectedProjectDetail,
-            viewModel.commonModel.stagesData.value?.filter { stageDetails ->
-                stageDetails.name !in (selectedProjectDetail?.stages?.map { it.name }
-                    ?: arrayListOf())
-            }
-        ).validate()?.let { (project, stages) ->
-            InputSheet().show(requireActivity()) {
-                title("Stage Creation")
-                with(InputSpinner {
-                    required()
-                    this.options(listOf("Select Stage") + stages.map { it.name })
-                    label("select Stage Name ")
-                })
-                onNegative { viewModel.commonModel.showSnackBar("Stage Creation Cancelled") }
-                onPositive { result ->
-                    val index = result.getInt("0")
-                    if (index == 0) {
-                        viewModel.commonModel.showSnackBar("Select a stage")
-                        return@onPositive
+                    Actions.SHOW_STAGE_ENTRY_DELETE_DIALOG -> {
+                        viewModel.stageEntryDataToEdit.value?.validate()?.let { pairRecord ->
+                            showDeleteConfirmationDialog(pairRecord)
+                        }
                     }
-                    val selectedStage = stages[index - 1]
-                    createStageUnderSelectedProject(project, selectedStage)
                 }
             }
-        } ?: run {
-            viewModel.commonModel.showSnackBar("Failed to create a stage")
         }
     }
 
-    private fun createStageUnderSelectedProject(
+    private fun showDeleteConfirmationDialog(pairRecord: Pair<StageEntryRecord, ProjectStageDetail>) {
+        pairRecord.first.let { entry ->
+            InfoSheet().show(requireActivity()) {
+                title("Are you sure?")
+                this.content("Do you really want to delete ${entry.name}-(${entry.count})? It you want to continue deletion, press ok.")
+                onNegative { viewModel.commonModel.showSnackBar("Entry deletion Cancelled") }
+                onPositive {
+                    val records = pairRecord.second.entryRecords.filter { it._id != entry._id }
+                    pairRecord.second.entryRecords = records
+                    viewModel.commonModel.selectedProjectDetail.value?.let { projectDetail ->
+                        entryDeletionApiCall(projectDetail, pairRecord.second)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun entryDeletionApiCall(
         project: ProjectDetail,
-        stage: StageDetail
+        stage: ProjectStageDetail
     ) {
-        viewModel.createStage(project, stage).observe(viewLifecycleOwner) {
+        viewModel.updateStage(project, stage).observe(viewLifecycleOwner) {
             when (it.status) {
                 ApiCallStatus.LOADING -> {
                     viewModel.commonModel.showProgress()
                 }
                 ApiCallStatus.ERROR -> {
                     viewModel.commonModel.cancelProgress()
-                    viewModel.commonModel.showSnackBar("Failed to create a stage.")
+                    viewModel.commonModel.showSnackBar("Failed to delete an entry.")
                 }
                 ApiCallStatus.SUCCESS -> {
                     viewModel.commonModel.cancelProgress()
-                    viewModel.commonModel.showSnackBar("Stage Created Successfully.")
+                    viewModel.commonModel.showSnackBar("Entry Record deleted Successfully.")
                     viewModel.commonModel.actionListener.postValue(Actions.REFRESH_PROJECT_LIST)
                 }
             }
         }
     }
-}
+
+
+        private fun showChoiceOptionSheet() {
+            OptionSheet().show(requireActivity()) {
+                title("Choose any one")
+                with(
+                    Option("Stage"),
+                    Option("Entry Record"),
+                )
+                onPositive { index: Int, _: Option ->
+                    if (index == 0) {
+                        showStageCreationBottomSheet()
+                    } else {
+                        viewModel.updateEntryInformation()
+                        StageEntryBottomSheet.show(parentFragmentManager)
+                    }
+                }
+            }
+        }
+
+        private fun showStageCreationBottomSheet() {
+            val selectedProjectDetail = viewModel.commonModel.selectedProjectDetail.value
+            Pair(
+                selectedProjectDetail,
+                viewModel.commonModel.stagesData.value?.filter { stageDetails ->
+                    stageDetails.name !in (selectedProjectDetail?.stages?.map { it.name }
+                        ?: arrayListOf())
+                }
+            ).validate()?.let { (project, stages) ->
+                InputSheet().show(requireActivity()) {
+                    title("Stage Creation")
+                    with(InputSpinner {
+                        required()
+                        this.options(listOf("Select Stage") + stages.map { it.name })
+                        label("select Stage Name ")
+                    })
+                    onNegative { viewModel.commonModel.showSnackBar("Stage Creation Cancelled") }
+                    onPositive { result ->
+                        val index = result.getInt("0")
+                        if (index == 0) {
+                            viewModel.commonModel.showSnackBar("Select a stage")
+                            return@onPositive
+                        }
+                        val selectedStage = stages[index - 1]
+                        createStageUnderSelectedProject(project, selectedStage)
+                    }
+                }
+            } ?: run {
+                viewModel.commonModel.showSnackBar("Failed to create a stage")
+            }
+        }
+
+        private fun createStageUnderSelectedProject(
+            project: ProjectDetail,
+            stage: StageDetail
+        ) {
+            viewModel.createStage(project, stage).observe(viewLifecycleOwner) {
+                when (it.status) {
+                    ApiCallStatus.LOADING -> {
+                        viewModel.commonModel.showProgress()
+                    }
+                    ApiCallStatus.ERROR -> {
+                        viewModel.commonModel.cancelProgress()
+                        viewModel.commonModel.showSnackBar("Failed to create a stage.")
+                    }
+                    ApiCallStatus.SUCCESS -> {
+                        viewModel.commonModel.cancelProgress()
+                        viewModel.commonModel.showSnackBar("Stage Created Successfully.")
+                        viewModel.commonModel.actionListener.postValue(Actions.REFRESH_PROJECT_LIST)
+                    }
+                }
+            }
+        }
+    }

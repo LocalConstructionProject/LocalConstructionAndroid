@@ -35,20 +35,29 @@ class MainActivity : AppCompatActivity() {
             if (it == 4) {
                 viewModel.commonModel
                     .actionListener.postValue(Actions.GOTO_HOME_PAGE_ACTIVITY)
+            } else {
+                validateFailureCount(it)
             }
         }
         viewModel.failureAPICount.observe(this) {
             if (it != 0) {
-                InfoSheet().show(this) {
-                    title("Oh No")
-                    this.content("We are facing some problem. Can you check your network connectivity and try again.!")
-                    onNegative("Exit") {
-                        finishAffinity()
-                        exitProcess(0)
-                    }
-                    onPositive("Retry") {
-                        callAPI()
-                    }
+                validateFailureCount(viewModel.successAPICount.value?:0)
+            }
+        }
+    }
+
+    private fun validateFailureCount(successCount: Int) {
+        val failureCount = viewModel.failureAPICount.value?:0
+        if(failureCount.plus(successCount) == 4) {
+            InfoSheet().show(this) {
+                title("Oh No")
+                this.content("We are facing some problem. Can you check your network connectivity and try again.!")
+                onNegative("Exit") {
+                    finishAffinity()
+                    exitProcess(0)
+                }
+                onPositive("Retry") {
+                    callAPI()
                 }
             }
         }

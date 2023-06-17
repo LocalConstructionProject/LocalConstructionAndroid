@@ -65,6 +65,12 @@ class DashboardViewModel(
         commonModel.actionListener.postValue(Actions.SHOW_STAGE_ENTRY_EDIT_DIALOG)
     }
 
+    fun deleteStageEntryData(data: StageEntryRecord, stageDetails: ProjectStageDetail) {
+        projectStagesTabAdapterPosition.postValue(stageDetails)
+        stageEntryDataToEdit.postValue(Pair(data, stageDetails))
+        commonModel.actionListener.postValue(Actions.SHOW_STAGE_ENTRY_DELETE_DIALOG)
+    }
+
     fun editProjectData(data: ProjectDetail) {
         commonModel.selectedProjectDetail.postValue(data)
         commonModel.actionListener.postValue(Actions.SHOW_PROJECT_EDIT_DIALOG)

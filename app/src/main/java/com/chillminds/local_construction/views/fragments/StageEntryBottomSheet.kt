@@ -141,14 +141,25 @@ class StageEntryBottomSheet : BottomSheetDialogFragment() {
             return
         }
 
-        newEntry?.apply {
-            this.count = count.toLongOrNull() ?: 0L
-            this.totalPrice = totalPrice.toLong()
-            this.priceForTheDay = price?.toLongOrNull() ?: 0L
-            this.dateOfExecution = date.dateConversionReverse() + toAppendWithDate
-        }
         val entryRecords = ArrayList(currentStage.entryRecords)
-        entryRecords.add(newEntry)
+
+        viewModel.materialEntryRecord.value?.let { entry ->
+            entryRecords.firstOrNull { it._id == entry._id }?.apply {
+                this.count = count.toLongOrNull() ?: 0L
+                this.totalPrice = totalPrice.toLong()
+                this.priceForTheDay = price?.toLongOrNull() ?: 0L
+                this.dateOfExecution = date.dateConversionReverse() + toAppendWithDate
+            }
+        } ?: kotlin.run {
+            newEntry?.apply {
+                this.count = count.toLongOrNull() ?: 0L
+                this.totalPrice = totalPrice.toLong()
+                this.priceForTheDay = price?.toLongOrNull() ?: 0L
+                this.dateOfExecution = date.dateConversionReverse() + toAppendWithDate
+            }
+            entryRecords.add(newEntry)
+        }
+
         currentStage.entryRecords = entryRecords
         updateStageUnderSelectedProject(
             viewModel.commonModel.selectedProjectDetail.value!!,

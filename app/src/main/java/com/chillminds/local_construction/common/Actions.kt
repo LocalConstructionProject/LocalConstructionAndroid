@@ -13,6 +13,7 @@ object Actions {
 
     const val SHOW_PROJECT_EDIT_DIALOG = "Project edit dialog to update"
     const val SHOW_STAGE_ENTRY_EDIT_DIALOG = "Stage Entry edit dialog to update"
+    const val SHOW_STAGE_ENTRY_DELETE_DIALOG = "Stage Entry delete confirmation dialog"
     const val SHOW_MATERIAL_EDIT_DIALOG = "Material Edit dialog to update with fields"
     const val SHOW_LABOUR_EDIT_DIALOG = "Labour Edit dialog to update with fields"
 
