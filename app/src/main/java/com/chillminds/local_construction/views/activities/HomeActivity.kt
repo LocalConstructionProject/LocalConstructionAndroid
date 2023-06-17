@@ -52,11 +52,12 @@ class HomeActivity : AppCompatActivity() {
             }
         }
         commonModel.progressListener.observe(this) {
-            if(it.isNullOrEmptyOrBlank()){
+            if(!it.isNullOrEmptyOrBlank()){
                 when(it){
                     Actions.SHOW_PROGRESS_BAR -> showProgress()
                     Actions.CANCEL_PROGRESS_BAR -> cancelProgress()
                 }
+                commonModel.progressListener.postValue("")
             }
         }
     }

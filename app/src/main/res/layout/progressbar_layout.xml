@@ -4,19 +4,20 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@android:color/transparent"
+    android:background="@null"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="@dimen/_13sdp">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/_250sdp"
+        android:layout_height="@dimen/_300sdp"
         android:layout_margin="@dimen/_10sdp"
         android:minWidth="@dimen/_40sdp"
         android:minHeight="@dimen/_40sdp"
         android:scaleType="center"
+        android:background="@null"
         app:srcCompat="@drawable/loading_animation"
         tools:src="@drawable/loading_animation" />
 

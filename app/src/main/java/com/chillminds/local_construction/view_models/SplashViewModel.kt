@@ -56,12 +56,12 @@ class SplashViewModel(
 
     fun updateErrorCount() {
         val count = (failureAPICount.value ?: 0) + 1
-        failureAPICount.postValue(count)
+        failureAPICount.value = count
     }
 
     fun updateSuccessCount() {
         val count = (successAPICount.value ?: 0) + 1
-        successAPICount.postValue(count)
+        successAPICount.value = count
     }
 
     fun resetCount() {

@@ -1,6 +1,8 @@
 package com.chillminds.local_construction.common
 
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
@@ -49,6 +51,8 @@ class ProgressbarHelper(private val context: Context, var message: CharSequence?
         dialog = builder
             .setCancelable(cancelable)
             .create()
+
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         return dialog!!
     }
