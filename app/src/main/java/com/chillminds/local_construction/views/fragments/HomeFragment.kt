@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import com.chillminds.local_construction.common.Actions
 import com.chillminds.local_construction.databinding.FragmentHomeBinding
@@ -56,6 +57,7 @@ class HomeFragment : Fragment() {
                 ) {
                     val selectedProject =
                         parent.getItemAtPosition(position) as ProjectDetail
+                    viewModel.projectStagesTabPosition.value = -1
                     viewModel.selectProject(selectedProject)
                 }
 
@@ -65,10 +67,16 @@ class HomeFragment : Fragment() {
         observeFields()
     }
 
-    private fun setupTabBar(projectDetail: ProjectDetail) {
+    private fun setupTabBar(projectDetail: ProjectDetail, defaultPosition: Int = -1) {
         val tabAdapter = ProjectStagesTabAdapter(this, projectDetail)
 
         binding.viewPager.adapter = tabAdapter
+
+        if (defaultPosition != -1 && defaultPosition < projectDetail.stages.size && projectDetail.stages.isNotEmpty()) {
+            binding.viewPager.doOnPreDraw {
+                binding.viewPager.setCurrentItem(defaultPosition, true)
+            }
+        }
 
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = projectDetail.stages.map { it.name }[position]
@@ -78,6 +86,7 @@ class HomeFragment : Fragment() {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 val project = viewModel.commonModel.selectedProjectDetail.value
                 val stage = project?.stages?.elementAtOrNull(tab?.position ?: 0)
+                viewModel.projectStagesTabPosition.value = (tab?.position ?: -1)
                 viewModel.projectStagesTabAdapterPosition.postValue(stage)
             }
 
@@ -90,7 +99,7 @@ class HomeFragment : Fragment() {
     private fun observeFields() {
         viewModel.commonModel.selectedProjectDetail.observe(viewLifecycleOwner) {
             if (it != null) {
-                setupTabBar(it)
+                setupTabBar(it, viewModel.projectStagesTabPosition.value ?: -1)
             }
         }
         viewModel.commonModel.actionListener.observe(viewLifecycleOwner) {
@@ -160,75 +169,75 @@ class HomeFragment : Fragment() {
     }
 
 
-        private fun showChoiceOptionSheet() {
-            OptionSheet().show(requireActivity()) {
-                title("Choose any one")
-                with(
-                    Option("Stage"),
-                    Option("Entry Record"),
-                )
-                onPositive { index: Int, _: Option ->
-                    if (index == 0) {
-                        showStageCreationBottomSheet()
-                    } else {
-                        viewModel.updateEntryInformation()
-                        StageEntryBottomSheet.show(parentFragmentManager)
-                    }
-                }
-            }
-        }
-
-        private fun showStageCreationBottomSheet() {
-            val selectedProjectDetail = viewModel.commonModel.selectedProjectDetail.value
-            Pair(
-                selectedProjectDetail,
-                viewModel.commonModel.stagesData.value?.filter { stageDetails ->
-                    stageDetails.name !in (selectedProjectDetail?.stages?.map { it.name }
-                        ?: arrayListOf())
-                }
-            ).validate()?.let { (project, stages) ->
-                InputSheet().show(requireActivity()) {
-                    title("Stage Creation")
-                    with(InputSpinner {
-                        required()
-                        this.options(listOf("Select Stage") + stages.map { it.name })
-                        label("select Stage Name ")
-                    })
-                    onNegative { viewModel.commonModel.showSnackBar("Stage Creation Cancelled") }
-                    onPositive { result ->
-                        val index = result.getInt("0")
-                        if (index == 0) {
-                            viewModel.commonModel.showSnackBar("Select a stage")
-                            return@onPositive
-                        }
-                        val selectedStage = stages[index - 1]
-                        createStageUnderSelectedProject(project, selectedStage)
-                    }
-                }
-            } ?: run {
-                viewModel.commonModel.showSnackBar("Failed to create a stage")
-            }
-        }
-
-        private fun createStageUnderSelectedProject(
-            project: ProjectDetail,
-            stage: StageDetail
-        ) {
-            viewModel.createStage(project, stage).observe(viewLifecycleOwner) {
-                when (it.status) {
-                    ApiCallStatus.LOADING -> {
-                        viewModel.commonModel.showProgress()
-                    }
-                    ApiCallStatus.ERROR -> {
-                        viewModel.commonModel.cancelProgress()
-                        viewModel.commonModel.showSnackBar("Failed to create a stage.")
-                    }
-                    ApiCallStatus.SUCCESS -> {
-                        viewModel.commonModel.cancelProgress()
-                        viewModel.commonModel.showSnackBar("Stage Created Successfully.")
-                        viewModel.commonModel.actionListener.postValue(Actions.REFRESH_PROJECT_LIST)
-                    }
+    private fun showChoiceOptionSheet() {
+        OptionSheet().show(requireActivity()) {
+            title("Choose any one")
+            with(
+                Option("Stage"),
+                Option("Entry Record"),
+            )
+            onPositive { index: Int, _: Option ->
+                if (index == 0) {
+                    showStageCreationBottomSheet()
+                } else {
+                    viewModel.updateEntryInformation()
+                    StageEntryBottomSheet.show(parentFragmentManager)
                 }
             }
         }
     }
+
+    private fun showStageCreationBottomSheet() {
+        val selectedProjectDetail = viewModel.commonModel.selectedProjectDetail.value
+        Pair(
+            selectedProjectDetail,
+            viewModel.commonModel.stagesData.value?.filter { stageDetails ->
+                stageDetails.name !in (selectedProjectDetail?.stages?.map { it.name }
+                    ?: arrayListOf())
+            }
+        ).validate()?.let { (project, stages) ->
+            InputSheet().show(requireActivity()) {
+                title("Stage Creation")
+                with(InputSpinner {
+                    required()
+                    this.options(listOf("Select Stage") + stages.map { it.name })
+                    label("select Stage Name ")
+                })
+                onNegative { viewModel.commonModel.showSnackBar("Stage Creation Cancelled") }
+                onPositive { result ->
+                    val index = result.getInt("0")
+                    if (index == 0) {
+                        viewModel.commonModel.showSnackBar("Select a stage")
+                        return@onPositive
+                    }
+                    val selectedStage = stages[index - 1]
+                    createStageUnderSelectedProject(project, selectedStage)
+                }
+            }
+        } ?: run {
+            viewModel.commonModel.showSnackBar("Failed to create a stage")
+        }
+    }
+
+    private fun createStageUnderSelectedProject(
+        project: ProjectDetail,
+        stage: StageDetail
+    ) {
+        viewModel.createStage(project, stage).observe(viewLifecycleOwner) {
+            when (it.status) {
+                ApiCallStatus.LOADING -> {
+                    viewModel.commonModel.showProgress()
+                }
+                ApiCallStatus.ERROR -> {
+                    viewModel.commonModel.cancelProgress()
+                    viewModel.commonModel.showSnackBar("Failed to create a stage.")
+                }
+                ApiCallStatus.SUCCESS -> {
+                    viewModel.commonModel.cancelProgress()
+                    viewModel.commonModel.showSnackBar("Stage Created Successfully.")
+                    viewModel.commonModel.actionListener.postValue(Actions.REFRESH_PROJECT_LIST)
+                }
+            }
+        }
+    }
+}
