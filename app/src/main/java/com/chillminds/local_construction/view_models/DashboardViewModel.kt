@@ -38,7 +38,7 @@ class DashboardViewModel(
     }
 
     fun exportPdfFromProjectDashboard() {
-        commonModel.actionListener.postValue(Actions.EXPORT_PDF_FROM_DASHBOARD_STATISTICS)
+        commonModel.actionListener.postValue(Actions.CHECK_PERMISSION_FOR_STORAGE)
     }
 
     fun updateEntryInformation(

@@ -1,5 +1,6 @@
 package com.chillminds.local_construction.views.activities
 
+import android.Manifest
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -16,7 +17,9 @@ import com.chillminds.local_construction.repositories.remote.ApiCallStatus
 import com.chillminds.local_construction.utils.isNullOrEmptyOrBlank
 import com.chillminds.local_construction.view_models.DashboardViewModel
 import org.koin.android.ext.android.inject
+import permissions.dispatcher.*
 
+@RuntimePermissions
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomeBinding
@@ -47,19 +50,46 @@ class HomeActivity : AppCompatActivity() {
                     Actions.REFRESH_STAGE_LIST -> getStagesData()
                     Actions.REFRESH_LABOUR_LIST -> getLabourData()
                     Actions.REFRESH_PROJECT_LIST -> getProjectDetails()
+                    Actions.CHECK_PERMISSION_FOR_STORAGE -> exportPdfWithPermissionCheck()
                 }
                 commonModel.actionListener.postValue("")
             }
         }
         commonModel.progressListener.observe(this) {
-            if(!it.isNullOrEmptyOrBlank()){
-                when(it){
+            if (!it.isNullOrEmptyOrBlank()) {
+                when (it) {
                     Actions.SHOW_PROGRESS_BAR -> showProgress()
                     Actions.CANCEL_PROGRESS_BAR -> cancelProgress()
                 }
                 commonModel.progressListener.postValue("")
             }
         }
+    }
+
+    @NeedsPermission(
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+    )
+    fun exportPdf() {
+        commonModel.actionListener.postValue(Actions.EXPORT_PDF_FROM_DASHBOARD_STATISTICS)
+    }
+
+    @OnPermissionDenied(Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE,)
+    fun onPermissionDeniedForStorage(){
+        viewModel.commonModel.showSnackBar("Permission Denied")
+    }
+
+    @OnShowRationale(Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    fun showRationaleForStorage(request: PermissionRequest) {
+        //showRationaleDialog(R.string.permission_camera_rationale, request)
+        request.proceed()
+    }
+
+    @OnNeverAskAgain(Manifest.permission.CAMERA)
+    fun onCameraNeverAskAgain() {
+        commonModel.showSnackBar("Please Enable Permission in settings page.")
     }
 
     private fun getStagesData() {

@@ -77,6 +77,12 @@ dependencies {
     //coroutine
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
 
+    def permission_version = "4.9.2"
+    implementation "com.github.permissions-dispatcher:permissionsdispatcher:${permission_version}"
+    kapt "com.github.permissions-dispatcher:permissionsdispatcher-processor:${permission_version}"
+
+    implementation 'com.github.Gkemon:Android-XML-to-PDF-Generator:2.6.8'
+
     // network call
     def ok_http_3_version = "4.9.0"
     def retrofit_version = "2.9.0"
