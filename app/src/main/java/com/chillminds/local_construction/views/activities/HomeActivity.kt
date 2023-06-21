@@ -15,6 +15,7 @@ import com.chillminds.local_construction.databinding.ActivityHomeBinding
 import com.chillminds.local_construction.models.CommonModel
 import com.chillminds.local_construction.repositories.remote.ApiCallStatus
 import com.chillminds.local_construction.utils.isNullOrEmptyOrBlank
+import com.chillminds.local_construction.utils.isSdkHigherThan28
 import com.chillminds.local_construction.view_models.DashboardViewModel
 import org.koin.android.ext.android.inject
 import permissions.dispatcher.*
@@ -50,7 +51,7 @@ class HomeActivity : AppCompatActivity() {
                     Actions.REFRESH_STAGE_LIST -> getStagesData()
                     Actions.REFRESH_LABOUR_LIST -> getLabourData()
                     Actions.REFRESH_PROJECT_LIST -> getProjectDetails()
-                    Actions.CHECK_PERMISSION_FOR_STORAGE -> exportPdfWithPermissionCheck()
+                    Actions.CHECK_PERMISSION_FOR_STORAGE -> if(isSdkHigherThan28()) exportPdf() else exportPdfWithPermissionCheck()
                 }
                 commonModel.actionListener.postValue("")
             }

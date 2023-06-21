@@ -41,6 +41,8 @@ fun dip(value: Int): Int =
 fun Activity.getActivityRoot(): View =
     (findViewById<ViewGroup>(android.R.id.content)).getChildAt(0)
 
+fun isSdkHigherThan28() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+
 fun Activity.openPdfFile(dest: String) {
     val browserIntent = Intent(Intent.ACTION_VIEW)
     browserIntent.setDataAndType(getUriFromFile(dest), "application/pdf")
