@@ -23,28 +23,43 @@
 
         <TextView
             android:id="@+id/projectNameTextView"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="@dimen/_45sdp"
             android:gravity="center"
             android:text="@{viewModel.commonModel.dashboardProjectDetail.name}"
             android:textColor="?attr/title_text_color"
             android:textSize="@dimen/_14sdp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toStartOf="@+id/exportPdf"
+            app:layout_constraintStart_toEndOf="@+id/appCompatImageView"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/appCompatImageView"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            app:layout_constraintWidth="@dimen/_40sdp"
-            android:padding="@dimen/_10sdp"
-            app:layout_constrainedHeight="true"
             android:layout_marginStart="@dimen/_5sdp"
             android:onClick="@{(view)->viewModel.commonModel.goBack(view)}"
+            android:padding="@dimen/_10sdp"
+            app:layout_constrainedHeight="true"
             app:layout_constraintBottom_toBottomOf="@+id/projectNameTextView"
-            app:layout_constraintTop_toTopOf="@+id/projectNameTextView"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/projectNameTextView"
+            app:layout_constraintWidth="@dimen/_40sdp"
+            app:srcCompat="@drawable/ic_arrow_back" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/exportPdf"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:onClick="@{(view)->viewModel.exportPdfFromProjectDashboard()}"
+            android:padding="@dimen/_10sdp"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintBottom_toBottomOf="@+id/projectNameTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/projectNameTextView"
+            app:layout_constraintWidth="@dimen/_40sdp"
             app:srcCompat="@drawable/ic_arrow_back" />
 
         <View

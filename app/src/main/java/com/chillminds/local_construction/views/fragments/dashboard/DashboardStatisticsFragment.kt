@@ -65,7 +65,6 @@ class DashboardStatisticsFragment : Fragment() {
             if (!it.isNullOrEmptyOrBlank()) {
                 when (it) {
                     Actions.EXPORT_PDF_FROM_DASHBOARD_STATISTICS -> {
-                        viewModel.commonModel.showSnackBar("Coming Soon..!")
                         exportStatistics()
                     }
                 }
