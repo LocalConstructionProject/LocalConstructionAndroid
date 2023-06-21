@@ -10,18 +10,42 @@
             type="androidx.lifecycle.LifecycleOwner" />
 
         <variable
+            name="viewModel"
+            type="com.chillminds.local_construction.view_models.DashboardViewModel" />
+
+        <variable
             name="data"
             type="com.chillminds.local_construction.repositories.remote.dto.ProjectStageDetail" />
     </data>
 
-    <androidx.recyclerview.widget.RecyclerView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="?attr/background_color"
-        android:orientation="vertical"
-        app:lifeCycle="@{lifeCycle}"
-        app:setStagesEntryAdapter="@{data.entryRecords}"
-        app:stageDetails="@{data}"
-        tools:context=".views.fragments.StagesEntriesFragment" />
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?attr/background_color"
+            android:orientation="vertical"
+            app:lifeCycle="@{lifeCycle}"
+            app:setStagesEntryAdapter="@{data.entryRecords}"
+            app:stageDetails="@{data}"
+            tools:context=".views.fragments.StagesEntriesFragment" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_10sdp"
+            android:text="@string/export"
+            app:iconTint="?attr/background_color"
+            android:textColor="?attr/background_color"
+            android:backgroundTint="@color/button_color"
+            android:onClick="@{()->viewModel.exportPdfFromProjectDashboard()}"
+            app:icon="@drawable/ic_pdf"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

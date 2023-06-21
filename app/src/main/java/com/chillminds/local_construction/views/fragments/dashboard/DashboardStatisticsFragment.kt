@@ -75,15 +75,8 @@ class DashboardStatisticsFragment : Fragment() {
     private fun exportStatistics() {
         PdfGenerator.getBuilder()
             .setContext(requireActivity())
-            .fromViewIDSource()
-            .fromViewID(
-                requireActivity(), R.id.view2,
-                R.id.nameTextView,
-                R.id.textView,
-                R.id.textView4,
-                R.id.view,
-                R.id.recyclerView
-            )
+            .fromViewSource()
+            .fromViewList(listOf(binding.parentView, binding.recyclerView))
             .setFileName("PROJECT_DOCUMENT_" + getDateTime().dateConversion())
             .setFolderNameOrPath(resources.getString(R.string.app_name))
             .actionAfterPDFGeneration(PdfGenerator.ActionAfterPDFGeneration.OPEN)
@@ -103,7 +96,6 @@ class DashboardStatisticsFragment : Fragment() {
 
                 override fun showLog(log: String?) {
                     super.showLog(log)
-                    viewModel.commonModel.showSnackBar("Info - $log")
                     Logger.error(
                         "generatePdf", "log: $log"
                     )

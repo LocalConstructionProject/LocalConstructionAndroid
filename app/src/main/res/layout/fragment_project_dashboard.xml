@@ -55,12 +55,13 @@
             android:layout_height="match_parent"
             android:onClick="@{(view)->viewModel.exportPdfFromProjectDashboard()}"
             android:padding="@dimen/_10sdp"
+            app:tint="?attr/background_color"
             app:layout_constrainedHeight="true"
             app:layout_constraintBottom_toBottomOf="@+id/projectNameTextView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/projectNameTextView"
             app:layout_constraintWidth="@dimen/_40sdp"
-            app:srcCompat="@drawable/ic_arrow_back" />
+            app:srcCompat="@drawable/ic_pdf" />
 
         <View
             android:id="@+id/topView"

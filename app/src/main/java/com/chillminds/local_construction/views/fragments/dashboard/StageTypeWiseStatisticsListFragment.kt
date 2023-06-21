@@ -23,14 +23,14 @@ class StageTypeWiseStatisticsListFragment : Fragment() {
 
     var position: Int = 0
 
-    lateinit var binding : FragmentStageTypeWiseStatisticsListBinding
+    lateinit var binding: FragmentStageTypeWiseStatisticsListBinding
     val viewModel by inject<DashboardViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentStageTypeWiseStatisticsListBinding.inflate(inflater,container, false)
+        binding = FragmentStageTypeWiseStatisticsListBinding.inflate(inflater, container, false)
         position = arguments?.getInt("position") ?: 0
         binding.viewModel = viewModel
         binding.position = position
@@ -56,7 +56,7 @@ class StageTypeWiseStatisticsListFragment : Fragment() {
         PdfGenerator.getBuilder()
             .setContext(requireActivity())
             .fromViewSource()
-            .fromView(binding.view)
+            .fromViewList(listOf(binding.headingView, binding.recyclerView))
             .setFileName("PROJECT_DOCUMENT_" + getDateTime().dateConversion())
             .setFolderNameOrPath(resources.getString(R.string.app_name))
             .actionAfterPDFGeneration(PdfGenerator.ActionAfterPDFGeneration.OPEN)
@@ -76,7 +76,6 @@ class StageTypeWiseStatisticsListFragment : Fragment() {
 
                 override fun showLog(log: String?) {
                     super.showLog(log)
-                    viewModel.commonModel.showSnackBar("Info - $log")
                     Logger.error(
                         "generatePdf", "log: $log"
                     )

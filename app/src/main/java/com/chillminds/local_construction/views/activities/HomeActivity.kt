@@ -51,7 +51,7 @@ class HomeActivity : AppCompatActivity() {
                     Actions.REFRESH_STAGE_LIST -> getStagesData()
                     Actions.REFRESH_LABOUR_LIST -> getLabourData()
                     Actions.REFRESH_PROJECT_LIST -> getProjectDetails()
-                    Actions.CHECK_PERMISSION_FOR_STORAGE -> if(isSdkHigherThan28()) exportPdf() else exportPdfWithPermissionCheck()
+                    Actions.CHECK_PERMISSION_FOR_STORAGE -> exportPdfWithPermissionCheck()
                 }
                 commonModel.actionListener.postValue("")
             }

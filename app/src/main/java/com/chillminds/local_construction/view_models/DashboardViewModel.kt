@@ -11,6 +11,7 @@ import com.chillminds.local_construction.repositories.remote.Resource
 import com.chillminds.local_construction.repositories.remote.dto.*
 import com.chillminds.local_construction.utils.dateConversion
 import com.chillminds.local_construction.utils.getDateTime
+import com.chillminds.local_construction.utils.isSdkHigherThan28
 
 class DashboardViewModel(
     application: Application,
@@ -38,7 +39,16 @@ class DashboardViewModel(
     }
 
     fun exportPdfFromProjectDashboard() {
-        commonModel.actionListener.postValue(Actions.CHECK_PERMISSION_FOR_STORAGE)
+        if (isSdkHigherThan28()) {
+            commonModel.actionListener.postValue(Actions.EXPORT_PDF_FROM_DASHBOARD_STATISTICS)
+        } else {
+            commonModel.actionListener.postValue(Actions.CHECK_PERMISSION_FOR_STORAGE)
+        }
+    }
+
+    fun showStageEntryChildOptionsDeleteSheet(data: StageEntryRecord, stageDetails: ProjectStageDetail) {
+        projectStagesTabAdapterPosition.postValue(stageDetails)
+        stageEntryDataToEdit.postValue(Pair(data, stageDetails))
     }
 
     fun updateEntryInformation(
@@ -47,7 +57,9 @@ class DashboardViewModel(
         materialEntryRecord.postValue(stageEntry)
         count.postValue((stageEntry?.count ?: 1).toString())
         price.postValue((stageEntry?.priceForTheDay ?: 1).toString())
-        date.postValue(stageEntry?.dateOfExecution?.dateConversion() ?: getDateTime().dateConversion())
+        date.postValue(
+            stageEntry?.dateOfExecution?.dateConversion() ?: getDateTime().dateConversion()
+        )
     }
 
     fun showBottomSheetToCreateProject() {
@@ -62,18 +74,6 @@ class DashboardViewModel(
     fun editLabourInfo(data: LabourData) {
         labourDataToEdit.postValue(data)
         commonModel.actionListener.postValue(Actions.SHOW_LABOUR_EDIT_DIALOG)
-    }
-
-    fun editStageEntryData(data: StageEntryRecord, stageDetails: ProjectStageDetail) {
-        projectStagesTabAdapterPosition.postValue(stageDetails)
-        stageEntryDataToEdit.postValue(Pair(data, stageDetails))
-        commonModel.actionListener.postValue(Actions.SHOW_STAGE_ENTRY_EDIT_DIALOG)
-    }
-
-    fun deleteStageEntryData(data: StageEntryRecord, stageDetails: ProjectStageDetail) {
-        projectStagesTabAdapterPosition.postValue(stageDetails)
-        stageEntryDataToEdit.postValue(Pair(data, stageDetails))
-        commonModel.actionListener.postValue(Actions.SHOW_STAGE_ENTRY_DELETE_DIALOG)
     }
 
     fun editProjectData(data: ProjectDetail) {

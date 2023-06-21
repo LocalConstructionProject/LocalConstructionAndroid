@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
+import com.chillminds.local_construction.R
 import com.chillminds.local_construction.common.Actions
 import com.chillminds.local_construction.databinding.FragmentHomeBinding
 import com.chillminds.local_construction.repositories.remote.ApiCallStatus
@@ -24,6 +25,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.maxkeppeler.sheets.info.InfoSheet
 import com.maxkeppeler.sheets.input.InputSheet
 import com.maxkeppeler.sheets.input.type.spinner.InputSpinner
+import com.maxkeppeler.sheets.option.DisplayMode
 import com.maxkeppeler.sheets.option.Option
 import com.maxkeppeler.sheets.option.OptionSheet
 import org.koin.android.ext.android.inject
@@ -111,17 +113,32 @@ class HomeFragment : Fragment() {
                     Actions.SHOW_SHEET_TO_CHOOSE_OPTION_ON_HOME -> {
                         showChoiceOptionSheet()
                     }
-                    Actions.SHOW_STAGE_ENTRY_EDIT_DIALOG -> {
-                        viewModel.stageEntryDataToEdit.value?.validate()?.let { pairRecord ->
-                            viewModel.updateEntryInformation(pairRecord.first)
-                            StageEntryBottomSheet.show(parentFragmentManager)
-                        } ?: kotlin.run {
-                            viewModel.commonModel.actionListener.postValue("Failed to edit entry.")
-                        }
-                    }
-                    Actions.SHOW_STAGE_ENTRY_DELETE_DIALOG -> {
-                        viewModel.stageEntryDataToEdit.value?.validate()?.let { pairRecord ->
-                            showDeleteConfirmationDialog(pairRecord)
+                    Actions.SHOW_STAGE_ENTRY_OPTIONS_DIALOG -> {
+                        OptionSheet().show(requireActivity()) {
+                            title("Select Option")
+                            displayMode(DisplayMode.LIST)
+                            this.with(mutableListOf<Option>().apply {
+                                add(Option(R.drawable.ic_delete, "Delete"))
+                                add(Option(R.drawable.ic_edit, "Edit"))
+                            })
+                            onNegative { viewModel.commonModel.showSnackBar("Operation Cancelled") }
+                            onPositive { index: Int, _: Option ->
+                                when (index) {
+                                    0 -> viewModel.stageEntryDataToEdit.value?.validate()
+                                        ?.let { pairRecord ->
+                                            showDeleteConfirmationDialog(pairRecord)
+                                        }
+                                    else -> {
+                                        viewModel.stageEntryDataToEdit.value?.validate()
+                                            ?.let { pairRecord ->
+                                                viewModel.updateEntryInformation(pairRecord.first)
+                                                StageEntryBottomSheet.show(parentFragmentManager)
+                                            } ?: kotlin.run {
+                                            viewModel.commonModel.actionListener.postValue("Failed to edit entry.")
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }

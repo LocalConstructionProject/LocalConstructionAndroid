@@ -81,7 +81,7 @@ dependencies {
     implementation "com.github.permissions-dispatcher:permissionsdispatcher:${permission_version}"
     kapt "com.github.permissions-dispatcher:permissionsdispatcher-processor:${permission_version}"
 
-    implementation 'com.github.Gkemon:Android-XML-to-PDF-Generator:2.6.8'
+    implementation 'com.github.Yabaze:Android-XML-to-PDF-Generator:V1.0.0'
 
     // network call
     def ok_http_3_version = "4.9.0"
