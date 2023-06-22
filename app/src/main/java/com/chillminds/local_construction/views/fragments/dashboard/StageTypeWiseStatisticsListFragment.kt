@@ -97,6 +97,4 @@ class StageTypeWiseStatisticsListFragment : Fragment() {
             return f
         }
     }
-
-
 }
