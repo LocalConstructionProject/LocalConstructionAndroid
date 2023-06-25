@@ -50,6 +50,7 @@ class DashboardViewModel(
     fun showStageEntryChildOptionsDeleteSheet(data: StageEntryRecord, stageDetails: ProjectStageDetail) {
         projectStagesTabAdapterPosition.postValue(stageDetails)
         stageEntryDataToEdit.postValue(Pair(data, stageDetails))
+        commonModel.actionListener.postValue(Actions.SHOW_STAGE_ENTRY_OPTIONS_DIALOG)
     }
 
     fun updateEntryInformation(
