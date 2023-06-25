@@ -27,6 +27,7 @@ class DashboardViewModel(
         MutableLiveData<ProjectStageDetail?>().apply { value = null }
     val spinnerSelectedPosition = MutableLiveData<Int>().apply { value = 0 }
     val projectStagesTabPosition = MutableLiveData<Int>().apply { value = -1 }
+    val projectDashboardPosition = MutableLiveData<Int>().apply { value = -1 }
 
     val materialEntryRecord = MutableLiveData<StageEntryRecord?>()
     val newMaterialEntrySpinnerSelection = MutableLiveData<StageEntryRecord?>()

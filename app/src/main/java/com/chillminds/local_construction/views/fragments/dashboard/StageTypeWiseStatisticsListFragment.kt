@@ -45,7 +45,9 @@ class StageTypeWiseStatisticsListFragment : Fragment() {
             if (!it.isNullOrEmptyOrBlank()) {
                 when (it) {
                     Actions.EXPORT_PDF_FROM_DASHBOARD_STATISTICS -> {
-                        exportStatistics()
+                        if (position == (viewModel.projectDashboardPosition.value ?: -1)) {
+                            exportStatistics()
+                        }
                     }
                 }
             }
