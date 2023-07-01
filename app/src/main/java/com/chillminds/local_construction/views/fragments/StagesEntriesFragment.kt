@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.chillminds.local_construction.R
 import com.chillminds.local_construction.common.Actions
@@ -12,7 +11,6 @@ import com.chillminds.local_construction.common.Logger
 import com.chillminds.local_construction.databinding.FragmentStagesEntriesBinding
 import com.chillminds.local_construction.repositories.remote.dto.ProjectStageDetail
 import com.chillminds.local_construction.utils.dateConversion
-import com.chillminds.local_construction.utils.getDateTime
 import com.chillminds.local_construction.utils.isNullOrEmptyOrBlank
 import com.chillminds.local_construction.view_models.DashboardViewModel
 import com.gkemon.XMLtoPDF.PdfGenerator
@@ -58,7 +56,9 @@ class StagesEntriesFragment() : Fragment() {
             if (!it.isNullOrEmptyOrBlank()) {
                 when (it) {
                     Actions.EXPORT_PDF_FROM_DASHBOARD_STATISTICS -> {
-                        exportStatistics()
+                        if(position == (viewModel.projectStagesTabPosition.value ?: -1)) {
+                            exportStatistics()
+                        }
                     }
                 }
             }

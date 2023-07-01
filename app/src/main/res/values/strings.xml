@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">LocalConstruction</string>
+    <string name="app_name">Lovely Constructions</string>
     <string name="title_activity_home">HomeActivity</string>
     <!-- Strings used for fragments for navigation -->
     <string name="next">Next</string>

@@ -27,6 +27,7 @@ class DashboardViewModel(
         MutableLiveData<ProjectStageDetail?>().apply { value = null }
     val spinnerSelectedPosition = MutableLiveData<Int>().apply { value = 0 }
     val projectStagesTabPosition = MutableLiveData<Int>().apply { value = -1 }
+    val projectDashboardPosition = MutableLiveData<Int>().apply { value = -1 }
 
     val materialEntryRecord = MutableLiveData<StageEntryRecord?>()
     val newMaterialEntrySpinnerSelection = MutableLiveData<StageEntryRecord?>()
@@ -49,6 +50,7 @@ class DashboardViewModel(
     fun showStageEntryChildOptionsDeleteSheet(data: StageEntryRecord, stageDetails: ProjectStageDetail) {
         projectStagesTabAdapterPosition.postValue(stageDetails)
         stageEntryDataToEdit.postValue(Pair(data, stageDetails))
+        commonModel.actionListener.postValue(Actions.SHOW_STAGE_ENTRY_OPTIONS_DIALOG)
     }
 
     fun updateEntryInformation(

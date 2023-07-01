@@ -134,7 +134,7 @@ class HomeFragment : Fragment() {
                                                 viewModel.updateEntryInformation(pairRecord.first)
                                                 StageEntryBottomSheet.show(parentFragmentManager)
                                             } ?: kotlin.run {
-                                            viewModel.commonModel.actionListener.postValue("Failed to edit entry.")
+                                            viewModel.commonModel.showSnackBar("Failed to edit entry.")
                                         }
                                     }
                                 }
