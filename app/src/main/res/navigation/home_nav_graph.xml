@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_dashboardFragment_to_projectDashboardFragment"
             app:destination="@id/projectDashboardFragment" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_statisticsExpandedDetailsFragment"
+            app:destination="@id/statisticsExpandedDetailsFragment" />
     </fragment>
 
     <fragment
@@ -35,6 +38,14 @@
     <fragment
         android:id="@+id/projectDashboardFragment"
         android:name="com.chillminds.local_construction.views.fragments.dashboard.ProjectDashboardFragment"
-        android:label="ProjectDashboardFragment" />
+        android:label="ProjectDashboardFragment" >
+        <action
+            android:id="@+id/action_projectDashboardFragment_to_statisticsExpandedDetailsFragment"
+            app:destination="@id/statisticsExpandedDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/statisticsExpandedDetailsFragment"
+        android:name="com.chillminds.local_construction.views.fragments.dashboard.StatisticsExpandedDetailsFragment"
+        android:label="StatisticsExpandedDetailsFragment" />
 
 </navigation>

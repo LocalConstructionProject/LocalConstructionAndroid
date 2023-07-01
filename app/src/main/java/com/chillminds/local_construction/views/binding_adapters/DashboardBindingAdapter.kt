@@ -95,18 +95,20 @@ fun setupProjectDashboardInformation(
         LinearLayoutManager(recyclerView.context, LinearLayoutManager.VERTICAL, false)
     val dashboardEntryDetails = arrayListOf<DashboardStatisticsDetails>()
     projectDetail?.stages?.forEach { stageDetails ->
-        dashboardEntryDetails.addAll(stageDetails.entryRecords.filter {
+        val entries = stageDetails.entryRecords.filter {
             when (position) {
                 0 -> it.type == StageEntryType.LABOUR || it.type == StageEntryType.MATERIAL
                 1 -> it.type == StageEntryType.MATERIAL
                 else -> it.type == StageEntryType.LABOUR
             }
         }
-            .map {
+        dashboardEntryDetails.addAll(
+            entries.map {
                 it.toDashboardStatisticsDetails(
                     projectDetail,
-                    stageDetails
-                )
+                    stageDetails,
+                    entries
+                    )
             })
     }
 
@@ -122,6 +124,7 @@ fun setupProjectDashboardInformation(
                     data.stageName,
                     data.stageEntry,
                     entryName,
+                    entries.map { it.stageEntry },
                     entries.sumOf { it.count },
                     entries.sumOf { it.totalPrice })
             }
@@ -147,7 +150,8 @@ fun setupDashboardInformation(
             dashboardEntryDetails.addAll(stageDetails.entryRecords.map {
                 it.toDashboardStatisticsDetails(
                     projectDetail,
-                    stageDetails
+                    stageDetails,
+                    stageDetails.entryRecords
                 )
             })
         }
@@ -165,6 +169,7 @@ fun setupDashboardInformation(
                     data.stageName,
                     data.stageEntry,
                     entryName,
+                    entries.map { it.stageEntry },
                     entries.sumOf { it.count },
                     entries.sumOf { it.totalPrice })
             }

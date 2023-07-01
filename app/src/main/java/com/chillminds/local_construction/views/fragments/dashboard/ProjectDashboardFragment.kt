@@ -5,8 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.chillminds.local_construction.R
+import com.chillminds.local_construction.common.Actions
 import com.chillminds.local_construction.common.Constants
 import com.chillminds.local_construction.databinding.FragmentProjectDashboardBinding
+import com.chillminds.local_construction.utils.isNullOrEmptyOrBlank
 import com.chillminds.local_construction.view_models.DashboardViewModel
 import com.chillminds.local_construction.views.adapters.ProjectDashBoardTabAdapter
 import com.google.android.material.tabs.TabLayout
@@ -32,10 +36,25 @@ class ProjectDashboardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setTabBar()
+        observeActionsListener()
+    }
+
+    private fun observeActionsListener() {
+        viewModel.commonModel.actionListener.observe(viewLifecycleOwner) {
+            if (!it.isNullOrEmptyOrBlank()) {
+                when (it) {
+                    Actions.SHOW_DASHBOARD_STATISTICS_EXPANSION_DETAILS ->
+                        if (findNavController().currentDestination?.id == R.id.projectDashboardFragment) {
+                            findNavController().navigate(R.id.action_projectDashboardFragment_to_statisticsExpandedDetailsFragment)
+                        }
+                }
+            }
+        }
     }
 
     private fun setTabBar() {
-        val tabAdapter = ProjectDashBoardTabAdapter(this,viewModel.commonModel.dashboardProjectDetail.value)
+        val tabAdapter =
+            ProjectDashBoardTabAdapter(this, viewModel.commonModel.dashboardProjectDetail.value)
 
         binding.viewPager.adapter = tabAdapter
 

@@ -45,9 +45,15 @@ class DashboardFragment : Fragment() {
                     Actions.SHOW_PROJECT_CREATION_SHEET -> showProjectCreationSheet()
 
                     Actions.SHOW_PROJECT_EDIT_DIALOG -> showProjectUpdateSheet()
+
                     Actions.SHOW_PROJECT_DELETION_CONFIRMATION_DIALOG -> showProjectDeleteConfirmation()
 
                     Actions.ON_SELECT_PROJECT_FROM_DASHBOARD -> findNavController().navigate(R.id.action_dashboardFragment_to_projectDashboardFragment)
+
+                    Actions.SHOW_DASHBOARD_STATISTICS_EXPANSION_DETAILS ->
+                        if (findNavController().currentDestination?.id == R.id.dashboardFragment) {
+                            findNavController().navigate(R.id.action_dashboardFragment_to_statisticsExpandedDetailsFragment)
+                        }
                 }
             }
         }

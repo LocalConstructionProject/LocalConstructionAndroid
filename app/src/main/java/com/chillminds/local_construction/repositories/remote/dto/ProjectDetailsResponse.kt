@@ -133,6 +133,7 @@ data class StageEntryRecord(
     fun toDashboardStatisticsDetails(
         projectDetail: ProjectDetail,
         stageDetail: ProjectStageDetail,
+        entries: List<StageEntryRecord>,
     ) = DashboardStatisticsDetails(
         projectDetail.id,
         projectDetail.name,
@@ -140,6 +141,7 @@ data class StageEntryRecord(
         stageDetail.name,
         this,
         this.name,
+        entries,
         this.count,
         this.totalPrice
     )
@@ -152,6 +154,7 @@ data class DashboardStatisticsDetails(
     val stageName: String,
     val stageEntry: StageEntryRecord,
     val entryName: String,
+    val entries: List<StageEntryRecord>,
     val count: Long,
     var totalPrice: Long,
 )

@@ -30,6 +30,7 @@ class DashboardViewModel(
     val projectDashboardPosition = MutableLiveData<Int>().apply { value = -1 }
 
     val materialEntryRecord = MutableLiveData<StageEntryRecord?>()
+    val selectedDashboardStatistics = MutableLiveData<DashboardStatisticsDetails?>()
     val newMaterialEntrySpinnerSelection = MutableLiveData<StageEntryRecord?>()
     val count = MutableLiveData<String>().apply { value = "1" }
     val price = MutableLiveData<String>().apply { value = "1" }
@@ -47,7 +48,10 @@ class DashboardViewModel(
         }
     }
 
-    fun showStageEntryChildOptionsDeleteSheet(data: StageEntryRecord, stageDetails: ProjectStageDetail) {
+    fun showStageEntryChildOptionsDeleteSheet(
+        data: StageEntryRecord,
+        stageDetails: ProjectStageDetail
+    ) {
         projectStagesTabAdapterPosition.postValue(stageDetails)
         stageEntryDataToEdit.postValue(Pair(data, stageDetails))
         commonModel.actionListener.postValue(Actions.SHOW_STAGE_ENTRY_OPTIONS_DIALOG)
@@ -268,4 +272,8 @@ class DashboardViewModel(
         projectStagesTabAdapterPosition.postValue(stageToUpdate)
     }
 
+    fun showDashboardEntryExpansion(dashboardStatistics: DashboardStatisticsDetails) {
+        selectedDashboardStatistics.postValue(dashboardStatistics)
+        commonModel.actionListener.postValue(Actions.SHOW_DASHBOARD_STATISTICS_EXPANSION_DETAILS)
+    }
 }
