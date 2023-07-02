@@ -59,7 +59,10 @@ class DashboardViewModel(
             val materialCount =
                 entryList.filter { it.type == StageEntryType.MATERIAL }.sumOf { it.count }
                     .toString()
-            listInfo.postValue(ListInfo(count, totalPrice, labourCount, materialCount))
+            val others = entryList.groupBy { it.name }.map {
+                Pair(it.key, it.value.sumOf { it.count })
+            }
+            listInfo.postValue(ListInfo(count, totalPrice, labourCount, materialCount, others))
         }
         commonModel.actionListener.postValue(Actions.SHOW_LIST_INFO_DIALOG)
     }
@@ -116,7 +119,10 @@ class DashboardViewModel(
         val materialCount =
             finalData.filter { it.stageEntry.type == StageEntryType.MATERIAL }.sumOf { it.count }
                 .toString()
-        listInfo.postValue(ListInfo(count, totalPrice, labourCount, materialCount))
+        val others = finalData.groupBy { it.entryName }.map {
+            Pair(it.key, it.value.sumOf { it.count })
+        }
+        listInfo.postValue(ListInfo(count, totalPrice, labourCount, materialCount, others))
         commonModel.actionListener.postValue(Actions.SHOW_LIST_INFO_DIALOG)
     }
 
@@ -173,7 +179,10 @@ class DashboardViewModel(
             val materialCount =
                 entryList.filter { it.type == StageEntryType.MATERIAL }.sumOf { it.count }
                     .toString()
-            listInfo.postValue(ListInfo(count, totalPrice, labourCount, materialCount))
+            val others = entryList.groupBy { it.name }.map {
+                Pair(it.key, it.value.sumOf { it.count })
+            }
+            listInfo.postValue(ListInfo(count, totalPrice, labourCount, materialCount, others))
         }
         commonModel.actionListener.postValue(Actions.SHOW_LIST_INFO_DIALOG)
     }

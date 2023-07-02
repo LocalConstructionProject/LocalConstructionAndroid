@@ -72,14 +72,22 @@ class HomeActivity : AppCompatActivity() {
 
     private fun showInfoDialog() {
         viewModel.listInfo.value?.let { info ->
+            val optionList = mutableListOf(
+                Option(R.drawable.ic_data_exploration, info.materialCount, "Materials"),
+                Option(R.drawable.ic_man, info.labourCount, "Labours"),
+                Option(R.drawable.ic_copyright, info.count, "Total Count"),
+                Option(R.drawable.ic_money, info.totalPrice, "Total Price"),
+            )
+            optionList.addAll(info.others.map {
+                Option(
+                    R.drawable.ic_data_exploration,
+                    it.second.toString(),
+                    it.first
+                )
+            })
             OptionSheet().show(this) {
                 title("Overall Info")
-                with(
-                    Option(R.drawable.ic_data_exploration, info.materialCount, "Materials"),
-                    Option(R.drawable.ic_man, info.labourCount, "Labours"),
-                    Option(R.drawable.ic_copyright, info.count, "Total Count"),
-                    Option(R.drawable.ic_money, info.totalPrice, "Total Price"),
-                )
+                with(optionList)
                 displayMode(DisplayMode.GRID_VERTICAL)
                 columns(2)
             }
