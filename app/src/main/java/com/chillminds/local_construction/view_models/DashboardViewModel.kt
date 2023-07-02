@@ -50,6 +50,20 @@ class DashboardViewModel(
         }
     }
 
+    fun showStageWiseInfo(data: ProjectStageDetail) {
+        data.entryRecords.let { entryList ->
+            val count = entryList.sumOf { it.count }.toString()
+            val totalPrice = entryList.sumOf { it.totalPrice }.toString()
+            val labourCount =
+                entryList.filter { it.type == StageEntryType.LABOUR }.sumOf { it.count }.toString()
+            val materialCount =
+                entryList.filter { it.type == StageEntryType.MATERIAL }.sumOf { it.count }
+                    .toString()
+            listInfo.postValue(ListInfo(count, totalPrice, labourCount, materialCount))
+        }
+        commonModel.actionListener.postValue(Actions.SHOW_LIST_INFO_DIALOG)
+    }
+
     fun showInformation(
         projectList: List<ProjectDetail>?,
         sortByPosition: Int
@@ -97,9 +111,11 @@ class DashboardViewModel(
         val count = finalData.sumOf { it.count }.toString()
         val totalPrice = finalData.sumOf { it.totalPrice }.toString()
         val labourCount =
-            finalData.filter { it.stageEntry.type == StageEntryType.LABOUR }.sumOf { it.count }.toString()
+            finalData.filter { it.stageEntry.type == StageEntryType.LABOUR }.sumOf { it.count }
+                .toString()
         val materialCount =
-            finalData.filter { it.stageEntry.type == StageEntryType.MATERIAL }.sumOf { it.count }.toString()
+            finalData.filter { it.stageEntry.type == StageEntryType.MATERIAL }.sumOf { it.count }
+                .toString()
         listInfo.postValue(ListInfo(count, totalPrice, labourCount, materialCount))
         commonModel.actionListener.postValue(Actions.SHOW_LIST_INFO_DIALOG)
     }
@@ -146,6 +162,20 @@ class DashboardViewModel(
     fun deleteProjectData(data: ProjectDetail) {
         commonModel.projectToDelete.postValue(data)
         commonModel.actionListener.postValue(Actions.SHOW_PROJECT_DELETION_CONFIRMATION_DIALOG)
+    }
+
+    fun showInfo(data: ProjectDetail) {
+        data.stages.flatMap { it.entryRecords }.let { entryList ->
+            val count = entryList.sumOf { it.count }.toString()
+            val totalPrice = entryList.sumOf { it.totalPrice }.toString()
+            val labourCount =
+                entryList.filter { it.type == StageEntryType.LABOUR }.sumOf { it.count }.toString()
+            val materialCount =
+                entryList.filter { it.type == StageEntryType.MATERIAL }.sumOf { it.count }
+                    .toString()
+            listInfo.postValue(ListInfo(count, totalPrice, labourCount, materialCount))
+        }
+        commonModel.actionListener.postValue(Actions.SHOW_LIST_INFO_DIALOG)
     }
 
     fun onSelectSpecificProjectFromDashboard(data: ProjectDetail) {
