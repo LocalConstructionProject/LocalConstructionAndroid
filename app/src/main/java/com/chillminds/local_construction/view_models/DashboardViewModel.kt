@@ -28,9 +28,11 @@ class DashboardViewModel(
     val spinnerSelectedPosition = MutableLiveData<Int>().apply { value = 0 }
     val projectStagesTabPosition = MutableLiveData<Int>().apply { value = -1 }
     val projectDashboardPosition = MutableLiveData<Int>().apply { value = -1 }
+    val expandedDashboardSpinnerPosition = MutableLiveData<Int>().apply { value = -1 }
 
     val materialEntryRecord = MutableLiveData<StageEntryRecord?>()
     val selectedDashboardStatistics = MutableLiveData<DashboardStatisticsDetails?>()
+    val listInfo = MutableLiveData<ListInfo?>()
     val newMaterialEntrySpinnerSelection = MutableLiveData<StageEntryRecord?>()
     val count = MutableLiveData<String>().apply { value = "1" }
     val price = MutableLiveData<String>().apply { value = "1" }
@@ -46,6 +48,60 @@ class DashboardViewModel(
         } else {
             commonModel.actionListener.postValue(Actions.CHECK_PERMISSION_FOR_STORAGE)
         }
+    }
+
+    fun showInformation(
+        projectList: List<ProjectDetail>?,
+        sortByPosition: Int
+    ) {
+        val dashboardEntryDetails = arrayListOf<DashboardStatisticsDetails>()
+        projectList?.forEach { projectDetail ->
+            projectDetail.stages.forEach { stageDetails ->
+                dashboardEntryDetails.addAll(stageDetails.entryRecords.map {
+                    it.toDashboardStatisticsDetails(
+                        projectDetail,
+                        stageDetails,
+                        stageDetails.entryRecords
+                    )
+                })
+            }
+        }
+
+        val listToDisplay =
+            dashboardEntryDetails.groupBy { it.entryName }.filter { it.value.isNotEmpty() }.map {
+                val entryName = it.key
+                val entries = it.value
+                entries.first().let { data ->
+                    DashboardStatisticsDetails(
+                        data.projectId,
+                        data.projectName,
+                        data.stageId,
+                        data.stageName,
+                        data.stageEntry,
+                        entryName,
+                        entries.map { it.stageEntry },
+                        entries.sumOf { it.count },
+                        entries.sumOf { it.totalPrice })
+                }
+            }
+
+        val finalData = when (sortByPosition) {
+            1 -> listToDisplay.sortedBy { it.count }
+            2 -> listToDisplay.sortedBy { it.totalPrice }
+            3 -> listToDisplay.filter { it.stageEntry.type == StageEntryType.LABOUR }
+                .sortedBy { it.stageId }
+            4 -> listToDisplay.filter { it.stageEntry.type == StageEntryType.MATERIAL }
+                .sortedBy { it.stageId }
+            else -> listToDisplay
+        }
+        val count = finalData.sumOf { it.count }.toString()
+        val totalPrice = finalData.sumOf { it.totalPrice }.toString()
+        val labourCount =
+            finalData.filter { it.stageEntry.type == StageEntryType.LABOUR }.sumOf { it.count }.toString()
+        val materialCount =
+            finalData.filter { it.stageEntry.type == StageEntryType.MATERIAL }.sumOf { it.count }.toString()
+        listInfo.postValue(ListInfo(count, totalPrice, labourCount, materialCount))
+        commonModel.actionListener.postValue(Actions.SHOW_LIST_INFO_DIALOG)
     }
 
     fun showStageEntryChildOptionsDeleteSheet(

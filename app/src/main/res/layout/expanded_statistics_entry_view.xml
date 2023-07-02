@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="title"
+            type="String" />
+
+        <variable
+            name="totalPrice"
+            type="String" />
+
+        <variable
+            name="count"
+            type="String" />
+
+        <variable
+            name="isLastElement"
+            type="Boolean" />
+
+        <variable
+            name="stageEntryRecordList"
+            type="com.chillminds.local_construction.repositories.remote.dto.StageEntryRecordList" />
+
+        <variable
+            name="lifeCycle"
+            type="androidx.lifecycle.LifecycleOwner" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_5sdp"
+        android:layout_marginVertical="@dimen/_2sdp"
+        android:background="?attr/card_background"
+        android:padding="@dimen/_10sdp">
+
+        <View
+            android:id="@+id/backgroundView"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
+            android:background="?attr/background_color"
+            app:layout_constraintBottom_toBottomOf="@+id/totalPriceTextView"
+            app:layout_constraintTop_toTopOf="@+id/totalPriceTextView" />
+
+        <TextView
+            android:id="@+id/nameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_5sdp"
+            android:elegantTextHeight="true"
+            android:letterSpacing="0.2"
+            android:lineSpacingExtra="@dimen/_5sdp"
+            android:padding="@dimen/_2sdp"
+            android:text="@{title}"
+            android:textColor="?attr/title_text_color"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Sample" />
+
+        <TextView
+            android:id="@+id/totalPriceTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_5sdp"
+            android:elegantTextHeight="true"
+            android:letterSpacing="0.2"
+            android:lineSpacingExtra="@dimen/_5sdp"
+            android:padding="@dimen/_2sdp"
+            android:text="@{` ( ` + count + ` ) ` +totalPrice}"
+            android:textColor="?attr/title_text_color"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Sample" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="nameTextView,backgroundView,totalPriceTextView"
+            app:layout_constraintTop_toBottomOf="@id/backgroundView" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            app:layout_constraintTop_toBottomOf="@id/barrier"
+            app:lifeCycle="@{lifeCycle}"
+            app:setExpandedStatisticsChildAdapter="@{stageEntryRecordList.entryRecords}" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_100sdp"
+            app:animateVisibility="@{isLastElement}"
+            app:layout_constraintTop_toBottomOf="@+id/recycler_view" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

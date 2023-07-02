@@ -15,8 +15,10 @@ import com.chillminds.local_construction.databinding.ActivityHomeBinding
 import com.chillminds.local_construction.models.CommonModel
 import com.chillminds.local_construction.repositories.remote.ApiCallStatus
 import com.chillminds.local_construction.utils.isNullOrEmptyOrBlank
-import com.chillminds.local_construction.utils.isSdkHigherThan28
 import com.chillminds.local_construction.view_models.DashboardViewModel
+import com.maxkeppeler.sheets.option.DisplayMode
+import com.maxkeppeler.sheets.option.Option
+import com.maxkeppeler.sheets.option.OptionSheet
 import org.koin.android.ext.android.inject
 import permissions.dispatcher.*
 
@@ -52,6 +54,7 @@ class HomeActivity : AppCompatActivity() {
                     Actions.REFRESH_LABOUR_LIST -> getLabourData()
                     Actions.REFRESH_PROJECT_LIST -> getProjectDetails()
                     Actions.CHECK_PERMISSION_FOR_STORAGE -> exportPdfWithPermissionCheck()
+                    Actions.SHOW_LIST_INFO_DIALOG -> showInfoDialog()
                 }
                 commonModel.actionListener.postValue("")
             }
@@ -67,6 +70,24 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+    private fun showInfoDialog() {
+        viewModel.listInfo.value?.let { info ->
+            OptionSheet().show(this) {
+                title("Overall Info")
+                with(
+                    Option(R.drawable.ic_data_exploration, info.materialCount, "Materials"),
+                    Option(R.drawable.ic_man, info.labourCount, "Labours"),
+                    Option(R.drawable.ic_copyright, info.count, "Total Count"),
+                    Option(R.drawable.ic_money, info.totalPrice, "Total Price"),
+                )
+                displayMode(DisplayMode.GRID_VERTICAL)
+                columns(2)
+            }
+        } ?: run {
+            viewModel.commonModel.showSnackBar("Something went wrong. Try again later.")
+        }
+    }
+
     @NeedsPermission(
         Manifest.permission.READ_EXTERNAL_STORAGE,
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -75,14 +96,18 @@ class HomeActivity : AppCompatActivity() {
         commonModel.actionListener.postValue(Actions.EXPORT_PDF_FROM_DASHBOARD_STATISTICS)
     }
 
-    @OnPermissionDenied(Manifest.permission.READ_EXTERNAL_STORAGE,
-        Manifest.permission.WRITE_EXTERNAL_STORAGE,)
-    fun onPermissionDeniedForStorage(){
+    @OnPermissionDenied(
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+    )
+    fun onPermissionDeniedForStorage() {
         viewModel.commonModel.showSnackBar("Permission Denied")
     }
 
-    @OnShowRationale(Manifest.permission.READ_EXTERNAL_STORAGE,
-        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    @OnShowRationale(
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE
+    )
     fun showRationaleForStorage(request: PermissionRequest) {
         //showRationaleDialog(R.string.permission_camera_rationale, request)
         request.proceed()

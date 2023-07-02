@@ -1,7 +1,6 @@
 package com.chillminds.local_construction.views.adapters
 
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.MutableLiveData
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.chillminds.local_construction.common.Constants
 import com.chillminds.local_construction.repositories.remote.dto.ProjectDetail
@@ -10,7 +9,7 @@ import com.chillminds.local_construction.views.fragments.dashboard.DashboardStat
 import com.chillminds.local_construction.views.fragments.dashboard.ProjectListFragment
 import com.chillminds.local_construction.views.fragments.dashboard.StageTypeWiseStatisticsListFragment
 
-class DashBoardTabAdapter(booksTabFragment: Fragment) : FragmentStateAdapter(booksTabFragment) {
+class DashBoardTabAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
     override fun getItemCount() = Constants.dashboardDashList.size
 
@@ -22,8 +21,8 @@ class DashBoardTabAdapter(booksTabFragment: Fragment) : FragmentStateAdapter(boo
     }
 }
 
-class ProjectStagesTabAdapter(booksTabFragment: Fragment, val projectDetail: ProjectDetail) :
-    FragmentStateAdapter(booksTabFragment) {
+class ProjectStagesTabAdapter(fragment: Fragment, val projectDetail: ProjectDetail) :
+    FragmentStateAdapter(fragment) {
 
     override fun getItemCount() = projectDetail.stages.size
 
@@ -31,9 +30,9 @@ class ProjectStagesTabAdapter(booksTabFragment: Fragment, val projectDetail: Pro
 }
 
 class ProjectDashBoardTabAdapter(
-    booksTabFragment: Fragment,
+    fragment: Fragment,
     val projectDetail: ProjectDetail?
-) : FragmentStateAdapter(booksTabFragment) {
+) : FragmentStateAdapter(fragment) {
 
     override fun getItemCount() = Constants.projectDashboardTabBar.size
 

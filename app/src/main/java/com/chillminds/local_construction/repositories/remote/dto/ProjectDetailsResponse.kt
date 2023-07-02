@@ -116,6 +116,13 @@ data class ProjectStageDetail(
     var entryRecords: List<StageEntryRecord> = arrayListOf(),
 )
 
+data class ListInfo(
+    var count: String,
+    var totalPrice: String,
+    var labourCount: String,
+    var materialCount: String
+)
+
 data class StageEntryRecord(
     val _id: UUID = UUID.randomUUID(),
     val name: String,

@@ -4,7 +4,9 @@ import androidx.databinding.BindingAdapter
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.chillminds.local_construction.common.Logger
 import com.chillminds.local_construction.repositories.remote.dto.*
+import com.chillminds.local_construction.utils.dateConversion
 import com.chillminds.local_construction.utils.toDateBelowOreo
 import com.chillminds.local_construction.views.adapters.*
 
@@ -82,6 +84,52 @@ fun setStagesEntryChildAdapter(
         )
 
 }
+@BindingAdapter("lifeCycle", "setExpandedStatisticsChildAdapter", requireAll = false)
+fun setExpandedStatisticsChildAdapter(
+    recyclerView: RecyclerView,
+    lifeCycle: LifecycleOwner,
+    entryRecords: List<StageEntryRecord>?,
+) {
+
+    recyclerView.layoutManager =
+        LinearLayoutManager(recyclerView.context, LinearLayoutManager.VERTICAL, false)
+
+    recyclerView.adapter =
+        ProjectExpandedStatisticsRecyclerViewChildAdapter(
+            lifeCycle,
+            entryRecords ?: arrayListOf(),
+        )
+
+}
+
+@BindingAdapter("lifeCycle", "position", "setStatisticsDataAdapter", requireAll = false)
+fun setStatisticsDataAdapter(
+    recyclerView: RecyclerView,
+    lifeCycle: LifecycleOwner,
+    position: Int,
+    data: DashboardStatisticsDetails,
+) {
+
+    recyclerView.layoutManager =
+        LinearLayoutManager(recyclerView.context, LinearLayoutManager.VERTICAL, false)
+
+    Logger.error("$position", "$data")
+
+    val mapWithEntries = when (position) {
+        1 -> data.entries.groupBy { it.dateOfExecution.dateConversion() }
+        else -> data.entries.groupBy { it.name }
+    }
+
+    recyclerView.adapter =
+        DashboardDetailedRecyclerViewAdapter(
+            lifeCycle,
+            mapWithEntries,
+            when(position){
+                1-> mapWithEntries.keys.sortedBy { it.toDateBelowOreo() }.toSet()
+                else -> mapWithEntries.keys
+            }
+        )
+}
 
 @BindingAdapter("lifeCycle", "position", "setupProjectDashboardInformation", requireAll = false)
 fun setupProjectDashboardInformation(
@@ -108,7 +156,7 @@ fun setupProjectDashboardInformation(
                     projectDetail,
                     stageDetails,
                     entries
-                    )
+                )
             })
     }
 

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -23,10 +24,83 @@
         android:layout_height="match_parent"
         tools:context=".views.fragments.dashboard.StatisticsExpandedDetailsFragment">
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/titleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="@dimen/_10sdp"
+            android:text="@{dashboardData.entryName}"
+            android:textColor="?attr/title_text_color"
+            android:textSize="@dimen/_14sdp"
+            android:textStyle="bold"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.05"
+            app:layout_constraintStart_toEndOf="@+id/appCompatImageView"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/appCompatImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:onClick="@{(view)->viewModel.commonModel.goBack(view)}"
+            android:padding="@dimen/_10sdp"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintBottom_toBottomOf="@+id/titleTextView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/titleTextView"
+            app:layout_constraintWidth="@dimen/_40sdp"
+            app:srcCompat="@drawable/ic_arrow_back" />
+
         <TextView
+            android:id="@+id/textView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_25sdp"
+            android:elegantTextHeight="true"
+            android:letterSpacing="0.2"
+            android:lineSpacingExtra="@dimen/_5sdp"
+            android:padding="@dimen/_2sdp"
+            android:text="Sort By"
+            android:textColor="?attr/title_text_color"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/expandedDashboardSpinner"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/expandedDashboardSpinner" />
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/expandedDashboardSpinner"
+            android:layout_width="@dimen/_200sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginVertical="@dimen/_3sdp"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView5"
+            app:layout_constraintTop_toBottomOf="@+id/titleTextView" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="@{dashboardData.entries.toString()}" />
+            android:layout_marginVertical="@dimen/_5sdp"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintBottom_toTopOf="@+id/exportButton"
+            app:layout_constraintTop_toBottomOf="@+id/expandedDashboardSpinner"
+            app:lifeCycle="@{lifeCycle}"
+            app:position="@{viewModel.expandedDashboardSpinnerPosition}"
+            app:setStatisticsDataAdapter="@{dashboardData}" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/exportButton"
+            style="@style/button_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Export as PDF"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

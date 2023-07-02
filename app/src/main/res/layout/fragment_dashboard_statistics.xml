@@ -14,7 +14,6 @@
             type="com.chillminds.local_construction.view_models.DashboardViewModel" />
     </data>
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -128,22 +127,49 @@
             android:layout_height="match_parent"
             android:layout_marginVertical="@dimen/_3sdp"
             app:layout_constrainedHeight="true"
-            app:layout_constraintBottom_toTopOf="@+id/exportButton"
+            app:layout_constraintBottom_toTopOf="@+id/buttonLayout"
             app:layout_constraintTop_toBottomOf="@+id/parentView"
             app:lifeCycle="@{lifeCycle}"
             app:setupDashboardInformation="@{viewModel.commonModel.projectList}"
             app:sortByPosition="@{viewModel.spinnerSelectedPosition}" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/exportButton"
-            style="@style/button_style"
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/buttonLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Export as PDF"
+            app:cornerRadius="@dimen/_50sdp"
+            android:layout_margin="@dimen/_1sdp"
             android:onClick="@{()->viewModel.exportPdfFromProjectDashboard()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent" >
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/exportButton"
+                style="@style/button_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Export"
+                android:layout_marginHorizontal="@dimen/_5sdp"
+                app:cornerRadius="@dimen/_50sdp"
+                android:onClick="@{()->viewModel.exportPdfFromProjectDashboard()}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/infoButton"
+                style="@style/button_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{()->viewModel.showInformation(viewModel.commonModel.projectList,viewModel.spinnerSelectedPosition)}"
+                android:text="Info"
+                app:cornerRadius="@dimen/_50sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/exportButton"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
