@@ -121,7 +121,7 @@ data class ListInfo(
     var totalPrice: String,
     var labourCount: String,
     var materialCount: String,
-    val others: List<Pair<String, Long>>
+    val others: List<Pair<String, String>>
 )
 
 data class StageEntryRecord(
