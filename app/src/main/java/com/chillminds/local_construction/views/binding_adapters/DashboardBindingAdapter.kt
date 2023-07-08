@@ -9,6 +9,7 @@ import com.chillminds.local_construction.repositories.remote.dto.*
 import com.chillminds.local_construction.utils.dateConversion
 import com.chillminds.local_construction.utils.toDateBelowOreo
 import com.chillminds.local_construction.views.adapters.*
+import java.util.UUID
 
 @BindingAdapter("lifeCycle", "setLabourListAdapter", requireAll = false)
 fun setLabourListAdapter(

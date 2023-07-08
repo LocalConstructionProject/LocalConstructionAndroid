@@ -102,6 +102,18 @@
             app:position="@{position}"
             app:setupProjectDashboardInformation="@{viewModel.commonModel.dashboardProjectDetail}" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/infoButton"
+            style="@style/button_style"
+            android:layout_margin="@dimen/_10sdp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{()->viewModel.showInformationForProjectWiseRecord()}"
+            android:text="Info"
+            app:cornerRadius="@dimen/_50sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>
