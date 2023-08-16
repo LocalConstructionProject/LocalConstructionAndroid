@@ -110,9 +110,11 @@ class HomeFragment : Fragment() {
                     Actions.SHOW_CREATE_STAGE_DIALOG -> {
                         showStageCreationBottomSheet()
                     }
+
                     Actions.SHOW_SHEET_TO_CHOOSE_OPTION_ON_HOME -> {
                         showChoiceOptionSheet()
                     }
+
                     Actions.SHOW_STAGE_ENTRY_OPTIONS_DIALOG -> {
                         OptionSheet().show(requireActivity()) {
                             title("Select Option")
@@ -128,6 +130,7 @@ class HomeFragment : Fragment() {
                                         ?.let { pairRecord ->
                                             showDeleteConfirmationDialog(pairRecord)
                                         }
+
                                     else -> {
                                         viewModel.stageEntryDataToEdit.value?.validate()
                                             ?.let { pairRecord ->
@@ -172,10 +175,12 @@ class HomeFragment : Fragment() {
                 ApiCallStatus.LOADING -> {
                     viewModel.commonModel.showProgress()
                 }
+
                 ApiCallStatus.ERROR -> {
                     viewModel.commonModel.cancelProgress()
                     viewModel.commonModel.showSnackBar("Failed to delete an entry.")
                 }
+
                 ApiCallStatus.SUCCESS -> {
                     viewModel.commonModel.cancelProgress()
                     viewModel.commonModel.showSnackBar("Entry Record deleted Successfully.")
@@ -192,13 +197,16 @@ class HomeFragment : Fragment() {
             with(
                 Option("Stage"),
                 Option("Entry Record"),
+                Option("Payment Details"),
             )
             onPositive { index: Int, _: Option ->
-                if (index == 0) {
-                    showStageCreationBottomSheet()
-                } else {
-                    viewModel.updateEntryInformation()
-                    StageEntryBottomSheet.show(parentFragmentManager)
+                when (index) {
+                    0 -> showStageCreationBottomSheet()
+                    1 -> {
+                        viewModel.updateEntryInformation()
+                        StageEntryBottomSheet.show(parentFragmentManager)
+                    }
+                    2 -> PaymentDetailUpsertBottomSheet.show(parentFragmentManager)
                 }
             }
         }
@@ -245,10 +253,12 @@ class HomeFragment : Fragment() {
                 ApiCallStatus.LOADING -> {
                     viewModel.commonModel.showProgress()
                 }
+
                 ApiCallStatus.ERROR -> {
                     viewModel.commonModel.cancelProgress()
                     viewModel.commonModel.showSnackBar("Failed to create a stage.")
                 }
+
                 ApiCallStatus.SUCCESS -> {
                     viewModel.commonModel.cancelProgress()
                     viewModel.commonModel.showSnackBar("Stage Created Successfully.")

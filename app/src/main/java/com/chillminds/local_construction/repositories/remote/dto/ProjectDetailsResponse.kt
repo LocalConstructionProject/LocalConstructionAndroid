@@ -81,6 +81,7 @@ data class ProjectDetail(
     var location: String,
     var contact: Long?,
     var stages: List<ProjectStageDetail> = arrayListOf(),
+    var paymentDetails: List<ProjectPaymentDetail> = arrayListOf(),
 )
 
 data class ProjectCreationRequest(
@@ -90,6 +91,13 @@ data class ProjectCreationRequest(
     val location: String,
     val contact: Long?,
     val stages: List<ProjectStageDetail> = arrayListOf(),
+)
+
+data class ProjectPaymentDetail(
+    @SerializedName("_id") val id: UUID = UUID.randomUUID(),
+    var paymentType: PaymentType,
+    var dateOfPayment: String,
+    var payment: Long?,
 )
 
 data class MaterialUpdateRequest(

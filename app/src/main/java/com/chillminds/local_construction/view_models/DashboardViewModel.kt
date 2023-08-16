@@ -31,15 +31,24 @@ class DashboardViewModel(
     val expandedDashboardSpinnerPosition = MutableLiveData<Int>().apply { value = -1 }
 
     val materialEntryRecord = MutableLiveData<StageEntryRecord?>()
+    val projectPaymentDetailToUpdate = MutableLiveData<ProjectPaymentDetail?>()
     val selectedDashboardStatistics = MutableLiveData<DashboardStatisticsDetails?>()
     val listInfo = MutableLiveData<ListInfo?>()
+    val projectPaymentDetailsToShow = MutableLiveData<ArrayList<ProjectPaymentDetail>?>()
     val newMaterialEntrySpinnerSelection = MutableLiveData<StageEntryRecord?>()
     val count = MutableLiveData<String>().apply { value = "1" }
     val price = MutableLiveData<String>().apply { value = "1" }
+    val paymentType = MutableLiveData<PaymentType>().apply { value = PaymentType.CASH }
+    val paymentValue = MutableLiveData<String>().apply { value = "1" }
     val date = MutableLiveData<String>().apply { value = getDateTime() }
+    val paymentDate = MutableLiveData<String>().apply { value = getDateTime() }
 
     fun onSelectDateToEntry() {
         commonModel.actionListener.postValue(Actions.SHOW_DATE_BOTTOM_SHEET)
+    }
+
+    fun onSelectDateForPayment() {
+        commonModel.actionListener.postValue(Actions.SHOW_DATE_BOTTOM_SHEET_FOR_PAYMENT_DATE)
     }
 
     fun exportPdfFromProjectDashboard() {
@@ -115,7 +124,8 @@ class DashboardViewModel(
             listToDisplay.filter { it.stageEntry.type == StageEntryType.LABOUR }.sumOf { it.count }
                 .toString()
         val materialCount =
-            listToDisplay.filter { it.stageEntry.type == StageEntryType.MATERIAL }.sumOf { it.count }
+            listToDisplay.filter { it.stageEntry.type == StageEntryType.MATERIAL }
+                .sumOf { it.count }
                 .toString()
         val others = listToDisplay.groupBy { it.entryName }.map {
             Pair(
@@ -257,6 +267,11 @@ class DashboardViewModel(
         commonModel.actionListener.postValue(Actions.SHOW_LIST_INFO_DIALOG)
     }
 
+    fun showPaymentInfo(data: ProjectDetail) {
+        projectPaymentDetailsToShow.postValue(ArrayList(data.paymentDetails))
+        commonModel.actionListener.postValue(Actions.SHOW_LIST_PAYMENT_INFO_DIALOG)
+    }
+
     fun onSelectSpecificProjectFromDashboard(data: ProjectDetail) {
         commonModel.dashboardProjectDetail.postValue(data)
         commonModel.actionListener.postValue(Actions.ON_SELECT_PROJECT_FROM_DASHBOARD)
@@ -270,8 +285,16 @@ class DashboardViewModel(
         commonModel.actionListener.postValue(Actions.DISMISS_STAGE_ENTRY_BOTTOM_SHEET)
     }
 
+    fun dismissPaymentEntryBottomSheet() {
+        commonModel.actionListener.postValue(Actions.DISMISS_PAYMENT_ENTRY_BOTTOM_SHEET)
+    }
+
     fun insertOrUpdateEntry() {
         commonModel.actionListener.postValue(Actions.INSERT_OR_VALIDATE_ENTRY)
+    }
+
+    fun insertOrUpdatePaymentEntry() {
+        commonModel.actionListener.postValue(Actions.INSERT_OR_VALIDATE_PAYMENT_ENTRY)
     }
 
     fun createProject(name: String, location: String, contact: Long) = liveData {
@@ -347,6 +370,28 @@ class DashboardViewModel(
                 it.id = stage.id
                 it.startedDate = stage.startedDate
                 it.entryRecords = stage.entryRecords
+            }
+        }
+        emit(Resource.loading())
+        try {
+            emit(
+                Resource.success(
+                    repository.updateProject(
+                        project
+                    )
+                )
+            )
+        } catch (e: Exception) {
+            emit(Resource.error(null, "${e.message}"))
+        }
+    }
+
+    fun updatePayment(project: ProjectDetail, stage: ProjectPaymentDetail) = liveData {
+        project.paymentDetails.forEach {
+            if (it.id == stage.id) {
+                it.paymentType = stage.paymentType
+                it.dateOfPayment = stage.dateOfPayment
+                it.payment = stage.payment
             }
         }
         emit(Resource.loading())

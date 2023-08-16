@@ -14,7 +14,9 @@ import com.chillminds.local_construction.common.Logger
 import com.chillminds.local_construction.databinding.ActivityHomeBinding
 import com.chillminds.local_construction.models.CommonModel
 import com.chillminds.local_construction.repositories.remote.ApiCallStatus
+import com.chillminds.local_construction.utils.beginWithUpperCase
 import com.chillminds.local_construction.utils.isNullOrEmptyOrBlank
+import com.chillminds.local_construction.utils.toCamelCase
 import com.chillminds.local_construction.view_models.DashboardViewModel
 import com.maxkeppeler.sheets.option.DisplayMode
 import com.maxkeppeler.sheets.option.Option
@@ -55,6 +57,7 @@ class HomeActivity : AppCompatActivity() {
                     Actions.REFRESH_PROJECT_LIST -> getProjectDetails()
                     Actions.CHECK_PERMISSION_FOR_STORAGE -> exportPdfWithPermissionCheck()
                     Actions.SHOW_LIST_INFO_DIALOG -> showInfoDialog()
+                    Actions.SHOW_LIST_PAYMENT_INFO_DIALOG -> showPaymentInfoDialog()
                 }
                 commonModel.actionListener.postValue("")
             }
@@ -67,6 +70,25 @@ class HomeActivity : AppCompatActivity() {
                 }
                 commonModel.progressListener.postValue("")
             }
+        }
+    }
+
+    private fun showPaymentInfoDialog() {
+        viewModel.projectPaymentDetailsToShow.value?.let { info ->
+            val optionList = info.map {
+                Option(
+                    R.drawable.ic_money,
+                    "${it.paymentType.name.beginWithUpperCase()} - ${it.payment}",
+                    it.dateOfPayment
+                )
+            }
+            OptionSheet().show(this) {
+                title("Payment Info")
+                with(optionList.toMutableList())
+                displayMode(DisplayMode.LIST)
+            }
+        } ?: run {
+            viewModel.commonModel.showSnackBar("Something went wrong. Try again later.")
         }
     }
 
@@ -133,9 +155,11 @@ class HomeActivity : AppCompatActivity() {
                     Logger.error("SUCCESS", response.toString())
                     viewModel.commonModel.stagesData.postValue(response.data?.data)
                 }
+
                 ApiCallStatus.ERROR -> {
                     Logger.error("ERROR", response.toString())
                 }
+
                 ApiCallStatus.LOADING -> {
 
                 }
@@ -150,9 +174,11 @@ class HomeActivity : AppCompatActivity() {
                     Logger.error("Labour Data", response.data.toString())
                     viewModel.commonModel.labourData.postValue(response.data?.data)
                 }
+
                 ApiCallStatus.ERROR -> {
                     Logger.error("ERROR", response.toString())
                 }
+
                 ApiCallStatus.LOADING -> {
 
                 }
@@ -167,9 +193,11 @@ class HomeActivity : AppCompatActivity() {
                     Logger.error("Material Details", response.data.toString())
                     viewModel.commonModel.materialData.postValue(response.data?.data)
                 }
+
                 ApiCallStatus.ERROR -> {
                     Logger.error("ERROR", response.toString())
                 }
+
                 ApiCallStatus.LOADING -> {
 
                 }
@@ -198,9 +226,11 @@ class HomeActivity : AppCompatActivity() {
                     }
 
                 }
+
                 ApiCallStatus.ERROR -> {
                     Logger.error("ERROR", response.toString())
                 }
+
                 ApiCallStatus.LOADING -> {
 
                 }
