@@ -127,9 +127,9 @@ class StageEntryBottomSheet : BottomSheetDialogFragment() {
         val toAppendWithDate = newEntry?.dateOfExecution?.substring(10)
 
         val totalPrice =
-            (viewModel.count.value?.toIntOrNull() ?: 1) * (viewModel.price.value?.toIntOrNull()
-                ?: 0)
-        if (count.isNullOrEmptyOrBlank() || count == "0" || count?.toLongOrNull() == null) {
+            (viewModel.count.value?.toDoubleOrNull() ?: 1.0) * (viewModel.price.value?.toDoubleOrNull()
+                ?: 0.0)
+        if (count.isNullOrEmptyOrBlank() || count == "0" || count?.toDoubleOrNull() == null) {
             viewModel.commonModel.showSnackBar("Enter valid count")
             return
         }
@@ -143,15 +143,15 @@ class StageEntryBottomSheet : BottomSheetDialogFragment() {
 
         viewModel.materialEntryRecord.value?.let { entry ->
             entryRecords.firstOrNull { it._id == entry._id }?.apply {
-                this.count = count.toLongOrNull() ?: 0L
-                this.totalPrice = totalPrice.toLong()
+                this.count = count.toDoubleOrNull() ?: 0.0
+                this.totalPrice = totalPrice
                 this.priceForTheDay = price?.toLongOrNull() ?: 0L
                 this.dateOfExecution = date.dateConversionReverse() + toAppendWithDate
             }
         } ?: kotlin.run {
             newEntry?.apply {
-                this.count = count.toLongOrNull() ?: 0L
-                this.totalPrice = totalPrice.toLong()
+                this.count = count.toDoubleOrNull() ?: 0.0
+                this.totalPrice = totalPrice
                 this.priceForTheDay = price?.toLongOrNull() ?: 0L
                 this.dateOfExecution = date.dateConversionReverse() + toAppendWithDate
             }

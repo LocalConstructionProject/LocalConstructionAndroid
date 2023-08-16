@@ -20,7 +20,7 @@ fun setAnimatedVisibility(target: View, isVisible: Boolean) {
 
 @BindingAdapter("count","setTotalPrice", requireAll = false)
 fun setTotalPrice(target: TextView, count: String?, price:String?) {
-    val totalPrice = ((count?:"1").toLongOrNull()?:1) * ((price?:"1").toLongOrNull()?:1)
+    val totalPrice = ((count?:"1").toDoubleOrNull()?:1.0) * ((price?:"1").toDoubleOrNull()?:1.0)
     val text = "Total Price - $totalPrice"
     target.text = text
 }

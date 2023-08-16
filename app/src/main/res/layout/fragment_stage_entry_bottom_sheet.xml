@@ -51,7 +51,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/_10sdp"
                 android:background="@null"
-                android:inputType="number"
+                android:inputType="numberDecimal"
                 android:text="@={viewModel.count}" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -69,7 +69,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/_10sdp"
                 android:background="@null"
-                android:inputType="number"
+                android:inputType="numberDecimal"
                 android:text="@={viewModel.price}" />
 
         </com.google.android.material.textfield.TextInputLayout>

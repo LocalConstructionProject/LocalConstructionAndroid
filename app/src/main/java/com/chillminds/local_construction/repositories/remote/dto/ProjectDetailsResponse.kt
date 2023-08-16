@@ -32,7 +32,7 @@ data class MaterialData(
     var amount: String,
     val id: String,
 ) {
-    fun toStageEntry(count: Long = 0, totalPrice: Long = 0) =
+    fun toStageEntry(count: Double = 0.0, totalPrice: Double = 0.0) =
         StageEntryRecord(
             name = this.name,
             stageTypeId = this.id,
@@ -63,7 +63,7 @@ data class LabourData(
     var price: Int,
     val id: String,
 ) {
-    fun toStageEntry(count: Long = 0, totalPrice: Long = 0) =
+    fun toStageEntry(count: Double = 0.0, totalPrice: Double = 0.0) =
         StageEntryRecord(
             name = this.name,
             stageTypeId = this.id,
@@ -139,9 +139,9 @@ data class StageEntryRecord(
     val type: StageEntryType,
     val insertedDate: String = getDateTime(),
     var dateOfExecution: String = getDateTime(),
-    var count: Long,
+    var count: Double,
     var priceForTheDay: Long,
-    var totalPrice: Long,
+    var totalPrice: Double,
 ) {
 
     fun getDate() = dateOfExecution.dateConversion()
@@ -171,8 +171,8 @@ data class DashboardStatisticsDetails(
     val stageEntry: StageEntryRecord,
     val entryName: String,
     val entries: List<StageEntryRecord>,
-    val count: Long,
-    var totalPrice: Long,
+    val count: Double,
+    var totalPrice: Double,
 )
 
 data class StageEntryRecordList(
