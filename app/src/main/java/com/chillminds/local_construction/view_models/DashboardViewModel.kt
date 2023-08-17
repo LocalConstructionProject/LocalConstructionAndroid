@@ -268,7 +268,7 @@ class DashboardViewModel(
     }
 
     fun showPaymentInfo(data: ProjectDetail) {
-        projectPaymentDetailsToShow.postValue(ArrayList(data.paymentDetails))
+        projectPaymentDetailsToShow.postValue(ArrayList(data.paymentDetails ?: arrayListOf()))
         commonModel.actionListener.postValue(Actions.SHOW_LIST_PAYMENT_INFO_DIALOG)
     }
 
@@ -387,13 +387,16 @@ class DashboardViewModel(
     }
 
     fun updatePayment(project: ProjectDetail, stage: ProjectPaymentDetail) = liveData {
-        project.paymentDetails.forEach {
+        val paymentDetails = (project.paymentDetails ?: arrayListOf()) + listOf(stage)
+        project.paymentDetails = paymentDetails
+
+        /*project.paymentDetails.forEach {
             if (it.id == stage.id) {
                 it.paymentType = stage.paymentType
                 it.dateOfPayment = stage.dateOfPayment
                 it.payment = stage.payment
             }
-        }
+        }*/
         emit(Resource.loading())
         try {
             emit(
