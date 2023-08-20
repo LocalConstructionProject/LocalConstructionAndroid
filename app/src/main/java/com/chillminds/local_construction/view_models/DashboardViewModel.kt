@@ -486,7 +486,11 @@ class DashboardViewModel(
     }
 
     fun showDashboardEntryExpansion(dashboardStatistics: DashboardStatisticsDetails) {
-        selectedDashboardStatistics.postValue(dashboardStatistics)
-        commonModel.actionListener.postValue(Actions.SHOW_DASHBOARD_STATISTICS_EXPANSION_DETAILS)
+        if (dashboardStatistics.projectId != "DUMMY") {
+            selectedDashboardStatistics.postValue(dashboardStatistics)
+            commonModel.actionListener.postValue(Actions.SHOW_DASHBOARD_STATISTICS_EXPANSION_DETAILS)
+        } else {
+            commonModel.showSnackBar("${dashboardStatistics.projectName} - ${dashboardStatistics.totalPrice}")
+        }
     }
 }

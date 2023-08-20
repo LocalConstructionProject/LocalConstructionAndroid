@@ -63,15 +63,15 @@
             tools:text="Zec 3:7" />
 
         <TextView
-            android:layout_width="@dimen/_30sdp"
+            android:layout_width="@dimen/_45sdp"
             android:layout_height="wrap_content"
-            android:text="@{`( `+ data.count + ` )`}"
+            android:text="@{`` + data.count}"
             android:textColor="?attr/subtitle_text_color"
             android:textSize="@dimen/_12sdp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/nameTextView"
             app:layout_constraintEnd_toStartOf="@+id/textView"
-            app:layout_constraintHorizontal_bias="0.9"
+            app:layout_constraintHorizontal_bias="0.925"
             app:layout_constraintStart_toEndOf="@+id/nameTextView"
             app:layout_constraintTop_toTopOf="parent" />
 

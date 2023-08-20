@@ -79,7 +79,7 @@ class HomeActivity : AppCompatActivity() {
                 Option(
                     R.drawable.ic_money,
                     "${it.paymentType.name.beginWithUpperCase()} - ${it.payment}",
-                    it.dateOfPayment
+                    it.dateOfPayment.subSequence(0,10).toString()
                 )
             }
             if(optionList.isNullOrEmpty()) {
