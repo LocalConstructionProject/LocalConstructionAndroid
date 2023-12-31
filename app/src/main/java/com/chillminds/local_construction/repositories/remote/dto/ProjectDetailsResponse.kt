@@ -81,7 +81,7 @@ data class ProjectDetail(
     var location: String,
     var contact: Long?,
     var stages: List<ProjectStageDetail> = arrayListOf(),
-    var paymentDetails: List<ProjectPaymentDetail>? = arrayListOf(),
+    var paymentDetails: List<ProjectPaymentDetail> = arrayListOf(),
 )
 
 data class ProjectCreationRequest(
@@ -91,6 +91,7 @@ data class ProjectCreationRequest(
     val location: String,
     val contact: Long?,
     val stages: List<ProjectStageDetail> = arrayListOf(),
+    var paymentDetails: List<ProjectPaymentDetail> = arrayListOf(),
 )
 
 data class ProjectPaymentDetail(
