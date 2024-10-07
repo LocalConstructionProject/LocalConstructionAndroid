@@ -8,6 +8,8 @@ import com.chillminds.local_construction.views.fragments.StagesEntriesFragment
 import com.chillminds.local_construction.views.fragments.dashboard.DashboardStatisticsFragment
 import com.chillminds.local_construction.views.fragments.dashboard.ProjectListFragment
 import com.chillminds.local_construction.views.fragments.dashboard.StageTypeWiseStatisticsListFragment
+import com.chillminds.local_construction.views.fragments.rental_system.RentalProductListFragment
+import com.chillminds.local_construction.views.fragments.rental_system.RentalReportListFragment
 
 class DashBoardTabAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
@@ -17,6 +19,18 @@ class DashBoardTabAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
         return when (position) {
             1 -> ProjectListFragment()
             else -> DashboardStatisticsFragment()
+        }
+    }
+}
+
+class RentDashBoardTabAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
+
+    override fun getItemCount() = Constants.rentDashboardDashList.size
+
+    override fun createFragment(position: Int): Fragment {
+        return when (position) {
+            0 -> RentalReportListFragment()
+            else -> RentalProductListFragment()
         }
     }
 }

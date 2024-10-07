@@ -16,7 +16,6 @@ import com.chillminds.local_construction.models.CommonModel
 import com.chillminds.local_construction.repositories.remote.ApiCallStatus
 import com.chillminds.local_construction.utils.beginWithUpperCase
 import com.chillminds.local_construction.utils.isNullOrEmptyOrBlank
-import com.chillminds.local_construction.utils.toCamelCase
 import com.chillminds.local_construction.view_models.DashboardViewModel
 import com.maxkeppeler.sheets.option.DisplayMode
 import com.maxkeppeler.sheets.option.Option
@@ -45,6 +44,13 @@ class HomeActivity : AppCompatActivity() {
         binding.bottomNavigationView.setupWithNavController(navController)
 
         observeFields()
+
+        callRentalApi()
+    }
+
+    private fun callRentalApi() {
+        getRentalProductDetails()
+        getRentalDataList()
     }
 
     private fun observeFields() {
@@ -55,6 +61,8 @@ class HomeActivity : AppCompatActivity() {
                     Actions.REFRESH_STAGE_LIST -> getStagesData()
                     Actions.REFRESH_LABOUR_LIST -> getLabourData()
                     Actions.REFRESH_PROJECT_LIST -> getProjectDetails()
+                    Actions.REFRESH_PRODUCT_LIST -> getRentalProductDetails()
+                    Actions.REFRESH_RENTAL_PRODUCT_LIST -> getRentalDataList()
                     Actions.CHECK_PERMISSION_FOR_STORAGE -> exportPdfWithPermissionCheck()
                     Actions.SHOW_LIST_INFO_DIALOG -> showInfoDialog()
                     Actions.SHOW_LIST_PAYMENT_INFO_DIALOG -> showPaymentInfoDialog()
@@ -103,7 +111,7 @@ class HomeActivity : AppCompatActivity() {
             optionList.addAll(info.others.map {
                 Option(
                     R.drawable.ic_data_exploration,
-                    it.second.toString(),
+                    it.second,
                     it.first
                 )
             })
@@ -234,6 +242,39 @@ class HomeActivity : AppCompatActivity() {
                 ApiCallStatus.LOADING -> {
 
                 }
+            }
+        }
+    }
+
+    private fun getRentalProductDetails() {
+        viewModel.getRentalProductDetails().observe(this) { response ->
+            when (response.status) {
+                ApiCallStatus.SUCCESS -> {
+                    Logger.error("Project Details", response.data.toString())
+                    val projectList = response.data?.data?: arrayListOf()
+                    viewModel.commonModel.rentalProductList.postValue(projectList)
+                }
+                ApiCallStatus.ERROR -> {
+                    Logger.error("ERROR", response.toString())
+                }
+                ApiCallStatus.LOADING -> {
+
+                }
+            }
+        }
+    }
+    private fun getRentalDataList() {
+        viewModel.getRentalDataList().observe(this) { response ->
+            when (response.status) {
+                ApiCallStatus.SUCCESS -> {
+                    Logger.error("Rental Data Details", response.data.toString())
+                    val projectList = response.data?.data?: arrayListOf()
+                    viewModel.commonModel.rentalDataInformationList.postValue(projectList)
+                }
+                ApiCallStatus.ERROR -> {
+                    Logger.error("ERROR", response.toString())
+                }
+                ApiCallStatus.LOADING -> {}
             }
         }
     }

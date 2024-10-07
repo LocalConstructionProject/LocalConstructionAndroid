@@ -17,4 +17,9 @@
         android:icon="@drawable/ic_settings"
         android:title="Settings" />
 
+    <item
+        android:id="@+id/rentalFragment"
+        android:icon="@drawable/business"
+        android:title="Rental" />
+
 </menu>

@@ -8,7 +8,10 @@ import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.*
+import java.util.concurrent.TimeUnit
+import kotlin.math.abs
 
 fun Long.convertToTime(): String {
     val date = Date(this)
@@ -39,6 +42,15 @@ fun String.toDate(pattern: String = "yyyy-MM-dd HH:mm:ss"): LocalDateTime =
         this,
         DateTimeFormatter.ofPattern(pattern, Locale.ENGLISH)
     )
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun LocalDateTime.countDaysBetween(toDateTime: LocalDateTime): Long {
+    return ChronoUnit.DAYS.between(this, toDateTime)
+}
+fun Date.countDaysBetween(toDateTime: Date): Long {
+    val diffInMilli = abs(time - toDateTime.time)
+    return TimeUnit.DAYS.convert(diffInMilli, TimeUnit.MILLISECONDS)
+}
 
 fun String.toDateBelowOreo(pattern: String = "yyyy-MM-dd"): Date {
     val formatter = SimpleDateFormat(pattern, Locale.getDefault())

@@ -18,6 +18,18 @@ interface ApiService {
     ): ProjectDetailsResponse
 
     @Headers(contentType)
+    @GET("/v1/product")
+    suspend fun getRentalProductDetails(
+        @Header("Authorization") auth: String,
+    ): RentalProductDetailsResponse
+
+    @Headers(contentType)
+    @GET("/v1/rentalData")
+    suspend fun getRentalDataList(
+        @Header("Authorization") auth: String,
+    ): RentalDataListResponse
+
+    @Headers(contentType)
     @GET("/v1/project/delete/{id}")
     suspend fun removeProject(
         @Header("Authorization") auth: String,
@@ -32,11 +44,56 @@ interface ApiService {
     ): CommonResponse
 
     @Headers(contentType)
+    @POST("/v1/product/update/{id}")
+    suspend fun updateRentalProduct(
+        @Header("Authorization") auth: String,
+        @Body request: RentalProduct,
+        @Path("id", encoded = true) id: String,
+    ): CommonResponse
+
+    @Headers(contentType)
+    @POST("/v1/rentalData/update/{id}")
+    suspend fun updateRentalData(
+        @Header("Authorization") auth: String,
+        @Body request: RentalInformation,
+        @Path("id", encoded = true) id: String,
+    ): CommonResponse
+
+    @Headers(contentType)
     @POST("/v1/project/create")
     suspend fun createProject(
         @Header("Authorization") auth: String,
         @Body request: ProjectCreationRequest
     ): CommonResponse
+
+    @Headers(contentType)
+    @POST("/v1/product/create")
+    suspend fun createRentalProduct(
+        @Header("Authorization") auth: String,
+        @Body request: RentalProductCreationRequest
+    ): CommonResponse
+
+    @Headers(contentType)
+    @POST("/v1/rentalData/create")
+    suspend fun createRentalEntry(
+        @Header("Authorization") auth: String,
+        @Body request: RentalInformation
+    ): CommonResponse
+
+    @Headers(contentType)
+    @DELETE("/v1/product/delete/{id}")
+    suspend fun removeRentalProduct(
+        @Header("Authorization") auth: String,
+        @Path("id", encoded = true) id: String,
+    ): CommonResponse
+
+    @Headers(contentType)
+    @DELETE("/v1/rentalData/delete/{id}")
+    suspend fun removeRentalEntry(
+        @Header("Authorization") auth: String,
+        @Path("id", encoded = true) id: String,
+    ): CommonResponse
+
 
     @Headers(contentType)
     @GET("/v1/materials/{id}")

@@ -12,6 +12,40 @@ data class ProjectDetailsResponse(
     val data: List<ProjectDetail> = arrayListOf(),
 )
 
+data class RentalProductDetailsResponse(
+    val status: String,
+    val statusCode: Int,
+    val data: List<RentalProduct> = arrayListOf(),
+)
+
+data class RentalProduct(
+    val id: String,
+    val name: String,
+    val quantity: Int,
+    val rentalPrice: Int,
+)
+
+data class RentalDataListResponse(
+    val status: String,
+    val statusCode: Int,
+    val data: List<RentalInformation> = arrayListOf(),
+)
+
+/*data class RentalInformation(
+    val id: String,
+    val productName: String,
+    val productId: String,
+    val rentedDate: String? = "",
+    val returnDate: String? = "",
+    val customerName: String,
+    val phoneNumber: String,
+    val place: String,
+    val productStatus: String,
+    val advanceAmount: Int,
+    val returnProductCount: Int? = 0,
+    val productCount: Int,
+)*/
+
 data class CommonResponse(
     val status: String,
     val statusCode: Int,
@@ -84,6 +118,22 @@ data class ProjectDetail(
     var paymentDetails: List<ProjectPaymentDetail> = arrayListOf(),
 )
 
+data class RentalInformation(
+    var id: String? = "",
+    val productName: String,
+    val productId: String,
+    var rentedDate: String = "",
+    var returnDate: String? = "",
+    val customerName: String,
+    val phoneNumber: String,
+    val place: String,
+    val advanceAmount: Int,
+    val finalPayment: Int? = 0,
+    var productStatus: String = "Rented",
+    val returnProductCount: Int? = 0,
+    val productCount: Int,
+)
+
 data class ProjectCreationRequest(
     val _id: UUID = UUID.randomUUID(),
     val name: String,
@@ -91,6 +141,12 @@ data class ProjectCreationRequest(
     val location: String,
     val contact: Long?,
     val stages: List<ProjectStageDetail> = arrayListOf(),
+)
+
+data class RentalProductCreationRequest(
+    val name: String,
+    val quantity: Int,
+    val rentalPrice: Int,
 )
 
 data class ProjectPaymentDetail(

@@ -40,6 +40,31 @@ fun setProjectListAdapter(
 
 }
 
+@BindingAdapter("lifeCycle", "setRentalProductListAdapter", requireAll = false)
+fun setRentalProductListAdapter(
+    recyclerView: RecyclerView,
+    lifeCycle: LifecycleOwner,
+    data: List<RentalProduct>?
+) {
+    recyclerView.layoutManager =
+        LinearLayoutManager(recyclerView.context, LinearLayoutManager.VERTICAL, false)
+
+    recyclerView.adapter =
+        RentalProductListRecyclerViewAdapter(lifeCycle, data ?: arrayListOf())
+}
+@BindingAdapter("lifeCycle", "setRentalInformationListAdapter", requireAll = false)
+fun setRentalInformationListAdapter(
+    recyclerView: RecyclerView,
+    lifeCycle: LifecycleOwner,
+    data: List<RentalInformation>?
+) {
+    recyclerView.layoutManager =
+        LinearLayoutManager(recyclerView.context, LinearLayoutManager.VERTICAL, false)
+
+    recyclerView.adapter =
+        RentalInformationListRecyclerViewAdapter(lifeCycle, data ?: arrayListOf())
+}
+
 @BindingAdapter("lifeCycle", "setStagesEntryAdapter", "stageDetails", requireAll = false)
 fun setStagesEntryAdapter(
     recyclerView: RecyclerView,

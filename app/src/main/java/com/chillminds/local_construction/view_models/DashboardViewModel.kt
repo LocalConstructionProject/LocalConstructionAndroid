@@ -19,6 +19,9 @@ class DashboardViewModel(
     private val repository: RemoteRepository,
 ) : AndroidViewModel(application) {
 
+    var rentalInformation: RentalInformation? = null
+    var returnStatus = "Returned"
+
     val materialDataToEdit = MutableLiveData<MaterialData?>().apply { value = null }
     val labourDataToEdit = MutableLiveData<LabourData?>().apply { value = null }
     val stageEntryDataToEdit =
@@ -49,6 +52,14 @@ class DashboardViewModel(
 
     fun onSelectDateForPayment() {
         commonModel.actionListener.postValue(Actions.SHOW_DATE_BOTTOM_SHEET_FOR_PAYMENT_DATE)
+    }
+
+    fun showDialogToRentalReport() {
+        commonModel.actionListener.postValue(Actions.SHOW_RENTAL_REPORT_CREATION_PAGE)
+    }
+
+    fun createNewProductForRental() {
+        commonModel.actionListener.postValue(Actions.SHOW_RENTAL_PRODUCT_CREATION_PAGE)
     }
 
     fun exportPdfFromProjectDashboard() {
@@ -242,9 +253,34 @@ class DashboardViewModel(
         commonModel.actionListener.postValue(Actions.SHOW_PROJECT_EDIT_DIALOG)
     }
 
+    fun editRentalProductData(data: RentalProduct) {
+        commonModel.selectedRentalProduct.postValue(data)
+        commonModel.actionListener.postValue(Actions.SHOW_RENTAL_DATA_EDIT_DIALOG)
+    }
+
+    fun editRentalInformation(data: RentalInformation) {
+        commonModel.selectedRentalInformation.postValue(data)
+        commonModel.actionListener.postValue(Actions.SHOW_RENTAL_INFORMATION_EDIT_DIALOG)
+    }
+
+    fun showRentalInfoDialog(data: RentalInformation) {
+        commonModel.selectedRentalInformation.postValue(data)
+        commonModel.actionListener.postValue(Actions.SHOW_RENT_INFORMATION_DIALOG)
+    }
+
     fun deleteProjectData(data: ProjectDetail) {
         commonModel.projectToDelete.postValue(data)
         commonModel.actionListener.postValue(Actions.SHOW_PROJECT_DELETION_CONFIRMATION_DIALOG)
+    }
+
+    fun deleteRentalProductData(data: RentalProduct) {
+        commonModel.rentalProductToDelete.postValue(data)
+        commonModel.actionListener.postValue(Actions.SHOW_RENTAL_PRODUCT_DELETION_CONFIRMATION_DIALOG)
+    }
+
+    fun deleteRentalProductData(data: RentalInformation) {
+        commonModel.rentalInfoToDelete.postValue(data)
+        commonModel.actionListener.postValue(Actions.SHOW_RENTAL_INFORMATION_DELETION_CONFIRMATION_DIALOG)
     }
 
     fun showInfo(data: ProjectDetail) {
@@ -297,6 +333,57 @@ class DashboardViewModel(
         commonModel.actionListener.postValue(Actions.INSERT_OR_VALIDATE_PAYMENT_ENTRY)
     }
 
+    fun createRentalProduct(name: String, quantity: Int, rentalPrice: Int) = liveData {
+        emit(Resource.loading())
+        try {
+            emit(
+                Resource.success(
+                    repository.createRentalProduct(
+                        RentalProductCreationRequest(
+                            name = name, quantity = quantity, rentalPrice = rentalPrice
+                        )
+                    )
+                )
+            )
+        } catch (e: Exception) {
+            emit(Resource.error(null, "${e.message}"))
+        }
+    }
+
+    fun createRentalEntry() = liveData {
+        emit(Resource.loading())
+        try {
+            emit(
+                Resource.success(
+                    rentalInformation?.let { entry ->
+                        repository.createRentalEntry(
+                            entry
+                        )
+                    }
+                )
+            )
+        } catch (e: Exception) {
+            emit(Resource.error(null, "${e.message}"))
+        }
+    }
+
+    fun updateRentalEntry() = liveData {
+        emit(Resource.loading())
+        try {
+            emit(
+                Resource.success(
+                    rentalInformation?.let { entry ->
+                        repository.updateRentalData(
+                            entry
+                        )
+                    }
+                )
+            )
+        } catch (e: Exception) {
+            emit(Resource.error(null, "${e.message}"))
+        }
+    }
+
     fun createProject(name: String, location: String, contact: Long) = liveData {
         emit(Resource.loading())
         try {
@@ -329,6 +416,21 @@ class DashboardViewModel(
         }
     }
 
+    fun updateRentalProduct(project: RentalProduct) = liveData {
+        emit(Resource.loading())
+        try {
+            emit(
+                Resource.success(
+                    repository.updateRentalProduct(
+                        project
+                    )
+                )
+            )
+        } catch (e: Exception) {
+            emit(Resource.error(null, "${e.message}"))
+        }
+    }
+
     fun deleteProject(project: ProjectDetail) = liveData {
         emit(Resource.loading())
         try {
@@ -344,6 +446,35 @@ class DashboardViewModel(
         }
     }
 
+    fun deleteRentalProduct(project: RentalProduct) = liveData {
+        emit(Resource.loading())
+        try {
+            emit(
+                Resource.success(
+                    repository.deleteRentalProduct(
+                        project
+                    )
+                )
+            )
+        } catch (e: Exception) {
+            emit(Resource.error(null, "${e.message}"))
+        }
+    }
+
+    fun deleteRentalEntry(project: RentalInformation) = liveData {
+        emit(Resource.loading())
+        try {
+            emit(
+                Resource.success(
+                    repository.deleteRentalEntry(
+                        project
+                    )
+                )
+            )
+        } catch (e: Exception) {
+            emit(Resource.error(null, "${e.message}"))
+        }
+    }
 
     fun createStage(project: ProjectDetail, stage: StageDetail) = liveData {
         val stages =
@@ -442,6 +573,24 @@ class DashboardViewModel(
         emit(Resource.loading())
         try {
             emit(Resource.success(repository.getProject()))
+        } catch (e: Exception) {
+            emit(Resource.error(null, e.toString()))
+        }
+    }
+
+    fun getRentalProductDetails() = liveData {
+        emit(Resource.loading())
+        try {
+            emit(Resource.success(repository.getRentalProductDetails()))
+        } catch (e: Exception) {
+            emit(Resource.error(null, e.toString()))
+        }
+    }
+
+    fun getRentalDataList() = liveData {
+        emit(Resource.loading())
+        try {
+            emit(Resource.success(repository.getRentalDataList()))
         } catch (e: Exception) {
             emit(Resource.error(null, e.toString()))
         }

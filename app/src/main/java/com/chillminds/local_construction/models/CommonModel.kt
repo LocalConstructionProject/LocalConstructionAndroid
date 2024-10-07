@@ -10,6 +10,8 @@ import com.chillminds.local_construction.common.SecurePreference
 import com.chillminds.local_construction.repositories.remote.dto.LabourData
 import com.chillminds.local_construction.repositories.remote.dto.MaterialData
 import com.chillminds.local_construction.repositories.remote.dto.ProjectDetail
+import com.chillminds.local_construction.repositories.remote.dto.RentalInformation
+import com.chillminds.local_construction.repositories.remote.dto.RentalProduct
 import com.chillminds.local_construction.repositories.remote.dto.StageDetail
 import org.koin.java.KoinJavaComponent
 
@@ -25,8 +27,14 @@ class CommonModel {
     val labourData = MutableLiveData<List<LabourData>>()
     val stagesData = MutableLiveData<List<StageDetail>>()
     val projectList = MutableLiveData<List<ProjectDetail>>()
+    val rentalProductList = MutableLiveData<List<RentalProduct>>()
+    val rentalDataInformationList = MutableLiveData<List<RentalInformation>>()
     val selectedProjectDetail = MutableLiveData<ProjectDetail?>().apply { value = null }
+    val selectedRentalProduct = MutableLiveData<RentalProduct?>().apply { value = null }
+    val selectedRentalInformation = MutableLiveData<RentalInformation?>().apply { value = null }
     val projectToDelete = MutableLiveData<ProjectDetail?>().apply { value = null }
+    val rentalProductToDelete = MutableLiveData<RentalProduct?>().apply { value = null }
+    val rentalInfoToDelete = MutableLiveData<RentalInformation?>().apply { value = null }
     val dashboardProjectDetail = MutableLiveData<ProjectDetail?>().apply { value = null }
 
     fun showSnackBar(message: String, delaySeconds: Int = 3) {
