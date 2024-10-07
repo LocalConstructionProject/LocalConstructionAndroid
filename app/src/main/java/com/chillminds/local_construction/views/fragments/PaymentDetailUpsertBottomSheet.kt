@@ -9,7 +9,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.FragmentManager
 import com.chillminds.local_construction.common.Actions
-import com.chillminds.local_construction.databinding.FragmentStageEntryBottomSheetBinding
+import com.chillminds.local_construction.databinding.FragmentPaymentUpsertBottomSheetBinding
 import com.chillminds.local_construction.repositories.remote.ApiCallStatus
 import com.chillminds.local_construction.repositories.remote.dto.PaymentType
 import com.chillminds.local_construction.repositories.remote.dto.ProjectDetail
@@ -24,11 +24,11 @@ import com.maxkeppeler.sheets.calendar.CalendarMode
 import com.maxkeppeler.sheets.calendar.CalendarSheet
 import com.maxkeppeler.sheets.calendar.SelectionMode
 import org.koin.android.ext.android.inject
-import java.util.Calendar
+import java.util.*
 
 class PaymentDetailUpsertBottomSheet : BottomSheetDialogFragment() {
 
-    lateinit var binding: FragmentStageEntryBottomSheetBinding
+    lateinit var binding: FragmentPaymentUpsertBottomSheetBinding
 
     val viewModel by inject<DashboardViewModel>()
 
@@ -36,7 +36,7 @@ class PaymentDetailUpsertBottomSheet : BottomSheetDialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentStageEntryBottomSheetBinding.inflate(inflater, container, false)
+        binding = FragmentPaymentUpsertBottomSheetBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
         return binding.root

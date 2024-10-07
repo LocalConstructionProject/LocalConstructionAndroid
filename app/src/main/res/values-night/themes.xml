@@ -25,4 +25,5 @@
         <item name="tool_bar_color">@color/tool_bar_color_dark</item>
         <item name="tool_bar_text_background_color">@color/tool_bar_color_dark_70</item>
     </style>
+
 </resources>

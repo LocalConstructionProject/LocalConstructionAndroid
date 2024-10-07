@@ -17,6 +17,7 @@ import com.chillminds.local_construction.repositories.remote.ApiCallStatus
 import com.chillminds.local_construction.utils.beginWithUpperCase
 import com.chillminds.local_construction.utils.isNullOrEmptyOrBlank
 import com.chillminds.local_construction.view_models.DashboardViewModel
+import com.maxkeppeler.sheets.info.InfoSheet
 import com.maxkeppeler.sheets.option.DisplayMode
 import com.maxkeppeler.sheets.option.Option
 import com.maxkeppeler.sheets.option.OptionSheet
@@ -87,13 +88,20 @@ class HomeActivity : AppCompatActivity() {
                 Option(
                     R.drawable.ic_money,
                     "${it.paymentType.name.beginWithUpperCase()} - ${it.payment}",
-                    it.dateOfPayment
+                    it.dateOfPayment.subSequence(0,10).toString()
                 )
             }
-            OptionSheet().show(this) {
-                title("Payment Info")
-                with(optionList.toMutableList())
-                displayMode(DisplayMode.LIST)
+            if(optionList.isNullOrEmpty()) {
+                InfoSheet().show(this) {
+                    title("Payment Info")
+                    this.content("Payment Not found for this project.")
+                }
+            } else {
+                OptionSheet().show(this) {
+                    title("Payment Info")
+                    with(optionList.toMutableList())
+                    displayMode(DisplayMode.LIST)
+                }
             }
         } ?: run {
             viewModel.commonModel.showSnackBar("Something went wrong. Try again later.")

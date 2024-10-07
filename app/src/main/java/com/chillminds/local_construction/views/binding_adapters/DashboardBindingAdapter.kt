@@ -9,6 +9,7 @@ import com.chillminds.local_construction.repositories.remote.dto.*
 import com.chillminds.local_construction.utils.dateConversion
 import com.chillminds.local_construction.utils.toDateBelowOreo
 import com.chillminds.local_construction.views.adapters.*
+import java.util.*
 
 @BindingAdapter("lifeCycle", "setLabourListAdapter", requireAll = false)
 fun setLabourListAdapter(
@@ -109,6 +110,7 @@ fun setStagesEntryChildAdapter(
         )
 
 }
+
 @BindingAdapter("lifeCycle", "setExpandedStatisticsChildAdapter", requireAll = false)
 fun setExpandedStatisticsChildAdapter(
     recyclerView: RecyclerView,
@@ -149,8 +151,8 @@ fun setStatisticsDataAdapter(
         DashboardDetailedRecyclerViewAdapter(
             lifeCycle,
             mapWithEntries,
-            when(position){
-                1-> mapWithEntries.keys.sortedBy { it.toDateBelowOreo() }.toSet()
+            when (position) {
+                1 -> mapWithEntries.keys.sortedBy { it.toDateBelowOreo() }.toSet()
                 else -> mapWithEntries.keys
             }
         )
@@ -203,8 +205,22 @@ fun setupProjectDashboardInformation(
             }
         }
 
+    val total = if (listToDisplay.isNotEmpty()) {
+        arrayListOf(DashboardStatisticsDetails(
+            "DUMMY",
+            "ALL PROJECTS",
+            UUID.randomUUID(),
+            "ALL STAGES",
+            listToDisplay.first().stageEntry,
+            "TOTAL",
+            arrayListOf(),
+            listToDisplay.sumOf { it.count },
+            listToDisplay.sumOf { it.totalPrice }
+        ))
+    } else arrayListOf()
+
     recyclerView.adapter =
-        DashboardListRecyclerViewAdapter(lifeCycle, listToDisplay)
+        DashboardListRecyclerViewAdapter(lifeCycle, listToDisplay + total)
 }
 
 @BindingAdapter("lifeCycle", "setupDashboardInformation", "sortByPosition", requireAll = false)
@@ -248,16 +264,31 @@ fun setupDashboardInformation(
             }
         }
 
+    val dataToDisplay = when (sortByPosition) {
+        1 -> listToDisplay.sortedBy { it.count }
+        2 -> listToDisplay.sortedBy { it.totalPrice }
+        3 -> listToDisplay.filter { it.stageEntry.type == StageEntryType.LABOUR }
+            .sortedBy { it.stageId }
+        4 -> listToDisplay.filter { it.stageEntry.type == StageEntryType.MATERIAL }
+            .sortedBy { it.stageId }
+        else -> listToDisplay
+    }
+    val total = if (dataToDisplay.isNotEmpty()) {
+        arrayListOf(DashboardStatisticsDetails(
+            "DUMMY",
+            "ALL PROJECTS",
+            UUID.randomUUID(),
+            "ALL STAGES",
+            dataToDisplay.first().stageEntry,
+            "TOTAL",
+            arrayListOf(),
+            dataToDisplay.sumOf { it.count },
+            dataToDisplay.sumOf { it.totalPrice }
+        ))
+    } else arrayListOf()
+
     recyclerView.adapter =
-        DashboardListRecyclerViewAdapter(lifeCycle, when (sortByPosition) {
-            1 -> listToDisplay.sortedBy { it.count }
-            2 -> listToDisplay.sortedBy { it.totalPrice }
-            3 -> listToDisplay.filter { it.stageEntry.type == StageEntryType.LABOUR }
-                .sortedBy { it.stageId }
-            4 -> listToDisplay.filter { it.stageEntry.type == StageEntryType.MATERIAL }
-                .sortedBy { it.stageId }
-            else -> listToDisplay
-        })
+        DashboardListRecyclerViewAdapter(lifeCycle, dataToDisplay + total)
 }
 
 @BindingAdapter("lifeCycle", "setStagesLabourList", "stagesData", requireAll = false)

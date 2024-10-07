@@ -141,6 +141,7 @@ data class ProjectCreationRequest(
     val location: String,
     val contact: Long?,
     val stages: List<ProjectStageDetail> = arrayListOf(),
+    var paymentDetails: List<ProjectPaymentDetail> = arrayListOf(),
 )
 
 data class RentalProductCreationRequest(
