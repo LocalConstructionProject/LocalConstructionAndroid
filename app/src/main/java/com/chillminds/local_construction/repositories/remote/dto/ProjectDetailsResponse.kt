@@ -19,7 +19,15 @@ data class RentalProductDetailsResponse(
 )
 
 data class RentalProduct(
-    val id: String,
+    @SerializedName("_id") val id: String,
+    val name: String,
+    val quantity: Int,
+    val rentalPrice: Int,
+) {
+    fun toUpdate() = UpdateRentalProduct(name, quantity, rentalPrice)
+}
+
+data class UpdateRentalProduct(
     val name: String,
     val quantity: Int,
     val rentalPrice: Int,
@@ -30,21 +38,6 @@ data class RentalDataListResponse(
     val statusCode: Int,
     val data: List<RentalInformation> = arrayListOf(),
 )
-
-/*data class RentalInformation(
-    val id: String,
-    val productName: String,
-    val productId: String,
-    val rentedDate: String? = "",
-    val returnDate: String? = "",
-    val customerName: String,
-    val phoneNumber: String,
-    val place: String,
-    val productStatus: String,
-    val advanceAmount: Int,
-    val returnProductCount: Int? = 0,
-    val productCount: Int,
-)*/
 
 data class CommonResponse(
     val status: String,
@@ -119,7 +112,37 @@ data class ProjectDetail(
 )
 
 data class RentalInformation(
-    var id: String? = "",
+    @SerializedName("_id") var id: String? = "",
+    val productName: String,
+    val productId: String,
+    var rentedDate: String = "",
+    var returnDate: String? = "",
+    val customerName: String,
+    val phoneNumber: String,
+    val place: String,
+    val advanceAmount: Int,
+    val finalPayment: Int? = 0,
+    var productStatus: String = "Rented",
+    val returnProductCount: Int? = 0,
+    val productCount: Int,
+) {
+    fun toUpdate() = UpdateRentalInformation(
+        productName,
+        productId,
+        rentedDate,
+        returnDate,
+        customerName,
+        phoneNumber,
+        place,
+        advanceAmount,
+        finalPayment,
+        productStatus,
+        returnProductCount,
+        productCount,
+    )
+}
+
+data class UpdateRentalInformation(
     val productName: String,
     val productId: String,
     var rentedDate: String = "",

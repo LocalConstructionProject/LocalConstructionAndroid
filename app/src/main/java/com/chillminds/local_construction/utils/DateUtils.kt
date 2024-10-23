@@ -103,3 +103,5 @@ fun Date.toCalendar(): Calendar? = try {
 
 fun Date.format(pattern: String = "dd-MM-yyyy"): String =
     SimpleDateFormat(pattern, Locale.getDefault()).format(this)
+
+fun getLocalDateTimeFormat() = "dd-MM-yyyy HH:mm:ss"

@@ -24,16 +24,16 @@ class ApiHelper(
         service.createRentalProduct(authentication, request)
 
     suspend fun createRentalEntry(request: RentalInformation) =
-        service.createRentalEntry(authentication, request)
+        service.createRentalEntry(authentication, request.toUpdate())
 
     suspend fun updateExistingProject(request: ProjectDetail) =
         service.updateProject(authentication, request)
 
     suspend fun updateRentalProduct(request: RentalProduct) =
-        service.updateRentalProduct(authentication, request, request.id)
+        service.updateRentalProduct(authentication, request.toUpdate(), request.id)
 
     suspend fun updateRentalData(request: RentalInformation) =
-        service.updateRentalData(authentication, request, request.id ?: "")
+        service.updateRentalData(authentication, request.toUpdate(), request.id ?: "")
 
     suspend fun getMaterialById(id: String) = service.getAllMaterials(authentication, id)
 

@@ -47,5 +47,10 @@
         android:id="@+id/statisticsExpandedDetailsFragment"
         android:name="com.chillminds.local_construction.views.fragments.dashboard.StatisticsExpandedDetailsFragment"
         android:label="StatisticsExpandedDetailsFragment" />
+    <fragment
+        android:id="@+id/rentDashboardFragment"
+        android:name="com.chillminds.local_construction.views.fragments.rental_system.RentDashboardFragment"
+        android:label="RentDashboardFragment"
+        tools:layout="@layout/fragment_rental_dashboard" />
 
 </navigation>

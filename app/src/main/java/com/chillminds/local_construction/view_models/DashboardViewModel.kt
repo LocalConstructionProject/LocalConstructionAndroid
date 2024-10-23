@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
 import com.chillminds.local_construction.common.Actions
+import com.chillminds.local_construction.common.Logger
 import com.chillminds.local_construction.models.CommonModel
 import com.chillminds.local_construction.repositories.remote.RemoteRepository
 import com.chillminds.local_construction.repositories.remote.Resource
@@ -12,6 +13,7 @@ import com.chillminds.local_construction.repositories.remote.dto.*
 import com.chillminds.local_construction.utils.dateConversion
 import com.chillminds.local_construction.utils.getDateTime
 import com.chillminds.local_construction.utils.isSdkHigherThan28
+import com.google.gson.Gson
 
 class DashboardViewModel(
     application: Application,
@@ -254,6 +256,7 @@ class DashboardViewModel(
     }
 
     fun editRentalProductData(data: RentalProduct) {
+        Logger.error("Rental Product", Gson().toJson(data))
         commonModel.selectedRentalProduct.postValue(data)
         commonModel.actionListener.postValue(Actions.SHOW_RENTAL_DATA_EDIT_DIALOG)
     }

@@ -44,18 +44,18 @@ interface ApiService {
     ): CommonResponse
 
     @Headers(contentType)
-    @POST("/v1/product/update/{id}")
+    @PATCH("/v1/product/update/{id}")
     suspend fun updateRentalProduct(
         @Header("Authorization") auth: String,
-        @Body request: RentalProduct,
+        @Body request: UpdateRentalProduct,
         @Path("id", encoded = true) id: String,
     ): CommonResponse
 
     @Headers(contentType)
-    @POST("/v1/rentalData/update/{id}")
+    @PATCH("/v1/rentalData/update/{id}")
     suspend fun updateRentalData(
         @Header("Authorization") auth: String,
-        @Body request: RentalInformation,
+        @Body request: UpdateRentalInformation,
         @Path("id", encoded = true) id: String,
     ): CommonResponse
 
@@ -77,7 +77,7 @@ interface ApiService {
     @POST("/v1/rentalData/create")
     suspend fun createRentalEntry(
         @Header("Authorization") auth: String,
-        @Body request: RentalInformation
+        @Body request: UpdateRentalInformation
     ): CommonResponse
 
     @Headers(contentType)

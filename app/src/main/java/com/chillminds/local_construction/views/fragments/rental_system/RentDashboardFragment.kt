@@ -9,18 +9,21 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.chillminds.local_construction.common.Actions
 import com.chillminds.local_construction.common.Constants
+import com.chillminds.local_construction.common.Logger
 import com.chillminds.local_construction.databinding.FragmentRentalDashboardBinding
 import com.chillminds.local_construction.repositories.remote.ApiCallStatus
 import com.chillminds.local_construction.repositories.remote.dto.RentalInformation
 import com.chillminds.local_construction.repositories.remote.dto.RentalProduct
 import com.chillminds.local_construction.utils.countDaysBetween
 import com.chillminds.local_construction.utils.format
+import com.chillminds.local_construction.utils.getLocalDateTimeFormat
 import com.chillminds.local_construction.utils.isNullOrEmptyOrBlank
 import com.chillminds.local_construction.utils.toDate
 import com.chillminds.local_construction.utils.toDateBelowOreo
 import com.chillminds.local_construction.view_models.DashboardViewModel
 import com.chillminds.local_construction.views.adapters.RentDashBoardTabAdapter
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.gson.Gson
 import com.maxkeppeler.sheets.calendar.CalendarMode
 import com.maxkeppeler.sheets.calendar.CalendarSheet
 import com.maxkeppeler.sheets.calendar.SelectionMode
@@ -28,11 +31,11 @@ import com.maxkeppeler.sheets.info.InfoSheet
 import com.maxkeppeler.sheets.input.InputSheet
 import com.maxkeppeler.sheets.input.type.InputEditText
 import com.maxkeppeler.sheets.input.type.spinner.InputSpinner
+import com.maxkeppeler.sheets.option.DisplayMode
 import com.maxkeppeler.sheets.option.Option
 import com.maxkeppeler.sheets.option.OptionSheet
 import org.koin.android.ext.android.inject
 import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 import java.util.Calendar
 
 class RentDashboardFragment : Fragment() {
@@ -209,7 +212,8 @@ class RentDashboardFragment : Fragment() {
             this.setSelectedDate(Calendar.getInstance())
 
             onPositive { dateStart, _ ->
-                viewModel.rentalInformation?.rentedDate = dateStart.time.format()
+                viewModel.rentalInformation?.rentedDate =
+                    dateStart.time.format(getLocalDateTimeFormat())
                 createRentalEntry()
             }
         }
@@ -223,7 +227,8 @@ class RentDashboardFragment : Fragment() {
             this.setSelectedDate(Calendar.getInstance())
 
             onPositive { dateStart, _ ->
-                viewModel.rentalInformation?.returnDate = dateStart.time.format()
+                viewModel.rentalInformation?.returnDate =
+                    dateStart.time.format(getLocalDateTimeFormat())
                 updateRentalEntry()
             }
         }
@@ -276,6 +281,7 @@ class RentDashboardFragment : Fragment() {
 
     private fun showRentalDataUpdateSheet() {
         viewModel.commonModel.selectedRentalProduct.value?.let { rentalProduct ->
+            Logger.error("Rental Product", Gson().toJson(rentalProduct))
 
             InputSheet().show(requireActivity()) {
                 title("Update Product")
@@ -350,28 +356,27 @@ class RentDashboardFragment : Fragment() {
                 options.add(Option("Final Payment - ${rentalProduct.finalPayment}"))
             } else {
                 val numberOfDays = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    rentalProduct.rentedDate.toDate("dd-MM-yyyy")
+                    rentalProduct.rentedDate.toDate(getLocalDateTimeFormat())
                         .countDaysBetween(LocalDateTime.now())
                 } else {
-                    rentalProduct.rentedDate.toDateBelowOreo("dd-MM-yyyy").countDaysBetween(
-                        Calendar.getInstance().time
-                    )
+                    rentalProduct.rentedDate.toDateBelowOreo(getLocalDateTimeFormat())
+                        .countDaysBetween(
+                            Calendar.getInstance().time
+                        )
                 }
                 val rentalPrice =
                     viewModel.commonModel.rentalProductList.value?.firstOrNull { it.id == rentalProduct.id }?.rentalPrice
                         ?: 0
                 val balance = ((numberOfDays * rentalPrice) - rentalProduct.advanceAmount)
                 options.add(Option("Amount to be paid : $balance"))
-
-                options.add(Option("Amount to be paid - ${rentalProduct.returnDate}"))
             }
 
-            if (rentalProduct.productStatus == viewModel.returnStatus)
-                OptionSheet().show(requireActivity()) {
-                    title("Rental Information")
-                    with(options)
-                    onNegative { }
-                }
+            OptionSheet().show(requireActivity()) {
+                title("Rental Information")
+                with(options)
+                displayMode(DisplayMode.LIST)
+                onNegative { }
+            }
         }
     }
 
@@ -382,7 +387,7 @@ class RentDashboardFragment : Fragment() {
                 it.name
             } ?: arrayListOf()
             val dataToDisplay = listOf("Select Product") + productNames
-            val returnStatus = arrayListOf(details.productStatus, viewModel.returnStatus)
+            val returnStatusList = listOf(details.productStatus, viewModel.returnStatus)
             InputSheet().show(requireActivity()) {
                 title("Add Rental Entry")
                 with(InputSpinner {
@@ -390,6 +395,12 @@ class RentDashboardFragment : Fragment() {
                     this.options(dataToDisplay)
                     label("Product Name")
                     this.selected(dataToDisplay.indexOf(details.productName))
+                })
+                with(InputSpinner("status") {
+                    required()
+                    this.options(returnStatusList)
+                    label("Status")
+                    this.selected(returnStatusList.indexOf(details.productStatus))
                 })
                 with(InputEditText("customerName") {
                     required()
@@ -414,30 +425,23 @@ class RentDashboardFragment : Fragment() {
                     required()
                     inputType(InputType.TYPE_CLASS_NUMBER)
                     hint("Initial Payment")
-                    defaultValue(details.advanceAmount)
+                    defaultValue(details.advanceAmount.toString())
                 })
                 with(InputEditText("productCount") {
                     label("Product Count")
                     required()
                     inputType(InputType.TYPE_CLASS_NUMBER)
                     hint("Number of product to rent")
-                    defaultValue(details.productCount)
+                    defaultValue(details.productCount.toString())
                 })
                 with(InputEditText("returnProductCount") {
                     label("Return Count")
                     required()
                     inputType(InputType.TYPE_CLASS_NUMBER)
-                    defaultValue(details.returnProductCount ?: 0)
-                })
-                with(InputSpinner("status") {
-                    required()
-                    this.options(returnStatus)
-                    label("Status")
-                    this.selected(dataToDisplay.indexOf(details.productStatus))
+                    defaultValue((details.returnProductCount ?: 0).toString())
                 })
                 with(InputEditText("finalPayment") {
                     label("Payment made")
-                    required()
                     inputType(InputType.TYPE_CLASS_NUMBER)
                     hint("Payment made")
                     defaultValue((details.finalPayment ?: 0).toString())
@@ -490,7 +494,7 @@ class RentDashboardFragment : Fragment() {
                     }
                     val status = result.getInt("status")
 
-                    val selectedStatus = returnStatus[status]
+                    val selectedStatus = returnStatusList[status]
 
                     val finalPayment = result.getString("finalPayment") ?: "0"
                     if (finalPayment.isNullOrEmptyOrBlank()) {
