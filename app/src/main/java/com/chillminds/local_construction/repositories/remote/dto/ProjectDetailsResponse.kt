@@ -116,45 +116,48 @@ data class RentalInformation(
     val productName: String,
     val productId: String,
     var rentedDate: String = "",
-    var returnDate: String? = "",
     val customerName: String,
     val phoneNumber: String,
     val place: String,
     val advanceAmount: Int,
     val finalPayment: Int? = 0,
     var productStatus: String = "Rented",
-    val returnProductCount: Int? = 0,
+    var returnDetails: List<ReturnDetails> = arrayListOf(),
     val productCount: Int,
 ) {
     fun toUpdate() = UpdateRentalInformation(
         productName,
         productId,
         rentedDate,
-        returnDate,
         customerName,
         phoneNumber,
         place,
         advanceAmount,
         finalPayment,
         productStatus,
-        returnProductCount,
         productCount,
+        returnDetails
     )
 }
+
+data class ReturnDetails(
+    @SerializedName("_id") val id: UUID = UUID.randomUUID(),
+    var returnProductCount: Int? = 0,
+    var returnDate: String = "",
+)
 
 data class UpdateRentalInformation(
     val productName: String,
     val productId: String,
     var rentedDate: String = "",
-    var returnDate: String? = "",
     val customerName: String,
     val phoneNumber: String,
     val place: String,
     val advanceAmount: Int,
     val finalPayment: Int? = 0,
     var productStatus: String = "Rented",
-    val returnProductCount: Int? = 0,
     val productCount: Int,
+    var returnDetails: List<ReturnDetails> = arrayListOf(),
 )
 
 data class ProjectCreationRequest(

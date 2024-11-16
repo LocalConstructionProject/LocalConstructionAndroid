@@ -1,14 +1,20 @@
 package com.chillminds.local_construction.views.binding_adapters
 
+import android.os.Build
+import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.chillminds.local_construction.common.Logger
 import com.chillminds.local_construction.repositories.remote.dto.*
+import com.chillminds.local_construction.utils.countDaysBetween
 import com.chillminds.local_construction.utils.dateConversion
+import com.chillminds.local_construction.utils.getLocalDateTimeFormat
+import com.chillminds.local_construction.utils.toDate
 import com.chillminds.local_construction.utils.toDateBelowOreo
 import com.chillminds.local_construction.views.adapters.*
+import java.time.LocalDateTime
 import java.util.*
 
 @BindingAdapter("lifeCycle", "setLabourListAdapter", requireAll = false)
@@ -53,6 +59,7 @@ fun setRentalProductListAdapter(
     recyclerView.adapter =
         RentalProductListRecyclerViewAdapter(lifeCycle, data ?: arrayListOf())
 }
+
 @BindingAdapter("lifeCycle", "setRentalInformationListAdapter", requireAll = false)
 fun setRentalInformationListAdapter(
     recyclerView: RecyclerView,
@@ -269,8 +276,10 @@ fun setupDashboardInformation(
         2 -> listToDisplay.sortedBy { it.totalPrice }
         3 -> listToDisplay.filter { it.stageEntry.type == StageEntryType.LABOUR }
             .sortedBy { it.stageId }
+
         4 -> listToDisplay.filter { it.stageEntry.type == StageEntryType.MATERIAL }
             .sortedBy { it.stageId }
+
         else -> listToDisplay
     }
     val total = if (dataToDisplay.isNotEmpty()) {
@@ -349,4 +358,64 @@ fun setStagesListAdapter(
         StagesListRecyclerViewAdapter(lifeCycle, data ?: arrayListOf())
 }
 
+@BindingAdapter("setBalanceAmount", "rentalInformation")
+fun setBalanceAmount(
+    textView: TextView,
+    productList: List<RentalProduct>? = arrayListOf(),
+    data: RentalInformation
+) {
+    val rentalPrice = productList?.find { it.id == data.productId }?.rentalPrice ?: 0
 
+    val numberOfDays = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        data.rentedDate.toDate(getLocalDateTimeFormat())
+            .countDaysBetween(LocalDateTime.now())
+    } else {
+        data.rentedDate.toDateBelowOreo(getLocalDateTimeFormat())
+            .countDaysBetween(
+                Calendar.getInstance().time
+            )
+    }
+
+    val priceForReturnedProduct = data.returnDetails.sumOf { returnDetails ->
+        val daysCount = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            data.rentedDate.toDate(getLocalDateTimeFormat())
+                .countDaysBetween(returnDetails.returnDate.toDate(getLocalDateTimeFormat()))
+        } else {
+            data.rentedDate.toDateBelowOreo(getLocalDateTimeFormat())
+                .countDaysBetween(
+                    returnDetails.returnDate.toDateBelowOreo(getLocalDateTimeFormat())
+                )
+        }
+        daysCount * (returnDetails.returnProductCount ?: 0) * rentalPrice
+    }
+
+    val productToReturn =
+        data.productCount - data.returnDetails.sumOf {
+            it.returnProductCount ?: 0
+        }
+
+    val priceForNonReturnedProduct = productToReturn * rentalPrice * numberOfDays
+
+    val balance = "₹ ${(priceForReturnedProduct + priceForNonReturnedProduct - data.advanceAmount)}"
+
+    textView.text = balance
+}
+
+@BindingAdapter("rentalProduct", "setBalanceProductCount")
+fun setBalanceProductCount(
+    textView: TextView,
+    rentalProduct: RentalProduct,
+    rentalInfoList: List<RentalInformation>? = arrayListOf()
+) {
+    val totalRentalProduct = arrayListOf<RentalInformation>().apply {
+        addAll(rentalInfoList ?: arrayListOf())
+    }.filter { it.productId == rentalProduct.id }.sumOf { it.productCount }
+
+    val totalReturnCount = arrayListOf<RentalInformation>().apply {
+        addAll(rentalInfoList ?: arrayListOf())
+    }.filter { it.productId == rentalProduct.id }
+        .sumOf { it.returnDetails.sumOf { returnData -> returnData.returnProductCount ?: 0 } }
+
+    val balance = "${rentalProduct.quantity - totalRentalProduct + totalReturnCount}"
+    textView.text = balance
+}

@@ -45,11 +45,12 @@ fun String.toDate(pattern: String = "yyyy-MM-dd HH:mm:ss"): LocalDateTime =
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun LocalDateTime.countDaysBetween(toDateTime: LocalDateTime): Long {
-    return ChronoUnit.DAYS.between(this, toDateTime)
+    return ChronoUnit.DAYS.between(this, toDateTime) + 1
 }
+
 fun Date.countDaysBetween(toDateTime: Date): Long {
     val diffInMilli = abs(time - toDateTime.time)
-    return TimeUnit.DAYS.convert(diffInMilli, TimeUnit.MILLISECONDS)
+    return TimeUnit.DAYS.convert(diffInMilli, TimeUnit.MILLISECONDS) + 1
 }
 
 fun String.toDateBelowOreo(pattern: String = "yyyy-MM-dd"): Date {

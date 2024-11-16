@@ -50,14 +50,33 @@
             android:elegantTextHeight="true"
             android:letterSpacing="0.1"
             android:padding="@dimen/_2sdp"
-            android:text="@{`Rental Price - `+data.rentalPrice}"
+            android:text="@{`Rental Price - ₹ `+data.rentalPrice}"
             android:textColor="?attr/title_text_color"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/appCompatImageButton"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/nameTextView"
-            tools:text="Rental Price 100" />
+            tools:text="Rental Price - ₹ 100" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_5sdp"
+            android:elegantTextHeight="true"
+            android:letterSpacing="0.1"
+            android:paddingHorizontal="@dimen/_5sdp"
+            android:paddingVertical="@dimen/_2sdp"
+            android:textSize="@dimen/_14sdp"
+            app:rentalProduct="@{data}"
+            app:setBalanceProductCount="@{viewModel.commonModel.rentalDataInformationList}"
+            android:background="@drawable/toast_background"
+            android:backgroundTint="?attr/button_color"
+            android:textColor="?attr/button_text_color"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/nameTextView"
+            tools:text="100" />
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/editButton"
@@ -66,7 +85,7 @@
             android:background="@null"
             android:onClick="@{()->viewModel.deleteRentalProductData(data)}"
             android:src="@drawable/ic_delete"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:tint="?attr/button_color"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -74,11 +93,11 @@
             android:id="@+id/appCompatImageButton"
             android:layout_width="@dimen/_30sdp"
             android:layout_height="@dimen/_30sdp"
-            android:layout_margin="@dimen/_10sdp"
+            android:layout_marginHorizontal="@dimen/_10sdp"
             android:background="@null"
             android:onClick="@{()->viewModel.editRentalProductData(data)}"
             android:src="@drawable/ic_edit"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:tint="?attr/button_color"
             app:layout_constraintEnd_toStartOf="@+id/editButton"
             app:layout_constraintTop_toTopOf="parent" />
 

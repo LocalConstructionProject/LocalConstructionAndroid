@@ -14,6 +14,7 @@ import com.chillminds.local_construction.databinding.FragmentRentalDashboardBind
 import com.chillminds.local_construction.repositories.remote.ApiCallStatus
 import com.chillminds.local_construction.repositories.remote.dto.RentalInformation
 import com.chillminds.local_construction.repositories.remote.dto.RentalProduct
+import com.chillminds.local_construction.repositories.remote.dto.ReturnDetails
 import com.chillminds.local_construction.utils.countDaysBetween
 import com.chillminds.local_construction.utils.format
 import com.chillminds.local_construction.utils.getLocalDateTimeFormat
@@ -197,14 +198,17 @@ class RentDashboardFragment : Fragment() {
                     place = place ?: "",
                     advanceAmount = advanceAmount?.toIntOrNull() ?: 0,
                     productCount = productCount?.toIntOrNull() ?: 0,
+                    rentedDate = Calendar.getInstance().time.format(getLocalDateTimeFormat())
                 )
 
-                showRentalDateSheet()
+//                showRentalDateSheet()
+
+                createRentalEntry()
             }
         }
     }
 
-    private fun showRentalDateSheet() {
+    /*private fun showRentalDateSheet() {
         CalendarSheet().show(requireActivity()) {
             title("Select Rental Date")
             this.calendarMode(CalendarMode.MONTH)
@@ -217,9 +221,9 @@ class RentDashboardFragment : Fragment() {
                 createRentalEntry()
             }
         }
-    }
+    }*/
 
-    private fun showRentalReturnDateSheet() {
+    private fun showRentalReturnDateSheet(returnCount: Int) {
         CalendarSheet().show(requireActivity()) {
             title("Select Return Date")
             this.calendarMode(CalendarMode.MONTH)
@@ -227,8 +231,18 @@ class RentDashboardFragment : Fragment() {
             this.setSelectedDate(Calendar.getInstance())
 
             onPositive { dateStart, _ ->
-                viewModel.rentalInformation?.returnDate =
-                    dateStart.time.format(getLocalDateTimeFormat())
+                val existingList = arrayListOf<ReturnDetails>().apply {
+                    addAll(viewModel.rentalInformation?.returnDetails ?: arrayListOf())
+                }
+                existingList.add(
+                    ReturnDetails(
+                        returnProductCount = returnCount,
+                        returnDate = dateStart.time.format(getLocalDateTimeFormat())
+                    )
+                )
+
+                viewModel.rentalInformation?.returnDetails = existingList
+
                 updateRentalEntry()
             }
         }
@@ -350,9 +364,11 @@ class RentDashboardFragment : Fragment() {
                 Option("Contact - ${rentalProduct.phoneNumber}"),
                 Option("Status " + rentalProduct.productStatus)
             )
+            val rentalPrice =
+                viewModel.commonModel.rentalProductList.value?.firstOrNull { it.id == rentalProduct.productId }?.rentalPrice
+                    ?: 0
 
             if (rentalProduct.productStatus == viewModel.returnStatus) {
-                options.add(Option("Return Date - ${rentalProduct.returnDate}"))
                 options.add(Option("Final Payment - ${rentalProduct.finalPayment}"))
             } else {
                 val numberOfDays = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -364,11 +380,46 @@ class RentDashboardFragment : Fragment() {
                             Calendar.getInstance().time
                         )
                 }
-                val rentalPrice =
-                    viewModel.commonModel.rentalProductList.value?.firstOrNull { it.id == rentalProduct.id }?.rentalPrice
-                        ?: 0
-                val balance = ((numberOfDays * rentalPrice) - rentalProduct.advanceAmount)
+
+                val priceForReturnedProduct = rentalProduct.returnDetails.sumOf { returnDetails ->
+                    val daysCount = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        rentalProduct.rentedDate.toDate(getLocalDateTimeFormat())
+                            .countDaysBetween(returnDetails.returnDate.toDate(getLocalDateTimeFormat()))
+                    } else {
+                        rentalProduct.rentedDate.toDateBelowOreo(getLocalDateTimeFormat())
+                            .countDaysBetween(
+                                returnDetails.returnDate.toDateBelowOreo(getLocalDateTimeFormat())
+                            )
+                    }
+                    daysCount * (returnDetails.returnProductCount ?: 0) * rentalPrice
+                }
+
+                val productToReturn =
+                    rentalProduct.productCount - rentalProduct.returnDetails.sumOf {
+                        it.returnProductCount ?: 0
+                    }
+
+                val priceForNonReturnedProduct = productToReturn * rentalPrice * numberOfDays
+
+                val balance =
+                    (priceForReturnedProduct + priceForNonReturnedProduct - rentalProduct.advanceAmount)
+
+
                 options.add(Option("Amount to be paid : $balance"))
+            }
+
+            rentalProduct.returnDetails.forEach { a ->
+                    val daysCount = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        rentalProduct.rentedDate.toDate(getLocalDateTimeFormat())
+                            .countDaysBetween(a.returnDate.toDate(getLocalDateTimeFormat()))
+                    } else {
+                        rentalProduct.rentedDate.toDateBelowOreo(getLocalDateTimeFormat())
+                            .countDaysBetween(
+                                a.returnDate.toDateBelowOreo(getLocalDateTimeFormat())
+                            )
+                    }
+
+                options.add(Option("${a.returnProductCount} product returned on ${a.returnDate} - (₹ ${daysCount * (a.returnProductCount ?: 0) * rentalPrice})"))
             }
 
             OptionSheet().show(requireActivity()) {
@@ -382,20 +433,47 @@ class RentDashboardFragment : Fragment() {
 
     private fun showRentalInformationUpdateSheet() {
         viewModel.commonModel.selectedRentalInformation.value?.let { details ->
-
-            val productNames = viewModel.commonModel.rentalProductList.value?.map {
-                it.name
-            } ?: arrayListOf()
-            val dataToDisplay = listOf("Select Product") + productNames
             val returnStatusList = listOf(details.productStatus, viewModel.returnStatus)
+            val rentedReturnCount = details.returnDetails.sumOf { it.returnProductCount ?: 0 }
+
+            val rentalPrice =
+                viewModel.commonModel.rentalProductList.value?.find { it.id == details.productId }?.rentalPrice
+                    ?: 0
+
+            val numberOfDays = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                details.rentedDate.toDate(getLocalDateTimeFormat())
+                    .countDaysBetween(LocalDateTime.now())
+            } else {
+                details.rentedDate.toDateBelowOreo(getLocalDateTimeFormat())
+                    .countDaysBetween(
+                        Calendar.getInstance().time
+                    )
+            }
+
+            val priceForReturnedProduct = details.returnDetails.sumOf { returnDetails ->
+                val daysCount = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    details.rentedDate.toDate(getLocalDateTimeFormat())
+                        .countDaysBetween(returnDetails.returnDate.toDate(getLocalDateTimeFormat()))
+                } else {
+                    details.rentedDate.toDateBelowOreo(getLocalDateTimeFormat())
+                        .countDaysBetween(
+                            returnDetails.returnDate.toDateBelowOreo(getLocalDateTimeFormat())
+                        )
+                }
+                daysCount * (returnDetails.returnProductCount ?: 0) * rentalPrice
+            }
+
+            val productToReturn =
+                details.productCount - details.returnDetails.sumOf {
+                    it.returnProductCount ?: 0
+                }
+
+            val priceForNonReturnedProduct = productToReturn * rentalPrice * numberOfDays
+
+            val balanceToBePaid = "₹ ${(priceForReturnedProduct + priceForNonReturnedProduct - details.advanceAmount)}"
+
             InputSheet().show(requireActivity()) {
-                title("Add Rental Entry")
-                with(InputSpinner {
-                    required()
-                    this.options(dataToDisplay)
-                    label("Product Name")
-                    this.selected(dataToDisplay.indexOf(details.productName))
-                })
+                title("Add Rental Entry to ${details.productName}")
                 with(InputSpinner("status") {
                     required()
                     this.options(returnStatusList)
@@ -427,40 +505,20 @@ class RentDashboardFragment : Fragment() {
                     hint("Initial Payment")
                     defaultValue(details.advanceAmount.toString())
                 })
-                with(InputEditText("productCount") {
-                    label("Product Count")
-                    required()
-                    inputType(InputType.TYPE_CLASS_NUMBER)
-                    hint("Number of product to rent")
-                    defaultValue(details.productCount.toString())
-                })
                 with(InputEditText("returnProductCount") {
-                    label("Return Count")
+                    label("Return Count (max ${details.productCount - rentedReturnCount})")
                     required()
                     inputType(InputType.TYPE_CLASS_NUMBER)
-                    defaultValue((details.returnProductCount ?: 0).toString())
+                    defaultValue((details.productCount - rentedReturnCount).toString())
                 })
                 with(InputEditText("finalPayment") {
-                    label("Payment made")
+                    label("Balance Due ($balanceToBePaid)")
                     inputType(InputType.TYPE_CLASS_NUMBER)
-                    hint("Payment made")
+                    hint("Pending Payment $balanceToBePaid")
                     defaultValue((details.finalPayment ?: 0).toString())
                 })
                 onNegative { viewModel.commonModel.showSnackBar("Process Cancelled") }
                 onPositive { result ->
-
-                    val index = result.getInt("0")
-                    if (index == 0) {
-                        viewModel.commonModel.showSnackBar("Select a product")
-                        return@onPositive
-                    }
-                    val selectedProductToRent =
-                        viewModel.commonModel.rentalProductList.value?.firstOrNull { it.name == productNames[index - 1] }
-
-                    if (selectedProductToRent == null) {
-                        viewModel.commonModel.showSnackBar("Select a valid product")
-                        return@onPositive
-                    }
 
                     val customerName = result.getString("customerName")
                     if (customerName.isNullOrEmptyOrBlank()) {
@@ -482,19 +540,20 @@ class RentDashboardFragment : Fragment() {
                         viewModel.commonModel.showSnackBar("Advance Amount is mandatory")
                         return@onPositive
                     }
-                    val productCount = result.getString("productCount")
-                    if (productCount.isNullOrEmptyOrBlank()) {
-                        viewModel.commonModel.showSnackBar("Count is mandatory")
-                        return@onPositive
-                    }
                     val returnProductCount = result.getString("returnProductCount")
                     if (returnProductCount.isNullOrEmptyOrBlank()) {
                         viewModel.commonModel.showSnackBar("Return Count is mandatory")
                         return@onPositive
                     }
-                    val status = result.getInt("status")
 
-                    val selectedStatus = returnStatusList[status]
+                    if ((returnProductCount?.toIntOrNull()
+                            ?: 0) > (details.productCount - rentedReturnCount)
+                    ) {
+                        viewModel.commonModel.showSnackBar("Return Count is higher than the product count")
+                        return@onPositive
+                    }
+
+                    val status = result.getInt("status")
 
                     val finalPayment = result.getString("finalPayment") ?: "0"
                     if (finalPayment.isNullOrEmptyOrBlank()) {
@@ -502,23 +561,33 @@ class RentDashboardFragment : Fragment() {
                         return@onPositive
                     }
 
+                    val selectedStatus = returnStatusList[status]
+
+                    val productStatusToUpdate = if ((returnProductCount?.toIntOrNull()
+                            ?: 0) + rentedReturnCount == details.productCount
+                    ) {
+                        "Returned"
+                    } else {
+                        "Rented"
+                    }
+
                     viewModel.rentalInformation = RentalInformation(
                         id = details.id,
-                        productName = selectedProductToRent.name,
-                        productId = selectedProductToRent.id,
-                        productStatus = selectedStatus,
+                        productName = details.productName,
+                        productId = details.productId,
+                        rentedDate = details.rentedDate,
+                        productStatus = productStatusToUpdate,
                         customerName = customerName ?: "",
                         phoneNumber = phoneNumber ?: "",
                         place = place ?: "",
                         finalPayment = finalPayment.toIntOrNull() ?: 0,
                         advanceAmount = advanceAmount?.toIntOrNull() ?: 0,
-                        returnProductCount = returnProductCount?.toIntOrNull() ?: 0,
-                        productCount = productCount?.toIntOrNull() ?: 0,
+                        productCount = details.productCount,
                     )
                     if (selectedStatus != viewModel.returnStatus) {
                         updateRentalEntry()
                     } else {
-                        showRentalReturnDateSheet()
+                        showRentalReturnDateSheet(returnProductCount?.toIntOrNull() ?: 0)
                     }
                 }
             }
@@ -550,6 +619,7 @@ class RentDashboardFragment : Fragment() {
     private fun createRentalEntry() {
         viewModel.createRentalEntry()
             .observe(viewLifecycleOwner) {
+                Logger.error("Error", Gson().toJson(it))
                 when (it.status) {
                     ApiCallStatus.LOADING -> {
                         viewModel.commonModel.showProgress()
