@@ -409,15 +409,15 @@ class RentDashboardFragment : Fragment() {
             }
 
             rentalProduct.returnDetails.forEach { a ->
-                    val daysCount = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        rentalProduct.rentedDate.toDate(getLocalDateTimeFormat())
-                            .countDaysBetween(a.returnDate.toDate(getLocalDateTimeFormat()))
-                    } else {
-                        rentalProduct.rentedDate.toDateBelowOreo(getLocalDateTimeFormat())
-                            .countDaysBetween(
-                                a.returnDate.toDateBelowOreo(getLocalDateTimeFormat())
-                            )
-                    }
+                val daysCount = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    rentalProduct.rentedDate.toDate(getLocalDateTimeFormat())
+                        .countDaysBetween(a.returnDate.toDate(getLocalDateTimeFormat()))
+                } else {
+                    rentalProduct.rentedDate.toDateBelowOreo(getLocalDateTimeFormat())
+                        .countDaysBetween(
+                            a.returnDate.toDateBelowOreo(getLocalDateTimeFormat())
+                        )
+                }
 
                 options.add(Option("${a.returnProductCount} product returned on ${a.returnDate} - (₹ ${daysCount * (a.returnProductCount ?: 0) * rentalPrice})"))
             }
@@ -470,7 +470,8 @@ class RentDashboardFragment : Fragment() {
 
             val priceForNonReturnedProduct = productToReturn * rentalPrice * numberOfDays
 
-            val balanceToBePaid = "₹ ${(priceForReturnedProduct + priceForNonReturnedProduct - details.advanceAmount)}"
+            val balanceToBePaid =
+                "₹ ${(priceForReturnedProduct + priceForNonReturnedProduct - details.advanceAmount)}"
 
             InputSheet().show(requireActivity()) {
                 title("Add Rental Entry to ${details.productName}")
