@@ -9,11 +9,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.chillminds.local_construction.common.Logger
 import com.chillminds.local_construction.repositories.remote.dto.*
 import com.chillminds.local_construction.utils.countDaysBetween
+import com.chillminds.local_construction.utils.countMonthsBetween
 import com.chillminds.local_construction.utils.dateConversion
 import com.chillminds.local_construction.utils.getLocalDateTimeFormat
 import com.chillminds.local_construction.utils.toDate
 import com.chillminds.local_construction.utils.toDateBelowOreo
 import com.chillminds.local_construction.views.adapters.*
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 
@@ -364,27 +366,52 @@ fun setBalanceAmount(
     productList: List<RentalProduct>? = arrayListOf(),
     data: RentalInformation
 ) {
-    val rentalPrice = productList?.find { it.id == data.productId }?.rentalPrice ?: 0
+    val rentedProduct = productList?.find { it.id == data.productId }
+    val rentalPrice = rentedProduct?.rentalPrice ?: 0
 
     val numberOfDays = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        data.rentedDate.toDate(getLocalDateTimeFormat())
-            .countDaysBetween(LocalDateTime.now())
+        if (rentedProduct?.rentalType == RentalType.Monthly) {
+            data.rentedDate.toDate(getLocalDateTimeFormat()).toLocalDate()
+                .countMonthsBetween(LocalDate.now())
+        } else {
+            data.rentedDate.toDate(getLocalDateTimeFormat())
+                .countDaysBetween(LocalDateTime.now())
+        }
     } else {
-        data.rentedDate.toDateBelowOreo(getLocalDateTimeFormat())
-            .countDaysBetween(
-                Calendar.getInstance().time
-            )
+        if (rentedProduct?.rentalType == RentalType.Monthly) {
+            data.rentedDate.toDateBelowOreo(getLocalDateTimeFormat())
+                .countMonthsBetween(
+                    Calendar.getInstance().time
+                )
+        } else {
+            data.rentedDate.toDateBelowOreo(getLocalDateTimeFormat())
+                .countDaysBetween(
+                    Calendar.getInstance().time
+                )
+        }
     }
 
     val priceForReturnedProduct = data.returnDetails.sumOf { returnDetails ->
         val daysCount = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            data.rentedDate.toDate(getLocalDateTimeFormat())
-                .countDaysBetween(returnDetails.returnDate.toDate(getLocalDateTimeFormat()))
+            if (rentedProduct?.rentalType == RentalType.Monthly) {
+                data.rentedDate.toDate(getLocalDateTimeFormat()).toLocalDate()
+                    .countMonthsBetween(returnDetails.returnDate.toDate(getLocalDateTimeFormat()).toLocalDate())
+            } else {
+                data.rentedDate.toDate(getLocalDateTimeFormat())
+                    .countDaysBetween(returnDetails.returnDate.toDate(getLocalDateTimeFormat()))
+            }
         } else {
-            data.rentedDate.toDateBelowOreo(getLocalDateTimeFormat())
-                .countDaysBetween(
-                    returnDetails.returnDate.toDateBelowOreo(getLocalDateTimeFormat())
-                )
+            if (rentedProduct?.rentalType == RentalType.Monthly) {
+                data.rentedDate.toDateBelowOreo(getLocalDateTimeFormat())
+                    .countMonthsBetween(
+                        returnDetails.returnDate.toDateBelowOreo(getLocalDateTimeFormat())
+                    )
+            } else {
+                data.rentedDate.toDateBelowOreo(getLocalDateTimeFormat())
+                    .countDaysBetween(
+                        returnDetails.returnDate.toDateBelowOreo(getLocalDateTimeFormat())
+                    )
+            }
         }
         daysCount * (returnDetails.returnProductCount ?: 0) * rentalPrice
     }
@@ -396,7 +423,8 @@ fun setBalanceAmount(
 
     val priceForNonReturnedProduct = productToReturn * rentalPrice * numberOfDays
 
-    val balance = "₹ ${(priceForReturnedProduct + priceForNonReturnedProduct - data.advanceAmount)}"
+    val balance =
+        "Rs ${(priceForReturnedProduct + priceForNonReturnedProduct - data.advanceAmount)}"
 
     textView.text = balance
 }

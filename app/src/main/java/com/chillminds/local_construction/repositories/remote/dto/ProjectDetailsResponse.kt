@@ -23,8 +23,13 @@ data class RentalProduct(
     val name: String,
     val quantity: Int,
     val rentalPrice: Int,
+    val rentalType: RentalType = RentalType.Daily
 ) {
     fun toUpdate() = UpdateRentalProduct(name, quantity, rentalPrice)
+}
+
+enum class RentalType {
+    Daily, Monthly
 }
 
 data class UpdateRentalProduct(
@@ -174,6 +179,7 @@ data class RentalProductCreationRequest(
     val name: String,
     val quantity: Int,
     val rentalPrice: Int,
+    val rentalType: String
 )
 
 data class ProjectPaymentDetail(

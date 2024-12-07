@@ -14,8 +14,10 @@ import com.chillminds.local_construction.databinding.FragmentRentalDashboardBind
 import com.chillminds.local_construction.repositories.remote.ApiCallStatus
 import com.chillminds.local_construction.repositories.remote.dto.RentalInformation
 import com.chillminds.local_construction.repositories.remote.dto.RentalProduct
+import com.chillminds.local_construction.repositories.remote.dto.RentalType
 import com.chillminds.local_construction.repositories.remote.dto.ReturnDetails
 import com.chillminds.local_construction.utils.countDaysBetween
+import com.chillminds.local_construction.utils.countMonthsBetween
 import com.chillminds.local_construction.utils.format
 import com.chillminds.local_construction.utils.getLocalDateTimeFormat
 import com.chillminds.local_construction.utils.isNullOrEmptyOrBlank
@@ -36,6 +38,7 @@ import com.maxkeppeler.sheets.option.DisplayMode
 import com.maxkeppeler.sheets.option.Option
 import com.maxkeppeler.sheets.option.OptionSheet
 import org.koin.android.ext.android.inject
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.Calendar
 
@@ -43,6 +46,7 @@ class RentDashboardFragment : Fragment() {
 
     lateinit var binding: FragmentRentalDashboardBinding
     val viewModel by inject<DashboardViewModel>()
+    private val rentalTypeList = RentalType.values().map { it.name }.toList()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -190,7 +194,7 @@ class RentDashboardFragment : Fragment() {
                     viewModel.commonModel.showSnackBar("Count is mandatory")
                     return@onPositive
                 }
-                viewModel.rentalInformation = RentalInformation(
+                val rentalInformation = RentalInformation(
                     productName = selectedProductToRent.name,
                     productId = selectedProductToRent.id,
                     customerName = customerName ?: "",
@@ -201,14 +205,12 @@ class RentDashboardFragment : Fragment() {
                     rentedDate = Calendar.getInstance().time.format(getLocalDateTimeFormat())
                 )
 
-//                showRentalDateSheet()
-
-                createRentalEntry()
+                showRentalDateSheet(rentalInformation)
             }
         }
     }
 
-    /*private fun showRentalDateSheet() {
+    private fun showRentalDateSheet(rentalInformation: RentalInformation) {
         CalendarSheet().show(requireActivity()) {
             title("Select Rental Date")
             this.calendarMode(CalendarMode.MONTH)
@@ -216,12 +218,13 @@ class RentDashboardFragment : Fragment() {
             this.setSelectedDate(Calendar.getInstance())
 
             onPositive { dateStart, _ ->
-                viewModel.rentalInformation?.rentedDate =
+                rentalInformation.rentedDate =
                     dateStart.time.format(getLocalDateTimeFormat())
+                viewModel.rentalInformation = rentalInformation
                 createRentalEntry()
             }
         }
-    }*/
+    }
 
     private fun showRentalReturnDateSheet(returnCount: Int) {
         CalendarSheet().show(requireActivity()) {
@@ -262,6 +265,12 @@ class RentDashboardFragment : Fragment() {
                 inputType(InputType.TYPE_CLASS_NUMBER)
                 hint("Stock Quantity")
             })
+            with(InputSpinner("priceFor") {
+                required()
+                this.options(rentalTypeList)
+                selected(0)
+                label("Price for")
+            })
             with(InputEditText {
                 label("Rental Price")
                 inputType(InputType.TYPE_CLASS_NUMBER)
@@ -271,7 +280,8 @@ class RentDashboardFragment : Fragment() {
             onPositive { result ->
                 val name = result.getString("0")
                 val quantity = result.getString("1") ?: "0"
-                val rentalPrice = result.getString("2") ?: "0"
+                val priceFor = rentalTypeList[result.getInt("priceFor")]
+                val rentalPrice = result.getString("3") ?: "0"
                 if (name.isNullOrEmptyOrBlank()) {
                     viewModel.commonModel.showSnackBar("Product Name is mandatory")
                     return@onPositive
@@ -288,7 +298,12 @@ class RentDashboardFragment : Fragment() {
                     viewModel.commonModel.showSnackBar("Rental Price is mandatory")
                     return@onPositive
                 }
-                createProduct(name, quantity.toIntOrNull() ?: 0, rentalPrice.toIntOrNull() ?: 0)
+                createProduct(
+                    name,
+                    quantity.toIntOrNull() ?: 0,
+                    priceFor,
+                    rentalPrice.toIntOrNull() ?: 0
+                )
             }
         }
     }
@@ -312,6 +327,12 @@ class RentDashboardFragment : Fragment() {
                     hint("Stock Quantity")
                     defaultValue(rentalProduct.quantity.toString())
                 })
+                with(InputSpinner("priceFor") {
+                    required()
+                    this.options(rentalTypeList)
+                    label("Price for")
+                    this.selected(rentalTypeList.indexOf(rentalProduct.rentalType.name))
+                })
                 with(InputEditText {
                     label("Rental Price")
                     inputType(InputType.TYPE_CLASS_NUMBER)
@@ -322,7 +343,8 @@ class RentDashboardFragment : Fragment() {
                 onPositive { result ->
                     val name = result.getString("0")
                     val quantity = result.getString("1") ?: "0"
-                    val rentalPrice = result.getString("2") ?: "0"
+                    val rentalPrice = result.getString("3") ?: "0"
+                    val priceFor = result.getInt("priceFor")
                     if (name.isNullOrEmptyOrBlank()) {
                         viewModel.commonModel.showSnackBar("Product Name is mandatory")
                         return@onPositive
@@ -344,7 +366,8 @@ class RentDashboardFragment : Fragment() {
                             rentalProduct.id,
                             name ?: "",
                             quantity.toIntOrNull() ?: 0,
-                            rentalPrice.toIntOrNull() ?: 0
+                            rentalPrice.toIntOrNull() ?: 0,
+                            rentalType = RentalType.values()[priceFor]
                         )
                     )
                 }
@@ -364,32 +387,65 @@ class RentDashboardFragment : Fragment() {
                 Option("Contact - ${rentalProduct.phoneNumber}"),
                 Option("Status " + rentalProduct.productStatus)
             )
-            val rentalPrice =
-                viewModel.commonModel.rentalProductList.value?.firstOrNull { it.id == rentalProduct.productId }?.rentalPrice
-                    ?: 0
+            val rentedProduct =
+                viewModel.commonModel.rentalProductList.value?.firstOrNull { it.id == rentalProduct.productId }
+
+            val rentalPrice = rentedProduct?.rentalPrice ?: 0
 
             if (rentalProduct.productStatus == viewModel.returnStatus) {
                 options.add(Option("Final Payment - ${rentalProduct.finalPayment}"))
             } else {
                 val numberOfDays = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    rentalProduct.rentedDate.toDate(getLocalDateTimeFormat())
-                        .countDaysBetween(LocalDateTime.now())
+                    if (rentedProduct?.rentalType == RentalType.Monthly) {
+                        rentalProduct.rentedDate.toDate(getLocalDateTimeFormat()).toLocalDate()
+                            .countMonthsBetween(LocalDate.now())
+                    } else {
+                        rentalProduct.rentedDate.toDate(getLocalDateTimeFormat())
+                            .countDaysBetween(LocalDateTime.now())
+                    }
                 } else {
-                    rentalProduct.rentedDate.toDateBelowOreo(getLocalDateTimeFormat())
-                        .countDaysBetween(
-                            Calendar.getInstance().time
-                        )
+                    if (rentedProduct?.rentalType == RentalType.Monthly) {
+                        rentalProduct.rentedDate.toDateBelowOreo(getLocalDateTimeFormat())
+                            .countMonthsBetween(
+                                Calendar.getInstance().time
+                            )
+                    } else {
+                        rentalProduct.rentedDate.toDateBelowOreo(getLocalDateTimeFormat())
+                            .countDaysBetween(
+                                Calendar.getInstance().time
+                            )
+                    }
                 }
 
                 val priceForReturnedProduct = rentalProduct.returnDetails.sumOf { returnDetails ->
                     val daysCount = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        rentalProduct.rentedDate.toDate(getLocalDateTimeFormat())
-                            .countDaysBetween(returnDetails.returnDate.toDate(getLocalDateTimeFormat()))
+                        if (rentedProduct?.rentalType == RentalType.Monthly) {
+                            rentalProduct.rentedDate.toDate(getLocalDateTimeFormat()).toLocalDate()
+                                .countMonthsBetween(
+                                    returnDetails.returnDate.toDate(
+                                        getLocalDateTimeFormat()
+                                    ).toLocalDate()
+                                )
+                        } else {
+                            rentalProduct.rentedDate.toDate(getLocalDateTimeFormat())
+                                .countDaysBetween(
+                                    returnDetails.returnDate.toDate(
+                                        getLocalDateTimeFormat()
+                                    )
+                                )
+                        }
                     } else {
-                        rentalProduct.rentedDate.toDateBelowOreo(getLocalDateTimeFormat())
-                            .countDaysBetween(
-                                returnDetails.returnDate.toDateBelowOreo(getLocalDateTimeFormat())
-                            )
+                        if (rentedProduct?.rentalType == RentalType.Monthly) {
+                            rentalProduct.rentedDate.toDateBelowOreo(getLocalDateTimeFormat())
+                                .countMonthsBetween(
+                                    returnDetails.returnDate.toDateBelowOreo(getLocalDateTimeFormat())
+                                )
+                        } else {
+                            rentalProduct.rentedDate.toDateBelowOreo(getLocalDateTimeFormat())
+                                .countDaysBetween(
+                                    returnDetails.returnDate.toDateBelowOreo(getLocalDateTimeFormat())
+                                )
+                        }
                     }
                     daysCount * (returnDetails.returnProductCount ?: 0) * rentalPrice
                 }
@@ -410,16 +466,30 @@ class RentDashboardFragment : Fragment() {
 
             rentalProduct.returnDetails.forEach { a ->
                 val daysCount = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    rentalProduct.rentedDate.toDate(getLocalDateTimeFormat())
-                        .countDaysBetween(a.returnDate.toDate(getLocalDateTimeFormat()))
+                    if (rentedProduct?.rentalType == RentalType.Monthly) {
+                        rentalProduct.rentedDate.toDate(getLocalDateTimeFormat()).toLocalDate()
+                            .countMonthsBetween(
+                                a.returnDate.toDate(getLocalDateTimeFormat()).toLocalDate()
+                            )
+                    } else {
+                        rentalProduct.rentedDate.toDate(getLocalDateTimeFormat())
+                            .countDaysBetween(a.returnDate.toDate(getLocalDateTimeFormat()))
+                    }
                 } else {
-                    rentalProduct.rentedDate.toDateBelowOreo(getLocalDateTimeFormat())
-                        .countDaysBetween(
-                            a.returnDate.toDateBelowOreo(getLocalDateTimeFormat())
-                        )
+                    if (rentedProduct?.rentalType == RentalType.Monthly) {
+                        rentalProduct.rentedDate.toDateBelowOreo(getLocalDateTimeFormat())
+                            .countMonthsBetween(
+                                a.returnDate.toDateBelowOreo(getLocalDateTimeFormat())
+                            )
+                    } else {
+                        rentalProduct.rentedDate.toDateBelowOreo(getLocalDateTimeFormat())
+                            .countDaysBetween(
+                                a.returnDate.toDateBelowOreo(getLocalDateTimeFormat())
+                            )
+                    }
                 }
 
-                options.add(Option("${a.returnProductCount} product returned on ${a.returnDate} - (₹ ${daysCount * (a.returnProductCount ?: 0) * rentalPrice})"))
+                options.add(Option("${a.returnProductCount} product returned on ${a.returnDate} - (Rs ${daysCount * (a.returnProductCount ?: 0) * rentalPrice})"))
             }
 
             OptionSheet().show(requireActivity()) {
@@ -436,29 +506,54 @@ class RentDashboardFragment : Fragment() {
             val returnStatusList = listOf(details.productStatus, viewModel.returnStatus)
             val rentedReturnCount = details.returnDetails.sumOf { it.returnProductCount ?: 0 }
 
-            val rentalPrice =
-                viewModel.commonModel.rentalProductList.value?.find { it.id == details.productId }?.rentalPrice
-                    ?: 0
+            val rentedProduct =
+                viewModel.commonModel.rentalProductList.value?.find { it.id == details.productId }
+
+            val rentalPrice = rentedProduct?.rentalPrice ?: 0
 
             val numberOfDays = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                details.rentedDate.toDate(getLocalDateTimeFormat())
-                    .countDaysBetween(LocalDateTime.now())
+                if (rentedProduct?.rentalType == RentalType.Monthly) {
+                    details.rentedDate.toDate(getLocalDateTimeFormat()).toLocalDate()
+                        .countMonthsBetween(LocalDate.now())
+                } else {
+                    details.rentedDate.toDate(getLocalDateTimeFormat())
+                        .countDaysBetween(LocalDateTime.now())
+                }
             } else {
-                details.rentedDate.toDateBelowOreo(getLocalDateTimeFormat())
-                    .countDaysBetween(
-                        Calendar.getInstance().time
-                    )
+                if (rentedProduct?.rentalType == RentalType.Monthly) {
+                    details.rentedDate.toDateBelowOreo(getLocalDateTimeFormat())
+                        .countMonthsBetween(
+                            Calendar.getInstance().time
+                        )
+                } else {
+                    details.rentedDate.toDateBelowOreo(getLocalDateTimeFormat())
+                        .countDaysBetween(
+                            Calendar.getInstance().time
+                        )
+                }
             }
 
             val priceForReturnedProduct = details.returnDetails.sumOf { returnDetails ->
                 val daysCount = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    details.rentedDate.toDate(getLocalDateTimeFormat())
-                        .countDaysBetween(returnDetails.returnDate.toDate(getLocalDateTimeFormat()))
+                    if (rentedProduct?.rentalType == RentalType.Monthly) {
+                        details.rentedDate.toDate(getLocalDateTimeFormat()).toLocalDate()
+                            .countMonthsBetween(returnDetails.returnDate.toDate(getLocalDateTimeFormat()).toLocalDate())
+                    } else {
+                        details.rentedDate.toDate(getLocalDateTimeFormat())
+                            .countDaysBetween(returnDetails.returnDate.toDate(getLocalDateTimeFormat()))
+                    }
                 } else {
-                    details.rentedDate.toDateBelowOreo(getLocalDateTimeFormat())
-                        .countDaysBetween(
-                            returnDetails.returnDate.toDateBelowOreo(getLocalDateTimeFormat())
-                        )
+                    if (rentedProduct?.rentalType == RentalType.Monthly) {
+                        details.rentedDate.toDateBelowOreo(getLocalDateTimeFormat())
+                            .countMonthsBetween(
+                                returnDetails.returnDate.toDateBelowOreo(getLocalDateTimeFormat())
+                            )
+                    } else {
+                        details.rentedDate.toDateBelowOreo(getLocalDateTimeFormat())
+                            .countDaysBetween(
+                                returnDetails.returnDate.toDateBelowOreo(getLocalDateTimeFormat())
+                            )
+                    }
                 }
                 daysCount * (returnDetails.returnProductCount ?: 0) * rentalPrice
             }
@@ -471,7 +566,7 @@ class RentDashboardFragment : Fragment() {
             val priceForNonReturnedProduct = productToReturn * rentalPrice * numberOfDays
 
             val balanceToBePaid =
-                "₹ ${(priceForReturnedProduct + priceForNonReturnedProduct - details.advanceAmount)}"
+                "Rs ${(priceForReturnedProduct + priceForNonReturnedProduct - details.advanceAmount)}"
 
             InputSheet().show(requireActivity()) {
                 title("Add Rental Entry to ${details.productName}")
@@ -595,8 +690,8 @@ class RentDashboardFragment : Fragment() {
         }
     }
 
-    private fun createProduct(name: String?, quantity: Int, rentalPrice: Int) {
-        viewModel.createRentalProduct(name ?: "", quantity, rentalPrice)
+    private fun createProduct(name: String?, quantity: Int, priceFor: String, rentalPrice: Int) {
+        viewModel.createRentalProduct(name ?: "", quantity, priceFor, rentalPrice)
             .observe(viewLifecycleOwner) {
                 when (it.status) {
                     ApiCallStatus.LOADING -> {

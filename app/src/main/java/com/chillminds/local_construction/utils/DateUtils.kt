@@ -3,6 +3,7 @@ package com.chillminds.local_construction.utils
 import android.os.Build
 import androidx.annotation.RequiresApi
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
@@ -44,13 +45,26 @@ fun String.toDate(pattern: String = "yyyy-MM-dd HH:mm:ss"): LocalDateTime =
     )
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun LocalDateTime.countDaysBetween(toDateTime: LocalDateTime): Long {
-    return ChronoUnit.DAYS.between(this, toDateTime) + 1
-}
+fun LocalDateTime.countDaysBetween(toDateTime: LocalDateTime) =
+    ChronoUnit.DAYS.between(this, toDateTime) + 1
 
 fun Date.countDaysBetween(toDateTime: Date): Long {
     val diffInMilli = abs(time - toDateTime.time)
     return TimeUnit.DAYS.convert(diffInMilli, TimeUnit.MILLISECONDS) + 1
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun LocalDate.countMonthsBetween(toDate: LocalDate): Long =
+    ChronoUnit.MONTHS.between(this, toDate) + 1
+
+fun Date.countMonthsBetween(toDateTime: Date): Long {
+    val thisCalendar = Calendar.getInstance().apply { time = this@countMonthsBetween }
+    val toCalendar = Calendar.getInstance().apply { time = toDateTime }
+    val yearsDiff = toCalendar.get(Calendar.YEAR) - thisCalendar.get(Calendar.YEAR)
+    val monthsDiff = toCalendar.get(Calendar.MONTH) - thisCalendar.get(Calendar.MONTH)
+    return abs(
+        yearsDiff * 12 + monthsDiff.toLong()
+    ) + 1
 }
 
 fun String.toDateBelowOreo(pattern: String = "yyyy-MM-dd"): Date {

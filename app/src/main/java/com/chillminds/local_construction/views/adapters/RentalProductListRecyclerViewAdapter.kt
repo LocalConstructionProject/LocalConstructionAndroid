@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
-import com.chillminds.local_construction.databinding.ProjectListRecyclerViewBinding
 import com.chillminds.local_construction.databinding.RentalProductListRecyclerViewBinding
 import com.chillminds.local_construction.repositories.remote.dto.RentalProduct
 import com.chillminds.local_construction.view_models.DashboardViewModel
@@ -23,9 +22,11 @@ class RentalProductListRecyclerViewAdapter(
             data: RentalProduct,
             lifeCycle: LifecycleOwner,
             viewModel: DashboardViewModel,
+            isLastIndex: Boolean
         ) {
             binding.data = data
             binding.viewModel = viewModel
+            binding.isLastIndex = isLastIndex
             binding.lifecycleOwner = lifeCycle
             binding.executePendingBindings()
         }
@@ -40,7 +41,7 @@ class RentalProductListRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(
         dataList[position],
-        lifeCycle, viewModel
+        lifeCycle, viewModel, dataList.size == position + 1
     )
 
     override fun getItemCount(): Int = dataList.size

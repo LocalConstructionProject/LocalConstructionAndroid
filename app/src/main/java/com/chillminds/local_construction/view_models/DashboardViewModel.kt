@@ -336,22 +336,26 @@ class DashboardViewModel(
         commonModel.actionListener.postValue(Actions.INSERT_OR_VALIDATE_PAYMENT_ENTRY)
     }
 
-    fun createRentalProduct(name: String, quantity: Int, rentalPrice: Int) = liveData {
-        emit(Resource.loading())
-        try {
-            emit(
-                Resource.success(
-                    repository.createRentalProduct(
-                        RentalProductCreationRequest(
-                            name = name, quantity = quantity, rentalPrice = rentalPrice
+    fun createRentalProduct(name: String, quantity: Int, priceFor: String, rentalPrice: Int) =
+        liveData {
+            emit(Resource.loading())
+            try {
+                emit(
+                    Resource.success(
+                        repository.createRentalProduct(
+                            RentalProductCreationRequest(
+                                name = name,
+                                quantity = quantity,
+                                rentalPrice = rentalPrice,
+                                rentalType = priceFor
+                            )
                         )
                     )
                 )
-            )
-        } catch (e: Exception) {
-            emit(Resource.error(null, "${e.message}"))
+            } catch (e: Exception) {
+                emit(Resource.error(null, "${e.message}"))
+            }
         }
-    }
 
     fun createRentalEntry() = liveData {
         emit(Resource.loading())
