@@ -8,8 +8,8 @@ import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
+import com.bumptech.glide.Glide
 import com.chillminds.local_construction.R
-import com.chillminds.local_construction.base.GlideApp
 import com.chillminds.local_construction.base.lazyFast
 import com.chillminds.local_construction.utils.isNullOrEmptyOrBlank
 
@@ -43,7 +43,7 @@ class ProgressbarHelper(private val context: Context, var message: CharSequence?
             message = "Please Wait..!"
         }
         this.title.text = message
-        GlideApp.with(progressBar).asGif().load(R.drawable.loading_animation).into(progressBar)
+        Glide.with(progressBar).asGif().load(R.drawable.loading_animation).into(progressBar)
     }
 
     fun create(): AlertDialog {

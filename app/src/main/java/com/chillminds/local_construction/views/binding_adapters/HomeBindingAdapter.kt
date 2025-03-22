@@ -7,8 +7,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.transition.TransitionManager
+import com.bumptech.glide.Glide
 import com.chillminds.local_construction.R
-import com.chillminds.local_construction.base.GlideApp
 import com.chillminds.local_construction.common.Logger
 
 @BindingAdapter("animateVisibility")
@@ -28,5 +28,5 @@ fun setTotalPrice(target: TextView, count: String?, price:String?) {
 @BindingAdapter("animateSrc")
 fun animateSrc(imageView: ImageView, resource: Drawable) {
     Logger.info("animateSrc", "${resource.isVisible}")
-    GlideApp.with(imageView).asGif().load(R.drawable.construction).into(imageView)
+    Glide.with(imageView).asGif().load(R.drawable.construction).into(imageView)
 }
